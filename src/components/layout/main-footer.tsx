@@ -14,19 +14,19 @@ const MainFooter = () => {
               <div className="relative w-16 h-16">
                 <Image
                   src="https://ext.same-assets.com/1082949689/2442665553.png"
-                  alt="Mali Government Logo"
+                  alt="Tchad Government Logo"
                   fill
                   className="object-contain"
                 />
               </div>
               <div>
-                <h3 className="text-lg font-bold">République du Mali</h3>
+                <h3 className="text-lg font-bold">République du Tchad</h3>
                 <p className="text-sm opacity-90">Secrétariat Général du Gouvernement</p>
                 <p className="text-xs opacity-75">Journal Officiel</p>
               </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
-              Le Secrétariat Général du Gouvernement du Mali est l'organe central
+              Le Secrétariat Général du Gouvernement du Tchad est l'organe central
               de coordination administrative du Gouvernement. Il assure la publication
               du Journal Officiel et la diffusion des textes législatifs et réglementaires.
             </p>
@@ -71,7 +71,7 @@ const MainFooter = () => {
               <div>
                 <p className="font-medium">Adresse:</p>
                 <p>Quartier du Fleuve, Bamako</p>
-                <p>République du Mali</p>
+                <p>République du Tchad</p>
               </div>
               <div>
                 <p className="font-medium">Téléphone:</p>
@@ -98,11 +98,11 @@ const MainFooter = () => {
             </div>
 
             <div>
-              <h5 className="font-semibold mb-3">Droit Malien</h5>
+              <h5 className="font-semibold mb-3">Droit Tchaden</h5>
               <ul className="space-y-1 text-sm opacity-80">
-                <li><Link href="/droit-malien/codes" className="hover:opacity-100 transition-opacity">Codes en vigueur</Link></li>
-                <li><Link href="/droit-malien/textes-consolides" className="hover:opacity-100 transition-opacity">Textes consolidés</Link></li>
-                <li><Link href="/droit-malien/publications" className="hover:opacity-100 transition-opacity">Publications spéciales</Link></li>
+                <li><Link href="/droit-tchadien/codes" className="hover:opacity-100 transition-opacity">Codes en vigueur</Link></li>
+                <li><Link href="/droit-tchadien/textes-consolides" className="hover:opacity-100 transition-opacity">Textes consolidés</Link></li>
+                <li><Link href="/droit-tchadien/publications" className="hover:opacity-100 transition-opacity">Publications spéciales</Link></li>
               </ul>
             </div>
 
@@ -136,7 +136,7 @@ const MainFooter = () => {
                 sgg-mali.ml
               </Link>
               <span className="ml-2">
-                Secrétariat Général du Gouvernement du Mali - Journal Officiel
+                Secrétariat Général du Gouvernement du Tchad - Journal Officiel
               </span>
             </div>
           </div>

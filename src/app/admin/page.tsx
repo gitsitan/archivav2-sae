@@ -104,7 +104,7 @@ const AdminDashboard = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-600 mt-1">Bienvenue dans le panel d'administration SGG Mali</p>
+          <p className="text-gray-600 mt-1">Bienvenue dans le panel d'administration SGG Tchad</p>
         </div>
         <div className="flex items-center space-x-3">
           <Button variant="outline" size="sm">

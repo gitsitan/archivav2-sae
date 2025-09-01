@@ -22,15 +22,15 @@ const MainHeader = () => {
       ]
     },
     {
-      title: 'DROIT MALIEN',
-      href: '/droit-malien',
+      title: 'DROIT TCHADIEN',
+      href: '/droit-tchadien',
       submenu: [
-        { title: 'Journal Officiel', href: '/droit-malien/journal-officiel' },
-        { title: 'Journaux spéciaux', href: '/droit-malien/journaux-speciaux' },
-        { title: 'Codes en vigueur', href: '/droit-malien/codes' },
-        { title: 'Textes version consolidée', href: '/droit-malien/textes-consolides' },
-        { title: 'Communiqués du Conseil des Ministres', href: '/droit-malien/communiques' },
-        { title: 'Publications spéciales', href: '/droit-malien/publications' },
+        { title: 'Journal Officiel', href: '/droit-tchadien/journal-officiel' },
+        { title: 'Journaux spéciaux', href: '/droit-tchadien/journaux-speciaux' },
+        { title: 'Codes en vigueur', href: '/droit-tchadien/codes' },
+        { title: 'Textes version consolidée', href: '/droit-tchadien/textes-consolides' },
+        { title: 'Communiqués du Conseil des Ministres', href: '/droit-tchadien/communiques' },
+        { title: 'Publications spéciales', href: '/droit-tchadien/publications' },
       ]
     },
     {
@@ -65,14 +65,14 @@ const MainHeader = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              {/* Mali Flag */}
+              {/* Tchad Flag */}
               <div className="mali-flag w-12 h-8 rounded"></div>
 
               {/* Government Seal */}
               <div className="relative w-16 h-16">
                 <Image
                   src="https://ext.same-assets.com/1082949689/2926066823.png"
-                  alt="Mali Government Seal"
+                  alt="Tchad Government Seal"
                   fill
                   className="object-contain"
                 />
@@ -80,7 +80,7 @@ const MainHeader = () => {
 
               {/* Title */}
               <div className="hidden md:block">
-                <h1 className="text-lg font-bold">République du Mali</h1>
+                <h1 className="text-lg font-bold">République du Tchad</h1>
                 <p className="text-sm opacity-90">Secrétariat Général du Gouvernement</p>
                 <p className="text-xs opacity-75">Journal Officiel</p>
               </div>
@@ -88,7 +88,7 @@ const MainHeader = () => {
 
             {/* Mobile title */}
             <div className="md:hidden text-center flex-1 ml-4">
-              <h1 className="text-sm font-bold">République du Mali</h1>
+              <h1 className="text-sm font-bold">République du Tchad</h1>
               <p className="text-xs opacity-90">SGG - Journal Officiel</p>
             </div>
 

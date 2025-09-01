@@ -10,7 +10,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 198 94% 20%; /* Mali government teal */
+    --primary: 198 94% 20%; /* Tchad government teal */
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
@@ -68,9 +68,9 @@
   }
 }
 
-/* Custom Mali government theme styles */
+/* Custom Tchad government theme styles */
 .government-header {
-  background: linear-gradient(135deg, #0c4560 0%, #0a3b52 100%);
+  background: linear-gradient(135deg, #020381 0%, #020381 100%);
 }
 
 .mali-flag {
