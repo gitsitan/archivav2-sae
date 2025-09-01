@@ -1,11 +1,11 @@
-# SGG Mali Clone - Project Todos
+# SGG Tchad Clone - Project Todos
 
 ## ✅ Completed
 - [x] Create Next.js project with shadcn/ui
 - [x] Project setup and initialization
 - [x] Install additional UI components (card, button, lucide-react)
 - [x] Create main site layout structure
-- [x] Implement header with Mali branding and flag
+- [x] Implement header with Tchad branding and flag
 - [x] Build navigation menu with dropdowns
 - [x] Create news carousel component with government activities
 - [x] Build three-column document sections (texts, journals, communiqués)
