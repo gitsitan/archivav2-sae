@@ -1,77 +1,106 @@
 "use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
-import { Menu, X, Search } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+import { Menu, X, Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import logo from "@/public/logo/logo-tchad.png";
+import maisonBlanche from "@/public/logo/maison.png";
+// import {image} from '@/assets/logo/tchad-seal.png';
 
 const MainHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigationItems = [
     {
-      title: 'SECRÉTARIAT GÉNÉRAL',
-      href: '/secretariat',
+      title: "SECRÉTARIAT GÉNÉRAL",
+      href: "/secretariat",
       submenu: [
-        { title: 'Présentation', href: '/secretariat/presentation' },
-        { title: 'Organisation', href: '/secretariat/organisation' },
-        { title: 'Abonnements au JO et annonces', href: '/secretariat/abonnements' },
-        { title: 'Liens utiles', href: '/secretariat/liens' },
-        { title: 'Actualités', href: '/secretariat/actualites' },
-      ]
+        { title: "Présentation", href: "/secretariat/presentation" },
+        { title: "Organisation", href: "/secretariat/organisation" },
+        {
+          title: "Abonnements au JO et annonces",
+          href: "/secretariat/abonnements",
+        },
+        { title: "Liens utiles", href: "/secretariat/liens" },
+        { title: "Actualités", href: "/secretariat/actualites" },
+      ],
     },
     {
-      title: 'DROIT TCHADIEN',
-      href: '/droit-tchadien',
+      title: "DROIT TCHADIEN",
+      href: "/droit-tchadien",
       submenu: [
-        { title: 'Journal Officiel', href: '/droit-tchadien/journal-officiel' },
-        { title: 'Journaux spéciaux', href: '/droit-tchadien/journaux-speciaux' },
-        { title: 'Codes en vigueur', href: '/droit-tchadien/codes' },
-        { title: 'Textes version consolidée', href: '/droit-tchadien/textes-consolides' },
-        { title: 'Communiqués du Conseil des Ministres', href: '/droit-tchadien/communiques' },
-        { title: 'Publications spéciales', href: '/droit-tchadien/publications' },
-      ]
+        { title: "Journal Officiel", href: "/droit-tchadien/journal-officiel" },
+        {
+          title: "Journaux spéciaux",
+          href: "/droit-tchadien/journaux-speciaux",
+        },
+        { title: "Codes en vigueur", href: "/droit-tchadien/codes" },
+        {
+          title: "Textes version consolidée",
+          href: "/droit-tchadien/textes-consolides",
+        },
+        {
+          title: "Communiqués du Conseil des Ministres",
+          href: "/droit-tchadien/communiques",
+        },
+        {
+          title: "Publications spéciales",
+          href: "/droit-tchadien/publications",
+        },
+      ],
     },
     {
-      title: 'DROIT RÉGIONAL',
-      href: '/droit-regional',
+      title: "DROIT RÉGIONAL",
+      href: "/droit-regional",
       submenu: [
-        { title: 'CIMA', href: '/droit-regional/cima' },
-        { title: 'CIPRES', href: '/droit-regional/cipres' },
-        { title: 'OAPI', href: '/droit-regional/oapi' },
-        { title: 'OHADA', href: '/droit-regional/ohada' },
-        { title: 'UEMOA', href: '/droit-regional/uemoa' },
-      ]
+        { title: "CIMA", href: "/droit-regional/cima" },
+        { title: "CIPRES", href: "/droit-regional/cipres" },
+        { title: "OAPI", href: "/droit-regional/oapi" },
+        { title: "OHADA", href: "/droit-regional/ohada" },
+        { title: "UEMOA", href: "/droit-regional/uemoa" },
+      ],
     },
     {
-      title: 'CONVENTIONS',
-      href: '/conventions',
+      title: "CONVENTIONS",
+      href: "/conventions",
     },
     {
-      title: 'CONTACTS',
-      href: '/contacts',
+      title: "CONTACTS",
+      href: "/contacts",
       submenu: [
-        { title: 'Contactez-Nous', href: '/contacts/nous-contacter' },
-        { title: 'Vos interlocuteurs', href: '/contacts/interlocuteurs' },
-      ]
-    }
+        { title: "Contactez-Nous", href: "/contacts/nous-contacter" },
+        { title: "Vos interlocuteurs", href: "/contacts/interlocuteurs" },
+      ],
+    },
   ];
 
   return (
     <header className="w-full">
       {/* Top Government Bar */}
       <div className="government-header text-white">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto  py-4">
+
+          <div className="hidden md:block">
+              {/* Header Background Pattern */}
+                <div className="absolute -top-[26px] bottom-0 left-[669px] right-0 z-0 overflow-hidden opacity-80 pointer-events-none">
+                  <Image
+                  src={maisonBlanche}
+                  alt="Government Building"
+                  width={500}
+                  height={2000}
+                  className="object-cover"
+                  style={{ maskImage: "linear-gradient(to left, transparent 0%, black 20%)" }}
+                  />
+                </div>
+            </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              {/* Tchad Flag */}
-              <div className="mali-flag w-12 h-8 rounded"></div>
-
               {/* Government Seal */}
               <div className="relative w-16 h-16">
                 <Image
-                  src="https://ext.same-assets.com/1082949689/2926066823.png"
+                  src={logo}
                   alt="Tchad Government Seal"
                   fill
                   className="object-contain"
@@ -80,9 +109,11 @@ const MainHeader = () => {
 
               {/* Title */}
               <div className="hidden md:block">
-                <h1 className="text-lg font-bold">République du Tchad</h1>
-                <p className="text-sm opacity-90">Secrétariat Général du Gouvernement</p>
-                <p className="text-xs opacity-75">Journal Officiel</p>
+                <p className="text-sm opacity-90">République du Tchad</p>
+                <p className="text-xs opacity-75">
+                  Secrétariat Général du Gouvernement
+                </p>
+                <h1 className="text-lg font-bold">Journal Officiel</h1>
               </div>
             </div>
 
@@ -92,22 +123,24 @@ const MainHeader = () => {
               <p className="text-xs opacity-90">SGG - Journal Officiel</p>
             </div>
 
+            
+
             {/* Header Background Pattern */}
-            <div className="hidden lg:block opacity-20">
-              <Image
-                src="https://ext.same-assets.com/1082949689/943702241.jpeg"
-                alt="Government Building"
-                width={200}
-                height={60}
-                className="object-cover"
-              />
+            <div className="hidden lg:block">
+              {/* Tchad Flag */}
+              {/* <div className="mali-flag w-12 h-8 rounded"></div> */}
+              <div className="flex h-14 w-24 border border-gray-400">
+                <div className="bg-[#002664] flex-1"></div>
+                <div className="bg-[#FECB00] flex-1"></div>
+                <div className="bg-[#C60C30] flex-1"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="bg-white shadow-md border-b">
+      <nav className="bg-white shadow-md border-b relative z-20">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Desktop Navigation */}
@@ -120,8 +153,18 @@ const MainHeader = () => {
                   >
                     {item.title}
                     {item.submenu && (
-                      <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <svg
+                        className="ml-1 h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     )}
                   </Link>
@@ -162,7 +205,11 @@ const MainHeader = () => {
               className="lg:hidden"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </Button>
           </div>
         </div>
