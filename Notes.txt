@@ -1,0 +1,6 @@
+Pour creer une route:
+-Apres avoir le dossier de destination (exemple Clients) ensuite creer
+le fichier page.tsx qui est vraiment essentielle pour prendre en compte la route
+et dans ce fichier creer les fonctions pour faire appel par exemple a votre liste de Clients
+A la fin du proceesus faire npx next build pour builder l'application afin qu'il prends en compte des routes et
+lancer avec npx next start

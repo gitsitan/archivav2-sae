@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/public/logo/logo-tchad.png";
-import maisonBlanche from "@/public/logo/maison.png";
+import logo from "/public/logo/tchad-seal.png";
+import maisonBlanche from "/public/logo/maison.png";
 // import {image} from '@/assets/logo/tchad-seal.png';
 
 const MainHeader = () => {
@@ -91,20 +91,22 @@ const MainHeader = () => {
       {/* Top Government Bar */}
       <div className="government-header text-white">
         <div className="container mx-auto  py-4">
-
           <div className="hidden md:block">
-              {/* Header Background Pattern */}
-                <div className="absolute -top-[26px] bottom-0 left-[669px] right-0 z-0 overflow-hidden opacity-80 pointer-events-none">
-                  <Image
-                  src={maisonBlanche}
-                  alt="Government Building"
-                  width={500}
-                  height={2000}
-                  className="object-cover"
-                  style={{ maskImage: "linear-gradient(to left, transparent 0%, black 20%)" }}
-                  />
-                </div>
+            {/* Header Background Pattern */}
+            <div className="absolute -top-[26px] bottom-0 left-[669px] right-0 z-0 overflow-hidden opacity-80 pointer-events-none">
+              <Image
+                src={maisonBlanche}
+                alt="Government Building"
+                width={500}
+                height={2000}
+                className="object-cover"
+                style={{
+                  maskImage:
+                    "linear-gradient(to left, transparent 0%, black 20%)",
+                }}
+              />
             </div>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               {/* Government Seal */}
@@ -132,8 +134,6 @@ const MainHeader = () => {
               <h1 className="text-sm font-bold">République du Tchad</h1>
               <p className="text-xs opacity-90">SGG - Journal Officiel</p>
             </div>
-
-            
 
             {/* Header Background Pattern */}
             <div className="hidden lg:block">

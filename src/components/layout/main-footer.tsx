@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/public/logo/logo-tchad.png";
+import logo from "/public/logo/logo-tchad.png";
 
 const MainFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -26,7 +26,6 @@ const MainFooter = () => {
                   Secrétariat Général du Gouvernement
                 </p>
                 <h3 className="text-lg font-bold">Journal Officiel</h3>
-
               </div>
             </div>
             <p className="text-sm opacity-80 leading-relaxed">
