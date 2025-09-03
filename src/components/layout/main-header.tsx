@@ -5,9 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "/public/logo/tchad-seal.png";
-import maisonBlanche from "/public/logo/maison.png";
-// import {image} from '@/assets/logo/tchad-seal.png';
 
 const MainHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +16,6 @@ const MainHeader = () => {
       submenu: [
         { title: "Présentation", href: "/secretariat/presentation" },
         { title: "Organisation", href: "/secretariat/organisation" },
-       
       ],
     },
     {
@@ -95,7 +91,7 @@ const MainHeader = () => {
             {/* Header Background Pattern */}
             <div className="absolute -top-[26px] bottom-0 left-[669px] right-0 z-0 overflow-hidden opacity-80 pointer-events-none">
               <Image
-                src={maisonBlanche}
+                src="/logo/maison.png"
                 alt="Government Building"
                 width={500}
                 height={2000}
@@ -112,7 +108,7 @@ const MainHeader = () => {
               {/* Government Seal */}
               <div className="relative w-16 h-16">
                 <Image
-                  src={logo}
+                  src="/logo/tchad-seal.png"
                   alt="Tchad Government Seal"
                   fill
                   className="object-contain"
