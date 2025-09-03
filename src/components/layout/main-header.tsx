@@ -19,12 +19,22 @@ const MainHeader = () => {
       submenu: [
         { title: "Présentation", href: "/secretariat/presentation" },
         { title: "Organisation", href: "/secretariat/organisation" },
+       
+      ],
+    },
+    {
+      title: "JOURNAL OFFICIEL",
+      href: "/journal-officiel",
+      submenu: [
         {
-          title: "Abonnements au JO et annonces",
-          href: "/secretariat/abonnements",
+          title: "Edition ordinaire",
+          href: "/journal-officiel/edition-ordinaire",
         },
-        { title: "Liens utiles", href: "/secretariat/liens" },
-        { title: "Actualités", href: "/secretariat/actualites" },
+        {
+          title: "Edition spéciaux",
+          href: "/journal-officiel/edition-speciaux",
+        },
+       
       ],
     },
     {

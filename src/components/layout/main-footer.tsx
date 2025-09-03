@@ -98,7 +98,7 @@ const MainFooter = () => {
               </div>
               <div>
                 <p className="font-medium">Email:</p>
-                <p>info@sgg-mali.ml</p>
+                <p>info@sgg.gouv.td</p>
               </div>
             </div>
           </div>
@@ -224,7 +224,7 @@ const MainFooter = () => {
                 href="/"
                 className="hover:opacity-100 transition-opacity font-medium"
               >
-                sgg-mali.ml
+                sgg.gouv.td
               </Link>
               <span className="ml-2">
                 Secrétariat Général du Gouvernement du Tchad - Journal Officiel
