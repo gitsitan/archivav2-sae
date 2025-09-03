@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { Search, Bell, User, Menu, LogOut, Settings, Globe } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import Link from "next/link";
+import {
+  Search,
+  Bell,
+  User,
+  Menu,
+  LogOut,
+  Settings,
+  Globe,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AdminHeaderProps {
   onMenuToggle: () => void;
@@ -19,25 +27,25 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
       title: "Nouveau document publié",
       message: "Arrêt n°2025-09/CC du 25 août 2025",
       time: "Il y a 5 minutes",
-      unread: true
+      unread: true,
     },
     {
       id: 2,
       title: "Journal Officiel mis à jour",
       message: "JO n°2025-11 spécial du 27/08/2025",
       time: "Il y a 1 heure",
-      unread: true
+      unread: true,
     },
     {
       id: 3,
       title: "Nouveau communiqué",
       message: "Communiqué du Conseil des Ministres",
       time: "Il y a 3 heures",
-      unread: false
-    }
+      unread: false,
+    },
   ];
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:px-6">
@@ -64,7 +72,7 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
       </div>
 
       {/* Center - Search */}
-      <div className="flex-1 max-w-lg mx-4">
+      {/* <div className="flex-1 max-w-lg mx-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -73,13 +81,17 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
-      </div>
+      </div> */}
 
       {/* Right Side */}
       <div className="flex items-center space-x-4">
         {/* View Site Button */}
         <Link href="/" target="_blank">
-          <Button variant="outline" size="sm" className="hidden md:flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden md:flex items-center space-x-2"
+          >
             <Globe className="h-4 w-4" />
             <span>Voir le site</span>
           </Button>
@@ -87,20 +99,6 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
 
         {/* Notifications */}
         <div className="relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-            className="relative"
-          >
-            <Bell className="h-5 w-5" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                {unreadCount}
-              </span>
-            )}
-          </Button>
-
           {/* Notifications Dropdown */}
           {isNotificationOpen && (
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-200 z-50">
@@ -112,13 +110,15 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
                   <div
                     key={notification.id}
                     className={`p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 cursor-pointer ${
-                      notification.unread ? 'bg-blue-50' : ''
+                      notification.unread ? "bg-blue-50" : ""
                     }`}
                   >
                     <div className="flex items-start space-x-3">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        notification.unread ? 'bg-blue-500' : 'bg-gray-300'
-                      }`} />
+                      <div
+                        className={`w-2 h-2 rounded-full mt-2 ${
+                          notification.unread ? "bg-blue-500" : "bg-gray-300"
+                        }`}
+                      />
                       <div className="flex-1">
                         <h4 className="text-sm font-medium text-gray-900">
                           {notification.title}
@@ -186,7 +186,7 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
                   className="flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
                   onClick={() => {
                     // Handle logout
-                    console.log('Logging out...');
+                    console.log("Logging out...");
                   }}
                 >
                   <LogOut className="h-4 w-4" />

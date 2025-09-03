@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Home,
   FileText,
@@ -18,9 +18,9 @@ import {
   Globe,
   Shield,
   Menu,
-  X
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+  X,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SidebarItem {
   title: string;
@@ -31,92 +31,43 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   {
-    title: 'Tableau de bord',
-    href: '/admin',
-    icon: <Home className="h-5 w-5" />
+    title: "Tableau de bord",
+    href: "/admin",
+    icon: <Home className="h-5 w-5" />,
   },
   {
-    title: 'Gestion des contenus',
-    href: '/admin/content',
+    title: "Gestion des contenus",
+    href: "/admin/content",
     icon: <FileText className="h-5 w-5" />,
     submenu: [
-      { title: 'Actualités', href: '/admin/content/news' },
-      { title: 'Documents officiels', href: '/admin/content/documents' },
-      { title: 'Communiqués', href: '/admin/content/communiques' },
-      { title: 'Journaux officiels', href: '/admin/content/journals' }
-    ]
+      { title: "Actualités", href: "/admin/content/news" },
+      { title: "Documents officiels", href: "/admin/content/documents" },
+      { title: "Communiqués", href: "/admin/content/communiques" },
+      { title: "Journaux officiels", href: "/admin/content/journals" },
+    ],
   },
   {
-    title: 'Bibliothèque',
-    href: '/admin/library',
+    title: "Bibliothèque",
+    href: "/admin/library",
     icon: <BookOpen className="h-5 w-5" />,
     submenu: [
-      { title: 'Codes en vigueur', href: '/admin/library/codes' },
-      { title: 'Textes consolidés', href: '/admin/library/consolidated' },
-      { title: 'Droit régional', href: '/admin/library/regional' },
-      { title: 'Conventions', href: '/admin/library/conventions' }
-    ]
+      { title: "Codes en vigueur", href: "/admin/library/codes" },
+      { title: "Textes consolidés", href: "/admin/library/consolidated" },
+      { title: "Droit régional", href: "/admin/library/regional" },
+      { title: "Conventions", href: "/admin/library/conventions" },
+    ],
   },
+
   {
-    title: 'Téléchargements',
-    href: '/admin/uploads',
-    icon: <Upload className="h-5 w-5" />
-  },
-  {
-    title: 'Utilisateurs',
-    href: '/admin/users',
+    title: "Utilisateurs",
+    href: "/admin/users",
     icon: <Users className="h-5 w-5" />,
     submenu: [
-      { title: 'Gestion des comptes', href: '/admin/users/accounts' },
-      { title: 'Permissions', href: '/admin/users/permissions' },
-      { title: 'Groupes', href: '/admin/users/groups' }
-    ]
+      { title: "Gestion des comptes", href: "/admin/users/accounts" },
+      { title: "Permissions", href: "/admin/users/permissions" },
+      { title: "Groupes", href: "/admin/users/groups" },
+    ],
   },
-  {
-    title: 'Recherche avancée',
-    href: '/admin/search',
-    icon: <Search className="h-5 w-5" />
-  },
-  {
-    title: 'Notifications',
-    href: '/admin/notifications',
-    icon: <Bell className="h-5 w-5" />
-  },
-  {
-    title: 'Calendrier',
-    href: '/admin/calendar',
-    icon: <Calendar className="h-5 w-5" />
-  },
-  {
-    title: 'Messages',
-    href: '/admin/messages',
-    icon: <MessageSquare className="h-5 w-5" />
-  },
-  {
-    title: 'Statistiques',
-    href: '/admin/analytics',
-    icon: <BarChart3 className="h-5 w-5" />
-  },
-  {
-    title: 'Site web',
-    href: '/admin/website',
-    icon: <Globe className="h-5 w-5" />,
-    submenu: [
-      { title: 'Configuration', href: '/admin/website/config' },
-      { title: 'Thèmes', href: '/admin/website/themes' },
-      { title: 'Menus', href: '/admin/website/menus' }
-    ]
-  },
-  {
-    title: 'Sécurité',
-    href: '/admin/security',
-    icon: <Shield className="h-5 w-5" />
-  },
-  {
-    title: 'Paramètres',
-    href: '/admin/settings',
-    icon: <Settings className="h-5 w-5" />
-  }
 ];
 
 interface AdminSidebarProps {
@@ -129,15 +80,15 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleSubmenu = (href: string) => {
-    setExpandedItems(prev =>
+    setExpandedItems((prev) =>
       prev.includes(href)
-        ? prev.filter(item => item !== href)
+        ? prev.filter((item) => item !== href)
         : [...prev, href]
     );
   };
 
   const isActive = (href: string) => {
-    return pathname === href || pathname.startsWith(href + '/');
+    return pathname === href || pathname.startsWith(href + "/");
   };
 
   return (
@@ -151,11 +102,13 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
       )}
 
       {/* Sidebar */}
-      <aside className={`
+      <aside
+        className={`
         fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
         lg:translate-x-0 lg:static lg:z-auto
-        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+      `}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
@@ -188,9 +141,10 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                       onClick={() => toggleSubmenu(item.href)}
                       className={`
                         w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200
-                        ${isActive(item.href)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-gray-700 hover:bg-gray-100'
+                        ${
+                          isActive(item.href)
+                            ? "bg-primary text-primary-foreground"
+                            : "text-gray-700 hover:bg-gray-100"
                         }
                       `}
                     >
@@ -200,13 +154,18 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                       </div>
                       <svg
                         className={`w-4 h-4 transition-transform duration-200 ${
-                          expandedItems.includes(item.href) ? 'rotate-180' : ''
+                          expandedItems.includes(item.href) ? "rotate-180" : ""
                         }`}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
                       </svg>
                     </button>
                   ) : (
@@ -214,9 +173,10 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                       href={item.href}
                       className={`
                         flex items-center space-x-3 px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200
-                        ${isActive(item.href)
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-gray-700 hover:bg-gray-100'
+                        ${
+                          isActive(item.href)
+                            ? "bg-primary text-primary-foreground"
+                            : "text-gray-700 hover:bg-gray-100"
                         }
                       `}
                       onClick={() => onToggle()}
@@ -236,9 +196,10 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                           href={subItem.href}
                           className={`
                             block px-3 py-2 text-sm rounded-md transition-colors duration-200
-                            ${isActive(subItem.href)
-                              ? 'bg-primary/10 text-primary font-medium'
-                              : 'text-gray-600 hover:bg-gray-50'
+                            ${
+                              isActive(subItem.href)
+                                ? "bg-primary/10 text-primary font-medium"
+                                : "text-gray-600 hover:bg-gray-50"
                             }
                           `}
                           onClick={() => onToggle()}
@@ -256,15 +217,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <Users className="h-4 w-4 text-gray-600" />
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Admin</p>
-              <p className="text-xs text-gray-500">sgg-mali.ml</p>
-            </div>
-          </div>
+          <div className="flex items-center space-x-3"></div>
         </div>
       </aside>
     </>
