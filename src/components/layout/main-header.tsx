@@ -12,7 +12,8 @@ const MainHeader = () => {
   const navigationItems = [
     {
       title: "SECRÉTARIAT GÉNÉRAL",
-      href: "/secretariat",
+      // href: "/secretariat",
+      href: "#",
       submenu: [
         { title: "Présentation", href: "/secretariat/presentation" },
         { title: "Organisation", href: "/secretariat/organisation" },
@@ -20,7 +21,8 @@ const MainHeader = () => {
     },
     {
       title: "JOURNAL OFFICIEL",
-      href: "/journal-officiel",
+      // href: "/journal-officiel",
+      href: "#",
       submenu: [
         {
           title: "Edition ordinaire",
@@ -35,50 +37,60 @@ const MainHeader = () => {
     },
     {
       title: "DROIT TCHADIEN",
-      href: "/droit-tchadien",
+      // href: "/droit-tchadien",
+      href: "#",
       submenu: [
-        { title: "Journal Officiel", href: "/droit-tchadien/journal-officiel" },
-        {
-          title: "Journaux spéciaux",
-          href: "/droit-tchadien/journaux-speciaux",
+       
+        { title: "Codes en vigueur",
+        //  href: "/droit-tchadien/codes" 
+         href: "#" 
+        
         },
-        { title: "Codes en vigueur", href: "/droit-tchadien/codes" },
         {
           title: "Textes version consolidée",
-          href: "/droit-tchadien/textes-consolides",
+          // href: "/droit-tchadien/textes-consolides",
+          href: "#",
         },
         {
           title: "Communiqués du Conseil des Ministres",
-          href: "/droit-tchadien/communiques",
+          // href: "/droit-tchadien/communiques",
+          href: "#",
         },
         {
           title: "Publications spéciales",
-          href: "/droit-tchadien/publications",
+          // href: "/droit-tchadien/publications",
+          href: "#",
         },
       ],
     },
     {
       title: "DROIT RÉGIONAL",
-      href: "/droit-regional",
+      href: "#",
       submenu: [
-        { title: "CIMA", href: "/droit-regional/cima" },
-        { title: "CIPRES", href: "/droit-regional/cipres" },
-        { title: "OAPI", href: "/droit-regional/oapi" },
-        { title: "OHADA", href: "/droit-regional/ohada" },
-        { title: "UEMOA", href: "/droit-regional/uemoa" },
+        { title: "CIMA", href: "#" },
+        { title: "CIPRES", href: "#" },
+        { title: "OAPI", href: "#" },
+        { title: "OHADA", href: "#" },
+        { title: "UEMOA", href: "#" },
+        // { title: "CIMA", href: "/droit-regional/cima" },
+        // { title: "CIPRES", href: "/droit-regional/cipres" },
+        // { title: "OAPI", href: "/droit-regional/oapi" },
+        // { title: "OHADA", href: "/droit-regional/ohada" },
+        // { title: "UEMOA", href: "/droit-regional/uemoa" },
       ],
     },
     {
       title: "CONVENTIONS",
-      href: "/conventions",
+      // href: "/conventions",
+      href: "#",
     },
     {
       title: "CONTACTS",
-      href: "/contacts",
+      href: "#",
       submenu: [
         { title: "Contactez-Nous", href: "/contacts/nous-contacter" },
         { title: "Vos interlocuteurs", href: "/contacts/interlocuteurs" },
-      ],
+      ], 
     },
   ];
 
