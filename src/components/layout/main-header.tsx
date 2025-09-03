@@ -37,11 +37,7 @@ const MainHeader = () => {
       title: "DROIT TCHADIEN",
       href: "/droit-tchadien",
       submenu: [
-        { title: "Journal Officiel", href: "/droit-tchadien/journal-officiel" },
-        {
-          title: "Journaux spéciaux",
-          href: "/droit-tchadien/journaux-speciaux",
-        },
+       
         { title: "Codes en vigueur", href: "/droit-tchadien/codes" },
         {
           title: "Textes version consolidée",
@@ -53,19 +49,24 @@ const MainHeader = () => {
         },
         {
           title: "Publications spéciales",
-          href: "/droit-tchadien/publications",
+          href: "/droit-tchadien/publications", 
         },
       ],
     },
     {
       title: "DROIT RÉGIONAL",
-      href: "/droit-regional",
+      href: "#",
       submenu: [
-        { title: "CIMA", href: "/droit-regional/cima" },
-        { title: "CIPRES", href: "/droit-regional/cipres" },
-        { title: "OAPI", href: "/droit-regional/oapi" },
-        { title: "OHADA", href: "/droit-regional/ohada" },
-        { title: "UEMOA", href: "/droit-regional/uemoa" },
+        { title: "CIMA", href: "#" },
+        { title: "CIPRES", href: "#" },
+        { title: "OAPI", href: "#" },
+        { title: "OHADA", href: "#" },
+        { title: "UEMOA", href: "#" },
+        // { title: "CIMA", href: "/droit-regional/cima" },
+        // { title: "CIPRES", href: "/droit-regional/cipres" },
+        // { title: "OAPI", href: "/droit-regional/oapi" },
+        // { title: "OHADA", href: "/droit-regional/ohada" },
+        // { title: "UEMOA", href: "/droit-regional/uemoa" },
       ],
     },
     {
@@ -74,11 +75,11 @@ const MainHeader = () => {
     },
     {
       title: "CONTACTS",
-      href: "/contacts",
+      href: "#",
       submenu: [
         { title: "Contactez-Nous", href: "/contacts/nous-contacter" },
         { title: "Vos interlocuteurs", href: "/contacts/interlocuteurs" },
-      ],
+      ], 
     },
   ];
 
