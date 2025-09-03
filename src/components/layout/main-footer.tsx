@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import logo from "/public/logo/logo-tchad.png";
 
 const MainFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -14,7 +13,7 @@ const MainFooter = () => {
             <div className="flex items-center space-x-4 mb-4">
               <div className="relative w-16 h-16">
                 <Image
-                  src={logo}
+                  src="/logo/logo-tchad.png"
                   alt="Tchad Government Logo"
                   fill
                   className="object-contain"

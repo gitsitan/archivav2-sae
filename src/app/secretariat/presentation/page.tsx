@@ -11,7 +11,6 @@ export default function Home() {
        <h1>Page de presentation</h1>
 
       </main>
-      <MainFooter />
     </div>
   );
 }
