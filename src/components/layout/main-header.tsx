@@ -12,7 +12,8 @@ const MainHeader = () => {
   const navigationItems = [
     {
       title: "SECRÉTARIAT GÉNÉRAL",
-      href: "/secretariat",
+      // href: "/secretariat",
+      href: "#",
       submenu: [
         { title: "Présentation", href: "/secretariat/presentation" },
         { title: "Organisation", href: "/secretariat/organisation" },
@@ -20,7 +21,8 @@ const MainHeader = () => {
     },
     {
       title: "JOURNAL OFFICIEL",
-      href: "/journal-officiel",
+      // href: "/journal-officiel",
+      href: "#",
       submenu: [
         {
           title: "Edition ordinaire",
@@ -35,21 +37,29 @@ const MainHeader = () => {
     },
     {
       title: "DROIT TCHADIEN",
-      href: "/droit-tchadien",
+      // href: "/droit-tchadien",
+      href: "#",
       submenu: [
        
-        { title: "Codes en vigueur", href: "/droit-tchadien/codes" },
+        { title: "Codes en vigueur",
+        //  href: "/droit-tchadien/codes" 
+         href: "#" 
+        
+        },
         {
           title: "Textes version consolidée",
-          href: "/droit-tchadien/textes-consolides",
+          // href: "/droit-tchadien/textes-consolides",
+          href: "#",
         },
         {
           title: "Communiqués du Conseil des Ministres",
-          href: "/droit-tchadien/communiques",
+          // href: "/droit-tchadien/communiques",
+          href: "#",
         },
         {
           title: "Publications spéciales",
-          href: "/droit-tchadien/publications", 
+          // href: "/droit-tchadien/publications",
+          href: "#",
         },
       ],
     },
@@ -71,7 +81,8 @@ const MainHeader = () => {
     },
     {
       title: "CONVENTIONS",
-      href: "/conventions",
+      // href: "/conventions",
+      href: "#",
     },
     {
       title: "CONTACTS",
