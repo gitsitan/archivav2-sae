@@ -5,9 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Menu, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "/public/logo/tchad-seal.png";
-import maisonBlanche from "/public/logo/maison.png";
-// import {image} from '@/assets/logo/tchad-seal.png';
 
 const MainHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -15,64 +12,85 @@ const MainHeader = () => {
   const navigationItems = [
     {
       title: "SECRÉTARIAT GÉNÉRAL",
-      href: "/secretariat",
+      // href: "/secretariat",
+      href: "#",
       submenu: [
         { title: "Présentation", href: "/secretariat/presentation" },
         { title: "Organisation", href: "/secretariat/organisation" },
+      ],
+    },
+    {
+      title: "JOURNAL OFFICIEL",
+      // href: "/journal-officiel",
+      href: "#",
+      submenu: [
         {
-          title: "Abonnements au JO et annonces",
-          href: "/secretariat/abonnements",
+          title: "Edition ordinaire",
+          href: "/journal-officiel/edition-ordinaire",
         },
-        { title: "Liens utiles", href: "/secretariat/liens" },
-        { title: "Actualités", href: "/secretariat/actualites" },
+        {
+          title: "Edition spéciaux",
+          href: "/journal-officiel/edition-speciaux",
+        },
+       
       ],
     },
     {
       title: "DROIT TCHADIEN",
-      href: "/droit-tchadien",
+      // href: "/droit-tchadien",
+      href: "#",
       submenu: [
-        { title: "Journal Officiel", href: "/droit-tchadien/journal-officiel" },
-        {
-          title: "Journaux spéciaux",
-          href: "/droit-tchadien/journaux-speciaux",
+       
+        { title: "Codes en vigueur",
+        //  href: "/droit-tchadien/codes" 
+         href: "#" 
+        
         },
-        { title: "Codes en vigueur", href: "/droit-tchadien/codes" },
         {
           title: "Textes version consolidée",
-          href: "/droit-tchadien/textes-consolides",
+          // href: "/droit-tchadien/textes-consolides",
+          href: "#",
         },
         {
           title: "Communiqués du Conseil des Ministres",
-          href: "/droit-tchadien/communiques",
+          // href: "/droit-tchadien/communiques",
+          href: "#",
         },
         {
           title: "Publications spéciales",
-          href: "/droit-tchadien/publications",
+          // href: "/droit-tchadien/publications",
+          href: "#",
         },
       ],
     },
     {
       title: "DROIT RÉGIONAL",
-      href: "/droit-regional",
+      href: "#",
       submenu: [
-        { title: "CIMA", href: "/droit-regional/cima" },
-        { title: "CIPRES", href: "/droit-regional/cipres" },
-        { title: "OAPI", href: "/droit-regional/oapi" },
-        { title: "OHADA", href: "/droit-regional/ohada" },
-        { title: "UEMOA", href: "/droit-regional/uemoa" },
+        { title: "CIMA", href: "#" },
+        { title: "CIPRES", href: "#" },
+        { title: "OAPI", href: "#" },
+        { title: "OHADA", href: "#" },
+        { title: "UEMOA", href: "#" },
+        // { title: "CIMA", href: "/droit-regional/cima" },
+        // { title: "CIPRES", href: "/droit-regional/cipres" },
+        // { title: "OAPI", href: "/droit-regional/oapi" },
+        // { title: "OHADA", href: "/droit-regional/ohada" },
+        // { title: "UEMOA", href: "/droit-regional/uemoa" },
       ],
     },
     {
       title: "CONVENTIONS",
-      href: "/conventions",
+      // href: "/conventions",
+      href: "#",
     },
     {
       title: "CONTACTS",
-      href: "/contacts",
+      href: "#",
       submenu: [
         { title: "Contactez-Nous", href: "/contacts/nous-contacter" },
         { title: "Vos interlocuteurs", href: "/contacts/interlocuteurs" },
-      ],
+      ], 
     },
   ];
 
@@ -85,7 +103,7 @@ const MainHeader = () => {
             {/* Header Background Pattern */}
             <div className="absolute -top-[26px] bottom-0 left-[669px] right-0 z-0 overflow-hidden opacity-80 pointer-events-none">
               <Image
-                src={maisonBlanche}
+                src="/logo/maison.png"
                 alt="Government Building"
                 width={500}
                 height={2000}
@@ -102,7 +120,7 @@ const MainHeader = () => {
               {/* Government Seal */}
               <div className="relative w-16 h-16">
                 <Image
-                  src={logo}
+                  src="/logo/tchad-seal.png"
                   alt="Tchad Government Seal"
                   fill
                   className="object-contain"

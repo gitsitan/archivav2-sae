@@ -8,11 +8,9 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <MainHeader />
       <main className="flex-1">
-        <HeroSection />
-        <DocumentSections />
+       <h1>Page Edition ordinaire</h1>
 
       </main>
-      <MainFooter />
     </div>
   );
 }
