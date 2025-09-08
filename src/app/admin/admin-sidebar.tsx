@@ -77,14 +77,14 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const pathname = usePathname();
-  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  //  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleSubmenu = (href: string) => {
-    setExpandedItems((prev) =>
-      prev.includes(href)
-        ? prev.filter((item) => item !== href)
-        : [...prev, href]
-    );
+    // setExpandedItems((prev) =>
+    //   prev.includes(href)
+    //     ? prev.filter((item) => item !== href)
+    //     : [...prev, href]
+    // );
   };
 
   const isActive = (href: string) => {
@@ -110,7 +110,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
       `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className=" flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <Shield className="h-5 w-5 text-white" />
@@ -152,9 +152,9 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                         {item.icon}
                         <span>{item.title}</span>
                       </div>
-                      <svg
+                      {/* <svg
                         className={`w-4 h-4 transition-transform duration-200 ${
-                          expandedItems.includes(item.href) ? "rotate-180" : ""
+                          item.href ? "rotate-180" : ""
                         }`}
                         fill="none"
                         stroke="currentColor"
@@ -166,7 +166,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                           strokeWidth={2}
                           d="M19 9l-7 7-7-7"
                         />
-                      </svg>
+                      </svg> */}
                     </button>
                   ) : (
                     <Link
@@ -188,7 +188,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                 </div>
 
                 {/* Submenu */}
-                {item.submenu && expandedItems.includes(item.href) && (
+                {item.submenu && item.href && (
                   <ul className="mt-1 ml-6 space-y-1">
                     {item.submenu.map((subItem) => (
                       <li key={subItem.href}>

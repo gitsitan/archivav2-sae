@@ -1,7 +1,12 @@
+import AdminHeaders from "@/app/admin/components/adminHeader";
+
 const ListeActualite = () => {
   return (
     <>
-      <h1>Liste des actualiites</h1>
+      <AdminHeaders
+        title="Liste des Actualités"
+        desc="ceci concerne les actualités"
+      />
     </>
   );
 };

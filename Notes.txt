@@ -4,3 +4,7 @@ le fichier page.tsx qui est vraiment essentielle pour prendre en compte la route
 et dans ce fichier creer les fonctions pour faire appel par exemple a votre liste de Clients
 A la fin du proceesus faire npx next build pour builder l'application afin qu'il prends en compte des routes et
 lancer avec npx next start
+-Notion de route:
+Pour gerer les routes toujours creer une page.tsx qui sera notre route cest a dire
+pour le crud d'un journal:on a edit,update etc pour que notre route marche
+on vas faire une page.tsx pour chacun de ces actions et faire notre logique dedans

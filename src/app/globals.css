@@ -74,7 +74,13 @@
 }
 
 .mali-flag {
-  background: linear-gradient(to right, #14b85d 33.33%, #ffcd00 33.33%, #ffcd00 66.66%, #ce1126 66.66%);
+  background: linear-gradient(
+    to right,
+    #14b85d 33.33%,
+    #ffcd00 33.33%,
+    #ffcd00 66.66%,
+    #ce1126 66.66%
+  );
 }
 
 .hero-section {
@@ -107,4 +113,178 @@
   .mobile-nav {
     @apply fixed inset-0 z-50 bg-primary text-primary-foreground;
   }
+}
+/*####################Style Container ########################*/
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem; /* mb-4 */
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+/*####################Style Input Search ########################*/
+.input-search {
+  width: 100%;
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-width: 1px; /* border */
+  border-radius: 0.375rem; /* rounded-md */
+  outline: none; /* focus:outline-none */
+}
+.search-container {
+  flex-grow: 1;
+  margin-right: 1rem; /* Espace entre la barre de recherche et le bouton */
+}
+
+.input-search:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* focus:ring-2 focus:ring-blue-500 */
+}
+
+.dark .input-search {
+  background-color: #1f2937; /* dark:bg-gray-800 */
+  border-color: #374151; /* dark:border-gray-700 */
+  color: #fff; /* dark:text-white */
+}
+/*####################Style Bouton Principale ########################*/
+.btn-primary {
+  background-color: #034663; /* bg-blue-500 */
+  color: #fff; /* text-white */
+  font-weight: 700; /* font-bold */
+  padding: 0.5rem 1rem; /* py-2 px-4 */
+  border-radius: 0.375rem; /* rounded-md */
+  outline: none; /* focus:outline-none */
+}
+
+.btn-primary:hover {
+  background-color: #0a4f6c; /* hover:bg-blue-600 */
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:shadow-outline */
+}
+/*####################Style Table ########################*/
+.table-main {
+  min-width: 100%; /* min-w-full */
+  border-collapse: collapse; /* Ensure borders are not doubled */
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-color: #e5e7eb; /* divide-y divide-gray-200 */
+}
+
+.table-header-cell {
+  padding: 0.75rem 1.5rem; /* px-6 py-3 */
+  text-align: left; /* text-left */
+  font-size: 0.75rem; /* text-xs */
+  font-weight: 500; /* font-medium */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em; /* tracking-wider */
+  color: #6b7280; /* text-gray-500 */
+  background-color: white;
+  /* border-bottom: 1px solid #e5e7eb; */
+  background-color: whitesmoke;
+}
+
+.table-header-cell > span {
+  display: flex;
+  align-items: center; /* flex items-center */
+}
+
+.table-row {
+  cursor: pointer; /* cursor-pointer */
+  transition: background-color 0.15s ease-in-out;
+}
+
+.table-row:hover {
+  background-color: #f9fafb; /* hover:bg-gray-50 */
+}
+
+.table-body-cell {
+  padding: 1rem 1.5rem; /* px-6 py-4 */
+  white-space: nowrap; /* whitespace-nowrap */
+  color: #6b7280; /* text-gray-500 */
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table-body-cell-bold {
+  font-weight: 500; /* font-medium */
+  color: #111827; /* text-gray-900 */
+}
+
+/*####################Style Bouton ########################*/
+
+/* Styles pour le mode sombre */
+.dark .table-main {
+  border-color: #374151; /* dark:divide-gray-700 */
+}
+
+.dark .table-header-cell {
+  color: #9ca3af; /* dark:text-gray-400 */
+}
+
+.dark .table-body {
+  background-color: #111827; /* dark:bg-gray-900 */
+  border-color: #374151; /* dark:divide-gray-700 */
+}
+
+.dark .table-row:hover {
+  background-color: #1f2937; /* dark:hover:bg-gray-800 */
+}
+
+.dark .table-body-cell {
+  border-bottom-color: #374151;
+}
+
+.dark .table-body-cell-bold {
+  color: #fff; /* dark:text-white */
+}
+.btn-action {
+  outline: none; /* focus:outline-none */
+}
+
+.btn-action-edit {
+  color: #034663; /* text-green-600 */
+  margin-right: 1rem; /* mr-4 */
+}
+
+.btn-action-edit:hover {
+  color: #034653; /* hover:text-green-900 */
+}
+
+.btn-action-delete {
+  color: #ef4444; /* text-red-600 */
+}
+
+.btn-action-delete:hover {
+  color: #b91c1c; /* hover:text-red-900 */
+}
+
+/* Styles pour le mode sombre */
+.dark .btn-action-edit {
+  color: #4ade80; /* dark:text-green-400 */
+}
+
+.dark .btn-action-edit:hover {
+  color: #c7d2fe; /* dark:hover:text-indigo-200 */
+}
+
+.dark .btn-action-delete {
+  color: #f87171; /* dark:text-red-400 */
+}
+
+.dark .btn-action-delete:hover {
+  color: #fecaca; /* dark:hover:text-red-200 */
+}
+
+.tableContainer {
+  background-color: white !important;
 }

@@ -1,4 +1,13 @@
+import AdminHeaders from "@/app/admin/components/adminHeader";
+
 const ListeDocument = () => {
-  return <h2>Liste des documents</h2>;
+  return (
+    <>
+      <AdminHeaders
+        title="Liste des Documents"
+        desc="ceci concerne les documents"
+      />
+    </>
+  );
 };
 export default ListeDocument;

@@ -1,7 +1,12 @@
+import AdminHeaders from "@/app/admin/components/adminHeader";
+
 const ListeCommunique = () => {
   return (
     <>
-      <h1>Liste des Communiques</h1>
+      <AdminHeaders
+        title="Liste des Communiques"
+        desc="ceci concerne les communiques"
+      />
     </>
   );
 };

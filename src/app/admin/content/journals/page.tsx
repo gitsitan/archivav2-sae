@@ -1,8 +1,9 @@
-import ListeJournals from "./actions/listeJournals";
+import ListeJournaux from "./actions/listeJournals";
+
 export default function Journals() {
   return (
     <>
-      <ListeJournals />
+      <ListeJournaux />
     </>
   );
 }
