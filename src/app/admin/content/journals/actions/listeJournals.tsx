@@ -11,6 +11,8 @@ import {
 } from "@hugeicons/core-free-icons";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
 import LoadingTchadFlag from "@/components/ui/LoadingTchadFlag";
+import useNotification from "@/app/hooks/useNotifications";
+import Notification from "@/components/ui/notifications";
 
 interface Journal {
   id: number;
@@ -54,6 +56,9 @@ const ListeJournaux: React.FC = () => {
   //constante qui vas gerer le tri
   const [sortColumn, setSortColumn] = useState<keyof Journal | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  //gestion de la notification
+  const { notification, showNotification, hideNotification } =
+    useNotification();
   useEffect(() => {
     const fetchData = async () => {
       const start = Date.now();
@@ -69,6 +74,7 @@ const ListeJournaux: React.FC = () => {
       } catch (error) {
         console.error("Erreur lors du chargement des journaux:", error);
       } finally {
+        //intervient dans la notifications
         const elapsed = Date.now() - start;
         const minLoadingTime = 1500; // en millisecondes (1.5 seconde)
         const remaining = minLoadingTime - elapsed;
@@ -139,12 +145,21 @@ const ListeJournaux: React.FC = () => {
           setJournaux((prevJournaux) =>
             prevJournaux.filter((journal) => journal.id !== itemToDeleteId)
           );
+          showNotification("Journal supprimé avec succès !", "success");
         } else {
           const errorData = await res.json();
           console.error("Erreur de suppression:", errorData.message);
+          showNotification(
+            errorData.message || "Erreur lors de la suppression.",
+            "error"
+          );
         }
       } catch (error) {
         console.error("Erreur lors de la suppression:", error);
+        showNotification(
+          "Une erreur inattendue est survenue. Veuillez réessayer.",
+          "error"
+        );
       }
 
       setShowDialog(false);
@@ -174,6 +189,13 @@ const ListeJournaux: React.FC = () => {
             title="Liste des Journaux"
             desc="Ceci décrit la liste des journaux"
           />
+          {notification.visible && (
+            <Notification
+              message={notification.message}
+              type={notification.type}
+              onClose={hideNotification}
+            />
+          )}
           <div className="flex-container">
             <div className="search-container">
               <label htmlFor="search" className="sr-only">

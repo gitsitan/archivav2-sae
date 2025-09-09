@@ -14,13 +14,6 @@
     "date_de_publication": "2023-11-09"
   },
   {
-    "id": 3,
-    "annee": 2024,
-    "type": "Spécial",
-    "numero": 75,
-    "date_de_publication": "2024-10-26"
-  },
-  {
     "id": 4,
     "annee": 2027,
     "type": "Ordinaire",
@@ -33,20 +26,6 @@
     "type": "Spécial",
     "numero": 35,
     "date_de_publication": "2020-12-10"
-  },
-  {
-    "id": 6,
-    "annee": 2022,
-    "type": "Ordinaire",
-    "numero": 40,
-    "date_de_publication": "2022-06-07"
-  },
-  {
-    "id": 7,
-    "annee": 2023,
-    "type": "Ordinaire",
-    "numero": 96,
-    "date_de_publication": "2023-03-20"
   },
   {
     "id": 8,
@@ -96,54 +75,5 @@
     "numero": 120,
     "type": "SpecialTestAvecUpdate",
     "date_de_publication": "2023-11-09"
-  },
-  {
-    "id": 15,
-    "annee": 2023,
-    "numero": 120,
-    "type": "SpecialTesswdsd",
-    "date_de_publication": "2023-11-09"
-  },
-  {
-    "id": 16,
-    "annee": 2023,
-    "type": "SpecialTesswdsd",
-    "numero": 1200,
-    "date_de_publication": "2023-11-09"
-  },
-  {
-    "id": 17,
-    "annee": 2023,
-    "type": "SpecialTesswdsd",
-    "numero": 1200,
-    "date_de_publication": "2023-11-09"
-  },
-  {
-    "id": 18,
-    "annee": 2024,
-    "type": "Special",
-    "numero": 45,
-    "date_de_publication": "2025-09-07"
-  },
-  {
-    "annee": 2025,
-    "type": "SpecialTest",
-    "numero": 450,
-    "date_de_publication": "2025-09-08",
-    "id": 19
-  },
-  {
-    "annee": 2025,
-    "numero": 798,
-    "type": "Ordinaire",
-    "date_de_publication": "2025-09-08",
-    "id": 20
-  },
-  {
-    "annee": 2025,
-    "numero": 300,
-    "type": "Ordinaire",
-    "date_de_publication": "2025-09-08",
-    "id": 21
   }
 ]

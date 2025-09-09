@@ -77,14 +77,14 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const pathname = usePathname();
-  //  const [expandedItems, setExpandedItems] = useState<string[]>([]);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
   const toggleSubmenu = (href: string) => {
-    // setExpandedItems((prev) =>
-    //   prev.includes(href)
-    //     ? prev.filter((item) => item !== href)
-    //     : [...prev, href]
-    // );
+    setExpandedItems((prev) =>
+      prev.includes(href)
+        ? prev.filter((item) => item !== href)
+        : [...prev, href]
+    );
   };
 
   const isActive = (href: string) => {
@@ -129,7 +129,6 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
             <X className="h-4 w-4" />
           </Button>
         </div>
-
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-1">
@@ -152,9 +151,9 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                         {item.icon}
                         <span>{item.title}</span>
                       </div>
-                      {/* <svg
+                      <svg
                         className={`w-4 h-4 transition-transform duration-200 ${
-                          item.href ? "rotate-180" : ""
+                          expandedItems.includes(item.href) ? "rotate-180" : ""
                         }`}
                         fill="none"
                         stroke="currentColor"
@@ -166,7 +165,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                           strokeWidth={2}
                           d="M19 9l-7 7-7-7"
                         />
-                      </svg> */}
+                      </svg>
                     </button>
                   ) : (
                     <Link
@@ -188,7 +187,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
                 </div>
 
                 {/* Submenu */}
-                {item.submenu && item.href && (
+                {item.submenu && expandedItems.includes(item.href) && (
                   <ul className="mt-1 ml-6 space-y-1">
                     {item.submenu.map((subItem) => (
                       <li key={subItem.href}>
@@ -214,7 +213,6 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
             ))}
           </ul>
         </nav>
-
         {/* Footer */}
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center space-x-3"></div>
