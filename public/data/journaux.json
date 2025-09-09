@@ -68,12 +68,5 @@
     "numero": 23,
     "type": "Spécial",
     "date_de_publication": "2025-09-06"
-  },
-  {
-    "id": 14,
-    "annee": 2023,
-    "numero": 120,
-    "type": "SpecialTestAvecUpdate",
-    "date_de_publication": "2023-11-09"
   }
 ]

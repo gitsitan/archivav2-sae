@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import AdminHeaders from "@/app/admin/components/adminHeader";
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Save } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 
@@ -196,7 +196,7 @@ const CreateJournalPage = () => {
             {/* Date de Publication */}
 
             {/* Submit */}
-            <div className="pt-6 flex justify-start items-center space-x-4">
+            <div className="pt-6 flex justify-between items-center space-x-4">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -232,15 +232,15 @@ const CreateJournalPage = () => {
                   </span>
                 ) : (
                   <>
-                    <PlusCircle size={24} className="mr-3" />
-                    Créer le Journal
+                    <Save size={24} className="mr-3" />
+                    Enregistrer
                   </>
                 )}
               </button>
               <button
                 onClick={handleBack}
                 type="button"
-                className="w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                className="ml-auto w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
               >
                 <HugeiconsIcon
                   icon={ArrowTurnBackwardIcon}

@@ -242,13 +242,13 @@ const UpdateJournalPage = () => {
                       name="date_de_publication"
                       value={formData.date_de_publication}
                       onChange={handleChange}
-                      className="block w-11/12 py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                      className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="pt-6 flex justify-start items-center space-x-4">
+                <div className="pt-6 flex justify-between items-center space-x-4">
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -289,14 +289,14 @@ const UpdateJournalPage = () => {
                           size={24}
                           className="mr-3"
                         />
-                        Mettre à jour le Journal
+                        Modifier
                       </>
                     )}
                   </button>
                   <button
                     onClick={handleBack}
                     type="button"
-                    className="w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                    className=" ml-auto w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
                   >
                     <HugeiconsIcon
                       icon={ArrowTurnBackwardIcon}
