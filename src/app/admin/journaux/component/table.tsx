@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import AdminHeaders from "@/app/admin/components/adminHeader";
+import AdminHeaders from "../../components/adminHeader";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -44,27 +44,23 @@ const SortIcon: React.FC = () => (
 
 const ListeJournaux: React.FC = () => {
   const [journaux, setJournaux] = useState<Journal[]>([]);
-  //constante qui fait appel a la barre de recherche
   const [searchTerm, setSearchTerm] = useState("");
-  //constante qui fait appel a la pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  //constante qui vas gerer le tri
   const [sortColumn, setSortColumn] = useState<keyof Journal | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-  //gestion de la notification
   const { notification, showNotification, hideNotification } =
     useNotification();
+
   useEffect(() => {
     const fetchData = async () => {
       const start = Date.now();
       try {
         const res = await fetch("/api/journaux");
-
         if (res.ok) {
           const data = await res.json();
           setJournaux(data);
@@ -74,9 +70,8 @@ const ListeJournaux: React.FC = () => {
       } catch (error) {
         console.error("Erreur lors du chargement des journaux:", error);
       } finally {
-        //intervient dans la notifications
         const elapsed = Date.now() - start;
-        const minLoadingTime = 1500; // en millisecondes (1.5 seconde)
+        const minLoadingTime = 1500;
         const remaining = minLoadingTime - elapsed;
 
         if (remaining > 0) {
@@ -99,10 +94,9 @@ const ListeJournaux: React.FC = () => {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-  //fonction de tri
+
   const sortedJournaux = [...filteredJournaux].sort((a, b) => {
     if (!sortColumn) return 0;
-
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
 
@@ -110,10 +104,10 @@ const ListeJournaux: React.FC = () => {
     if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
     return 0;
   });
+
   const totalPages = Math.ceil(filteredJournaux.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  //const currentJournaux = filteredJournaux.slice(startIndex, endIndex);
   const currentJournaux = sortedJournaux.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
@@ -123,17 +117,18 @@ const ListeJournaux: React.FC = () => {
   };
 
   const handleCreate = () => {
-    router.push("/admin/content/journals/actions/createJournals");
+    router.push("/admin/journaux/new");
   };
 
   const handleEdit = (id: number) => {
-    router.push(`/admin/content/journals/actions/updateJournals/${id}`);
+    router.push(`/admin/journaux/edit/${id}`);
   };
 
   const handleDelete = async (id: number) => {
     setItemToDeleteId(id);
     setShowDialog(true);
   };
+
   const handleConfirmDelete = async () => {
     if (itemToDeleteId !== null) {
       try {
@@ -161,15 +156,16 @@ const ListeJournaux: React.FC = () => {
           "error"
         );
       }
-
       setShowDialog(false);
       setItemToDeleteId(null);
     }
   };
+
   const handleCancelDelete = () => {
     setShowDialog(false);
     setItemToDeleteId(null);
   };
+
   const handleSort = (column: keyof Journal) => {
     if (sortColumn === column) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
@@ -196,6 +192,7 @@ const ListeJournaux: React.FC = () => {
               onClose={hideNotification}
             />
           )}
+
           <div className="flex-container">
             <div className="search-container">
               <label htmlFor="search" className="sr-only">
@@ -210,10 +207,12 @@ const ListeJournaux: React.FC = () => {
                 className="input-search"
               />
             </div>
+
             <button onClick={handleCreate} className="btn-primary">
               <HugeiconsIcon icon={Add01FreeIcons} size={25} />
             </button>
           </div>
+
           <div className="tableContainer">
             <table className="table-main">
               <thead className="table-header">
@@ -237,7 +236,6 @@ const ListeJournaux: React.FC = () => {
                     </span>
                   </th>
                   <th
-                    style={{ width: "50px" }}
                     className="table-header-cell"
                     onClick={() => handleSort("numero")}
                   >
@@ -255,24 +253,18 @@ const ListeJournaux: React.FC = () => {
                       <SortIcon />
                     </span>
                   </th>
-                  <th style={{ width: "50px" }} className="table-header-cell">
-                    <span>
-                      Actions
-                      <SortIcon />
-                    </span>
+
+                  <th className="table-header-cell">
+                    <span>Actions</span>
                   </th>
                 </tr>
               </thead>
               <tbody key={currentPage} className="table-body">
                 {currentJournaux.map((journal) => (
-                  // <tr key={journal.id} className="table-row">
-
-                  <tr
-                    // key={journal.id ?? `fallback-${index}`}
-                    key={journal.id}
-                    className="table-row"
-                  >
-                    <td className="table-body-cell bold">{journal.annee}</td>
+                  <tr key={journal.id} className="table-row">
+                    <td className="table-body-cell table-body-cell-bold">
+                      {journal.annee}
+                    </td>
                     <td className="table-body-cell">{journal.type}</td>
                     <td className="table-body-cell">{journal.numero}</td>
                     <td className="table-body-cell">
@@ -390,6 +382,7 @@ const ListeJournaux: React.FC = () => {
               </div>
             </div>
           </div>
+
           {showDialog && (
             <ConfirmationDialog
               title="Confirmation de suppression"

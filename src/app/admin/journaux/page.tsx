@@ -1,4 +1,4 @@
-import ListeJournaux from "./actions/listeJournals";
+import ListeJournaux from "./component/table";
 
 export default function Journals() {
   return (

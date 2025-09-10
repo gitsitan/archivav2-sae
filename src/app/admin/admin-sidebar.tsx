@@ -37,13 +37,13 @@
 //   },
 //   {
 //     title: "Gestion des contenus",
-//     href: "/admin/content",
+//     href: "/admin",
 //     icon: <FileText className="h-5 w-5" />,
 //     submenu: [
-//       { title: "Actualités", href: "/admin/content/actualites" },
-//       { title: "Documents officiels", href: "/admin/content/documents" },
-//       { title: "Communiqués", href: "/admin/content/communiques" },
-//       { title: "Journaux officiels", href: "/admin/content/journals" },
+//       { title: "Actualités", href: "/admin/actualites" },
+//       { title: "Documents officiels", href: "/admin/documents" },
+//       { title: "Communiqués", href: "/admin/communiques" },
+//       { title: "Journaux officiels", href: "/admin/journals" },
 //     ],
 //   },
 //   {
@@ -249,10 +249,10 @@ const sidebarItems: SidebarItem[] = [
     href: "/admin/content",
     icon: <FileText className="h-5 w-5" />,
     submenu: [
-      { title: "Actualités", href: "/admin/content/actualites" },
-      { title: "Documents officiels", href: "/admin/content/documents" },
-      { title: "Communiqués", href: "/admin/content/communiques" },
-      { title: "Journaux officiels", href: "/admin/content/journals" },
+      { title: "Actualités", href: "/admin/actualites" },
+      { title: "Documents officiels", href: "/admin/documents" },
+      { title: "Communiqués", href: "/admin/communiques" },
+      { title: "Journaux officiels", href: "/admin/journaux" },
     ],
   },
   {

@@ -169,12 +169,11 @@
   background-color: #0a4f6c; /* hover:bg-blue-600 */
 }
 
-.btn-primary:focus {
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:shadow-outline */
-}
-/*####################Style Table ########################*/
-.table-main {
-  min-width: 100%; /* min-w-full */
+.bt {
+  width: 100%; /* was min-w-full */
+  table-layout: fixed; /* keep column widths stable */
+  border-collapse: collapse; /* Ensure borders are not doubled */
+  border-top-width: 100%; /* min-w-full */
   border-collapse: collapse; /* Ensure borders are not doubled */
   border-top-width: 1px;
   border-bottom-width: 1px;
@@ -197,6 +196,13 @@
 .table-header-cell > span {
   display: flex;
   align-items: center; /* flex items-center */
+}
+.table-main {
+  width: 100%;
+  background-color: white;
+  table-layout: fixed !important;
+
+  overflow: hidden; /* overflow-hidden */
 }
 
 .table-row {
@@ -282,6 +288,11 @@
 }
 
 .dark .btn-action-delete:hover {
+  color: #fecaca; /* dark:hover:text-red-200 */
+}
+
+.tableContainer {
+  background-color: white !important;
   color: #fecaca; /* dark:hover:text-red-200 */
 }
 

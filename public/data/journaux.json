@@ -1,12 +1,5 @@
 [
   {
-    "id": 1,
-    "annee": 2023,
-    "type": "Ordinaire",
-    "numero": 8001,
-    "date_de_publication": "2022-03-04"
-  },
-  {
     "id": 2,
     "annee": 2024,
     "type": "OrdinaireTestAvecUpdate",
@@ -26,13 +19,6 @@
     "type": "Spécial",
     "numero": 35,
     "date_de_publication": "2020-12-10"
-  },
-  {
-    "id": 8,
-    "annee": 2025,
-    "type": "Spécial",
-    "numero": 54,
-    "date_de_publication": "2025-06-18"
   },
   {
     "id": 9,
