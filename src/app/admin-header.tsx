@@ -12,6 +12,8 @@ import {
   Globe,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
+import React from "react";
 
 interface AdminHeaderProps {
   onMenuToggle: () => void;
@@ -20,6 +22,36 @@ interface AdminHeaderProps {
 const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Fonction pour générer les éléments du fil d'Ariane
+  const generateBreadcrumbs = (path: string) => {
+    const pathSegments = path.split("/").filter((segment) => segment);
+
+    if (pathSegments.length === 0) {
+      return <span className="text-gray-900 font-medium">Tableau de bord</span>;
+    }
+
+    return pathSegments.map((segment, index) => {
+      const isLast = index === pathSegments.length - 1;
+      const href = "/" + pathSegments.slice(0, index + 1).join("/");
+      const label = segment.replace(/-/g, " ");
+
+      return (
+        <React.Fragment key={href}>
+          {index > 0 && <span>/</span>}
+          <Link
+            href={href}
+            className={`hover:text-primary transition-colors ${
+              isLast ? "text-gray-900 font-medium" : "text-gray-600"
+            }`}
+          >
+            {label.charAt(0).toUpperCase() + label.slice(1)}
+          </Link>
+        </React.Fragment>
+      );
+    });
+  };
 
   const notifications = [
     {
@@ -63,11 +95,7 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
 
         {/* Breadcrumb */}
         <nav className="hidden md:flex items-center space-x-2 text-sm text-gray-600">
-          <Link href="/admin" className="hover:text-primary transition-colors">
-            Administration
-          </Link>
-          <span>/</span>
-          <span className="text-gray-900">Tableau de bord</span>
+          {generateBreadcrumbs(pathname)}
         </nav>
       </div>
 
@@ -87,14 +115,14 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
       <div className="flex items-center space-x-4">
         {/* View Site Button */}
         <Link href="/" target="_blank">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             className="hidden md:flex items-center space-x-2"
           >
             <Globe className="h-4 w-4" />
             <span>Voir le site</span>
-          </Button>
+          </Button> */}
         </Link>
 
         {/* Notifications */}
