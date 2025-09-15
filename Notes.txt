@@ -8,3 +8,4 @@ lancer avec npx next start
 Pour gerer les routes toujours creer une page.tsx qui sera notre route cest a dire
 pour le crud d'un journal:on a edit,update etc pour que notre route marche
 on vas faire une page.tsx pour chacun de ces actions et faire notre logique dedans
+-Les layout sont les component servers on doit pas faire "use client" 
