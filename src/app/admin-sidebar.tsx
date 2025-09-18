@@ -41,7 +41,7 @@ const sidebarItems: SidebarItem[] = [
     href: "/reports",
     icon: <FileText className="h-5 w-5" />,
     submenu: [
-      { title: "Actualités", href: "/actualites" },
+      { title: "Rapport1", href: "/actualites" },
 
     ],
   },
