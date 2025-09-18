@@ -19,36 +19,62 @@ const sidebarItems: SidebarItem[] = [
     href: "/",
     icon: <Home className="h-5 w-5" />,
   },
+    {
+    title: "Recherches avancées",
+    href: "/search",
+    icon: <FileText className="h-5 w-5" />,
+  },
+    {
+    title: "Dossiers",
+    href: "/folders",
+    icon: <FileText className="h-5 w-5" />,
+    submenu: [
+      { title: "Nouveau dossier", href: "/folders/nouveau-dossier" },
+      { title: "Gestion des dossiers", href: "/folders/gestion-dossiers" },
+      { title: "Gestion des prêts", href: "/folders/gestion-prets" },
+      { title: "Gestion des versements", href: "/folders/gestion-versements" },
+      { title: "Gestion des destructions", href: "/folders/gestion-destructions" }
+    ],
+  },
   {
-    title: "Gestion des contenus",
-    href: "/admin/content",
+    title: "Etats",
+    href: "/reports",
     icon: <FileText className="h-5 w-5" />,
     submenu: [
       { title: "Actualités", href: "/actualites" },
-      { title: "Documents officiels", href: "/documents" },
-      { title: "Communiqués", href: "/communiques" },
-      { title: "Journaux officiels", href: "/journaux" },
+
     ],
   },
   {
-    title: "Bibliothèque",
-    href: "/admin/library",
+    title: "Plan de classement",
+    href: "/classification",
+    icon: <FileText className="h-5 w-5" />,
+    submenu: [
+      { title: "Series", href: "/classification/series" },
+      { title: "Nature documents", href: "/classification/nature-documents" },
+      { title: "Adressage", href: "/classification/adressage" },
+    ],
+  },
+  {
+    title: "Paramètres",
+    href: "/parameters",
     icon: <BookOpen className="h-5 w-5" />,
     submenu: [
-      { title: "Codes en vigueur", href: "/admin/library/codes" },
-      { title: "Textes consolidés", href: "/admin/library/consolidated" },
-      { title: "Droit régional", href: "/admin/library/regional" },
-      { title: "Conventions", href: "/admin/library/conventions" },
+      { title: "Organisation", href: "/parameters/organisation" },
+      { title: "Structures", href: "/parameters/structures" },
+      { title: "Bénéficiaires", href: "/parameters/beneficiaires" },
+      { title: "Paramètres géneraux", href: "/parameters/generaux" },
     ],
   },
   {
-    title: "Utilisateurs",
-    href: "/admin/users",
+    title: "Administration",
+    href: "/admin",
     icon: <Users className="h-5 w-5" />,
     submenu: [
-      { title: "Gestion des comptes", href: "/admin/users/accounts" },
-      { title: "Permissions", href: "/admin/users/permissions" },
-      { title: "Groupes", href: "/admin/users/groups" },
+      { title: "Gestion des comptes", href: "/admin/accounts" },
+      { title: "Permissions", href: "/admin/permissions" },
+      { title: "Groupes", href: "/admin/groups" },
+      { title: "Piste d'audit", href: "/admin/audit" },
     ],
   },
 ];
@@ -108,7 +134,7 @@ const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
               <Shield className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Admin SGG</h2>
+              <h2 className="text-lg font-semibold text-gray-900">ARCHIVA SAE</h2>
               <p className="text-xs text-gray-500">Panel d'administration</p>
             </div>
           </div>
