@@ -70,7 +70,6 @@ model Series {
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  documents   Document[]
   parent      Series?    @relation("SeriesHierarchy", fields: [parentId], references: [id])
   children    Series[]   @relation("SeriesHierarchy")
 
@@ -85,11 +84,10 @@ model Address {
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  documents   Document[]
 
 }
 
-model Document {
+model Documents {
   id              Int            @id @default(autoincrement())
   title           String
   description     String?
@@ -115,6 +113,15 @@ model Document {
 
 }
 
+model TypesDocuments {
+  id          Int            @id @default(autoincrement())
+  name        String
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+
 model Dossiers {
   id          Int            @id @default(autoincrement())
   name        String
@@ -128,6 +135,15 @@ model Dossiers {
   documents   Document[]
   loans       Loan[]
 
+}
+
+model TypesDossiers {
+  id          Int            @id @default(autoincrement())
+  name        String
+  metadata       Json
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 model Loan {
