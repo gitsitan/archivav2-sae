@@ -1,0 +1,241 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  password    String
+  role        UserRole    @default(USER)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  lastLoginAt DateTime?
+  auditLogs   AuditLog[]
+  documents   Document[]
+  loans       Loan[]
+  groups      UserGroup[]
+
+}
+
+model Group {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String?
+  permissions Json
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  users       UserGroup[]
+
+}
+
+model UserGroup {
+  userId  Int
+  groupId Int
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, groupId])
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  entity    String
+  entityId  Int?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+}
+
+model Series {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  name        String
+  description String?
+  parentId    Int?
+  level       Int        @default(1)
+  dcl         Int        @default(10)
+  dua         Int        @default(1)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  parent      Series?    @relation("SeriesHierarchy", fields: [parentId], references: [id])
+  children    Series[]   @relation("SeriesHierarchy")
+
+}
+
+model Address {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  name        String
+  location    String?
+  description String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+}
+
+model Documents {
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String?
+  documentType    DocumentType
+  reference       String         @unique
+  filePath        String?
+  fileSize        Int?
+  mimeType        String?
+  status          DocumentStatus @default(ACTIVE)
+  retentionPeriod Int?
+  destructionDate DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  userId          Int
+  seriesId        Int?
+  addressId       Int?
+  dossierId       Int?
+  address         Address?       @relation(fields: [addressId], references: [id])
+  dossier         Dossiers?      @relation(fields: [dossierId], references: [id])
+  series          Series?        @relation(fields: [seriesId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  loans           Loan[]
+
+}
+
+model TypesDocuments {
+  id          Int            @id @default(autoincrement())
+  name        String
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+
+model Dossiers {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  infoCompl String?
+  commentaire String?
+  code        String         @unique
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  documents   Document[]
+  loans       Loan[]
+
+}
+
+model TypesDossiers {
+  id          Int            @id @default(autoincrement())
+  name        String
+  metadata       Json
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model Loan {
+  id         Int        @id @default(autoincrement())
+  loanDate   DateTime   @default(now())
+  returnDate DateTime?
+  dueDate    DateTime
+  status     LoanStatus @default(ACTIVE)
+  notes      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  userId     Int
+  documentId Int
+  dossierId  Int?
+  document   Document   @relation(fields: [documentId], references: [id])
+  dossier    Dossiers?  @relation(fields: [dossierId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+
+}
+
+model Structure {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+}
+
+model Beneficiary {
+  id        Int             @id @default(autoincrement())
+  name      String
+  type      BeneficiaryType
+  contact   String?
+  address   String?
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+  VIEWER
+}
+
+enum DocumentType {
+  COMMUNIQUE
+  CONVENTION
+  JOURNAL
+  TEXTE
+  RAPPORT
+  AUTRE
+}
+
+enum DocumentStatus {
+  ACTIVE
+  ARCHIVED
+  DESTROYED
+  LOANED
+}
+
+enum DossiersStatus {
+  ACTIVE
+  ARCHIVED
+  CLOSED
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+  LOST
+}
+
+enum BeneficiaryType {
+  INDIVIDUAL
+  ORGANIZATION
+  GOVERNMENT
+  PRIVATE
+}
+
+model Options {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

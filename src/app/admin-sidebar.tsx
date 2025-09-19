@@ -1,83 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, FileText, Users, Shield, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import menusData from "../../public/data/menus.json";
 
 interface SidebarItem {
   title: string;
   href: string;
-  icon: React.ReactNode;
+  icon: string;
   submenu?: { title: string; href: string }[];
 }
 
-const sidebarItems: SidebarItem[] = [
-  {
-    title: "Tableau de bord",
-    href: "/",
-    icon: <Home className="h-5 w-5" />,
-  },
-    {
-    title: "Recherches avancées",
-    href: "/search",
-    icon: <FileText className="h-5 w-5" />,
-  },
-    {
-    title: "Dossiers",
-    href: "/folders",
-    icon: <FileText className="h-5 w-5" />,
-    submenu: [
-      { title: "Nouveau dossier", href: "/folders/nouveau-dossier" },
-      { title: "Gestion des dossiers", href: "/folders/gestion-dossiers" },
-      { title: "Gestion des prêts", href: "/folders/gestion-prets" },
-      { title: "Gestion des versements", href: "/folders/gestion-versements" },
-      { title: "Gestion des destructions", href: "/folders/gestion-destructions" }
-    ],
-  },
-  {
-    title: "Etats",
-    href: "/reports",
-    icon: <FileText className="h-5 w-5" />,
-    submenu: [
-      { title: "Rapport1", href: "/actualites" },
+interface SidebarItemWithIcon extends Omit<SidebarItem, 'icon'> {
+  icon: React.ReactNode;
+}
 
-    ],
-  },
-  {
-    title: "Plan de classement",
-    href: "/classification",
-    icon: <FileText className="h-5 w-5" />,
-    submenu: [
-      { title: "Series", href: "/classification/series" },
-      { title: "Nature documents", href: "/classification/nature-documents" },
-      { title: "Adressage", href: "/classification/adressage" },
-    ],
-  },
-  {
-    title: "Paramètres",
-    href: "/parameters",
-    icon: <BookOpen className="h-5 w-5" />,
-    submenu: [
-      { title: "Organisation", href: "/parameters/organisation" },
-      { title: "Structures", href: "/parameters/structures" },
-      { title: "Bénéficiaires", href: "/parameters/beneficiaires" },
-      { title: "Paramètres géneraux", href: "/parameters/generaux" },
-    ],
-  },
-  {
-    title: "Administration",
-    href: "/admin",
-    icon: <Users className="h-5 w-5" />,
-    submenu: [
-      { title: "Gestion des comptes", href: "/admin/accounts" },
-      { title: "Permissions", href: "/admin/permissions" },
-      { title: "Groupes", href: "/admin/groups" },
-      { title: "Piste d'audit", href: "/admin/audit" },
-    ],
-  },
-];
+const iconMap = {
+  Home: <Home className="h-5 w-5" />,
+  FileText: <FileText className="h-5 w-5" />,
+  Users: <Users className="h-5 w-5" />,
+  BookOpen: <BookOpen className="h-5 w-5" />,
+};
 
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -86,12 +32,22 @@ interface AdminSidebarProps {
 
 const AdminSidebar = ({ isOpen, onToggle }: AdminSidebarProps) => {
   const pathname = usePathname();
+  const [sidebarItems, setSidebarItems] = useState<SidebarItemWithIcon[]>([]);
 
   // État pour gérer l'ouverture/fermeture des sous-menus
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
 
   // État pour gérer la surbrillance basée sur le dernier clic
   const [activeItem, setActiveItem] = useState<string | null>(pathname);
+
+  // Charger et transformer les données des menus
+  useEffect(() => {
+    const transformedItems: SidebarItemWithIcon[] = menusData.map((item: SidebarItem) => ({
+      ...item,
+      icon: iconMap[item.icon as keyof typeof iconMap] || <FileText className="h-5 w-5" />
+    }));
+    setSidebarItems(transformedItems);
+  }, []);
 
   const toggleSubmenu = (href: string) => {
     setExpandedItem((prev) => (prev === href ? null : href));

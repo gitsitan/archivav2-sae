@@ -4,14 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 
 interface NotificationState {
   message: string;
-  type: "success" | "error";
+  type: "success" | "error" | "loading";
   visible: boolean;
+  isLoading?: boolean;
 }
 
 const initialState: NotificationState = {
   message: "",
   type: "success",
   visible: false,
+  isLoading: false,
 };
 
 const useNotification = () => {
@@ -19,16 +21,18 @@ const useNotification = () => {
     useState<NotificationState>(initialState);
 
   const showNotification = useCallback(
-    (message: string, type: "success" | "error", duration = 3000) => {
-      setNotification({ message, type, visible: true });
+    (message: string, type: "success" | "error" | "loading", duration = 1000, isLoading = false) => {
+      setNotification({ message, type, visible: true, isLoading });
 
-      // Cache la notification après la durée spécifiée
-      const timeoutId = setTimeout(() => {
-        setNotification(initialState);
-      }, duration);
+      // Cache la notification après la durée spécifiée (sauf pour loading)
+      if (type !== "loading") {
+        const timeoutId = setTimeout(() => {
+          setNotification(initialState);
+        }, duration);
 
-      // Nettoie le timer si le composant est démonté
-      return () => clearTimeout(timeoutId);
+        // Nettoie le timer si le composant est démonté
+        return () => clearTimeout(timeoutId);
+      }
     },
     []
   );

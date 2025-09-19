@@ -1,8 +1,6 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
-
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,67 +8,73 @@ import { useRouter } from "next/navigation";
 import AdminHeaders from "@/app/components/adminHeader";
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
-import { PlusCircle, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 import AdminLayout from "@/app/adminLayout";
+import { createBeneficiary } from "../actions";
+import { BeneficiaryType } from "@prisma/client";
+import MySpinner from "@/components/ui/my-spinner";
 
-//permet de definir le schema de zod pour le controle des champs
-const journalSchema = z.object({
-  annee: z
+// Schéma de validation Zod
+const beneficiarySchema = z.object({
+  name: z
     .string()
-    .min(4, "L'année doit contenir au moins 4 chiffres")
-    .regex(/^\d{4}$/, "L'année doit être un nombre à 4 chiffres"),
-  numero: z
-    .string()
-    .min(1, "Le numéro est requis")
-    .regex(/^\d+$/, "Doit être un nombre"),
-  type: z.string().min(1, "Le type est requis"),
-  date_de_publication: z.string().min(1, "La date de publication est requise"),
+    .min(1, "Le nom est requis")
+    .min(2, "Le nom doit contenir au moins 2 caractères"),
+  type: z.nativeEnum(BeneficiaryType, {
+    message: "Veuillez sélectionner un type valide",
+  }),
+  contact: z.string().optional(),
+  address: z.string().optional(),
 });
 
-type JournalFormData = z.infer<typeof journalSchema>;
+type BeneficiaryFormData = z.infer<typeof beneficiarySchema>;
 
-const CreateJournalPage = () => {
+const CreateBeneficiaryPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<JournalFormData>({
-    resolver: zodResolver(journalSchema),
+  } = useForm<BeneficiaryFormData>({
+    resolver: zodResolver(beneficiarySchema),
   });
 
   const { notification, showNotification, hideNotification } =
     useNotification();
 
+  useEffect(() => {
+    const start = Date.now();
+    const elapsed = Date.now() - start;
+    const minLoadingTime = 800;
+    const remaining = minLoadingTime - elapsed;
+
+    if (remaining > 0) {
+      setTimeout(() => setLoading(false), remaining);
+    } else {
+      setLoading(false);
+    }
+  }, []);
+
   const handleBack = () => {
     router.back();
   };
 
-  const onSubmit = async (data: JournalFormData) => {
+  const onSubmit = async (data: BeneficiaryFormData) => {
     try {
       setIsSubmitting(true);
-      const payload = {
-        ...data,
-        annee: parseInt(data.annee, 10),
-        numero: parseInt(data.numero, 10),
-      };
+      
+      const result = await createBeneficiary(data);
 
-      const response = await fetch("/api/journaux", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        showNotification("Journal créé avec succès !", "success");
-        setTimeout(() => router.push("/admin/content/journals"), 2000);
+      if (result.success) {
+        showNotification("Bénéficiaire créé avec succès !", "success");
+        setTimeout(() => router.push("/parameters/beneficiaires"), 2000);
       } else {
-        const errorData = await response.json();
         showNotification(
-          errorData.message || "Erreur lors de la création.",
+          result.error || "Erreur lors de la création.",
           "error"
         );
       }
@@ -87,115 +91,127 @@ const CreateJournalPage = () => {
   return (
     <>
       <AdminLayout>
-        <AdminHeaders
-          title="Créer un Journal"
-          desc="Ajoutez un nouveau journal à la base de données."
-        />
+        {loading ? (
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+            <MySpinner size="lg" color="primary" />
+            <p className="mt-4 text-gray-600 font-medium">
+              Chargement ...
+            </p>
+          </div>
+        ) : (
+          <>
+            <AdminHeaders
+              title="Créer un Bénéficiaire"
+              desc="Ajoutez un nouveau bénéficiaire au système d'archivage."
+            />
 
-        {notification.visible && (
-          <Notification
-            message={notification.message}
-            type={notification.type}
-            onClose={hideNotification}
-          />
-        )}
+            {notification.visible && (
+              <Notification
+                message={notification.message}
+                type={notification.type}
+                onClose={hideNotification}
+              />
+            )}
 
-        <div className=" w-full mx-auto mt-8 px-4 sm:px-6 lg:px-0">
+            <div className="w-full mx-auto mt-8 px-4 sm:px-6 lg:px-0">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
             <form
               onSubmit={handleSubmit(onSubmit)}
               className="px-6 py-8 space-y-6"
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Année */}
+                {/* Nom */}
                 <div>
                   <label
-                    htmlFor="annee"
+                    htmlFor="name"
                     className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
                   >
-                    Année de publication <span className="text-red-500">*</span>
+                    Nom du bénéficiaire <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="number"
-                    id="annee"
-                    {...register("annee")}
+                    type="text"
+                    id="name"
+                    {...register("name")}
                     className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                    placeholder="Ex: 2024"
+                    placeholder="Ex: Ministère de l'Éducation"
                   />
-                  {errors.annee && (
+                  {errors.name && (
                     <p className="text-sm text-red-600 mt-1">
-                      {errors.annee.message}
+                      {errors.name.message}
                     </p>
                   )}
                 </div>
 
-                {/* Numéro */}
-                <div>
-                  <label
-                    htmlFor="numero"
-                    className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
-                  >
-                    Numéro <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    id="numero"
-                    {...register("numero")}
-                    className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                    placeholder="Ex: 123"
-                  />
-                  {errors.numero && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {errors.numero.message}
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Type */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {/* Type */}
                 <div>
                   <label
                     htmlFor="type"
                     className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
                   >
-                    Type du journal <span className="text-red-500">*</span>
+                    Type de bénéficiaire <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="type"
                     {...register("type")}
                     className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                    placeholder="Ex: Officiel, Spécial"
-                  />
+                  >
+                    <option value="">Sélectionnez un type</option>
+                    <option value={BeneficiaryType.INDIVIDUAL}>Individuel</option>
+                    <option value={BeneficiaryType.ORGANIZATION}>Organisation</option>
+                    <option value={BeneficiaryType.GOVERNMENT}>Gouvernement</option>
+                    <option value={BeneficiaryType.PRIVATE}>Privé</option>
+                  </select>
                   {errors.type && (
                     <p className="text-sm text-red-600 mt-1">
                       {errors.type.message}
                     </p>
                   )}
                 </div>
-                <div>
-                  <label
-                    htmlFor="date_de_publication"
-                    className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
-                  >
-                    Date de Publication <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    id="date_de_publication"
-                    {...register("date_de_publication")}
-                    className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                  />
-                  {errors.date_de_publication && (
-                    <p className="text-sm text-red-600 mt-1">
-                      {errors.date_de_publication.message}
-                    </p>
-                  )}
-                </div>
               </div>
 
-              {/* Date de Publication */}
+              {/* Contact */}
+              <div>
+                <label
+                  htmlFor="contact"
+                  className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
+                >
+                  Contact
+                </label>
+                <input
+                  type="text"
+                  id="contact"
+                  {...register("contact")}
+                  className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  placeholder="Ex: +235 XX XX XX XX"
+                />
+                {errors.contact && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {errors.contact.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Adresse */}
+              <div>
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
+                >
+                  Adresse
+                </label>
+                <textarea
+                  id="address"
+                  {...register("address")}
+                  rows={3}
+                  className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  placeholder="Ex: Avenue Charles de Gaulle, N'Djamena"
+                />
+                {errors.address && (
+                  <p className="text-sm text-red-600 mt-1">
+                    {errors.address.message}
+                  </p>
+                )}
+              </div>
 
               {/* Submit */}
               <div className="pt-6 flex justify-between items-center space-x-4">
@@ -255,9 +271,11 @@ const CreateJournalPage = () => {
             </form>
           </div>
         </div>
+          </>
+        )}
       </AdminLayout>
     </>
   );
 };
 
-export default CreateJournalPage;
+export default CreateBeneficiaryPage;
