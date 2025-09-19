@@ -53,31 +53,7 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
     });
   };
 
-  const notifications = [
-    {
-      id: 1,
-      title: "Nouveau document publié",
-      message: "Arrêt n°2025-09/CC du 25 août 2025",
-      time: "Il y a 5 minutes",
-      unread: true,
-    },
-    {
-      id: 2,
-      title: "Journal Officiel mis à jour",
-      message: "JO n°2025-11 spécial du 27/08/2025",
-      time: "Il y a 1 heure",
-      unread: true,
-    },
-    {
-      id: 3,
-      title: "Nouveau communiqué",
-      message: "Communiqué du Conseil des Ministres",
-      time: "Il y a 3 heures",
-      unread: false,
-    },
-  ];
 
-  const unreadCount = notifications.filter((n) => n.unread).length;
 
   return (
     <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:px-6">
@@ -125,54 +101,7 @@ const AdminHeader = ({ onMenuToggle }: AdminHeaderProps) => {
           </Button> */}
         </Link>
 
-        {/* Notifications */}
-        <div className="relative">
-          {/* Notifications Dropdown */}
-          {isNotificationOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg border border-gray-200 z-50">
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold">Notifications</h3>
-              </div>
-              <div className="max-h-96 overflow-y-auto">
-                {notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-                    className={`p-4 border-b border-gray-100 last:border-b-0 hover:bg-gray-50 cursor-pointer ${
-                      notification.unread ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    <div className="flex items-start space-x-3">
-                      <div
-                        className={`w-2 h-2 rounded-full mt-2 ${
-                          notification.unread ? "bg-blue-500" : "bg-gray-300"
-                        }`}
-                      />
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900">
-                          {notification.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-2">
-                          {notification.time}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="p-4 border-t border-gray-200">
-                <Link href="/admin/notifications">
-                  <Button variant="outline" size="sm" className="w-full">
-                    Voir toutes les notifications
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          )}
-        </div>
-
+    
         {/* User Menu */}
         <div className="relative">
           <Button

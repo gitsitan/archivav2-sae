@@ -3,12 +3,221 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"  
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  name  String
-  email String  @unique
+  id          Int         @id @default(autoincrement())
+  name        String
+  email       String      @unique
+  password    String
+  role        UserRole    @default(USER)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  lastLoginAt DateTime?
+  auditLogs   AuditLog[]
+  documents   Document[]
+  loans       Loan[]
+  groups      UserGroup[]
+
+  @@map("users")
+}
+
+model Group {
+  id          Int         @id @default(autoincrement())
+  name        String      @unique
+  description String?
+  permissions Json
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  users       UserGroup[]
+
+  @@map("groups")
+}
+
+model UserGroup {
+  userId  Int
+  groupId Int
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, groupId])
+  @@map("user_groups")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  entity    String
+  entityId  Int?
+  details   Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+model Series {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  name        String
+  description String?
+  parentId    Int?
+  level       Int        @default(1)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  documents   Document[]
+  parent      Series?    @relation("SeriesHierarchy", fields: [parentId], references: [id])
+  children    Series[]   @relation("SeriesHierarchy")
+
+  @@map("series")
+}
+
+model Address {
+  id          Int        @id @default(autoincrement())
+  code        String     @unique
+  name        String
+  location    String?
+  description String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  documents   Document[]
+
+  @@map("addresses")
+}
+
+model Document {
+  id              Int            @id @default(autoincrement())
+  title           String
+  description     String?
+  documentType    DocumentType
+  reference       String         @unique
+  filePath        String?
+  fileSize        Int?
+  mimeType        String?
+  status          DocumentStatus @default(ACTIVE)
+  retentionPeriod Int?
+  destructionDate DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  userId          Int
+  seriesId        Int?
+  addressId       Int?
+  dossierId       Int?
+  address         Address?       @relation(fields: [addressId], references: [id])
+  dossier         Dossiers?      @relation(fields: [dossierId], references: [id])
+  series          Series?        @relation(fields: [seriesId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  loans           Loan[]
+
+  @@map("documents")
+}
+
+model Dossiers {
+  id          Int            @id @default(autoincrement())
+  name        String
+  description String?
+  code        String         @unique
+  status      DossiersStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  documents   Document[]
+  loans       Loan[]
+
+  @@map("dossiers")
+}
+
+model Loan {
+  id         Int        @id @default(autoincrement())
+  loanDate   DateTime   @default(now())
+  returnDate DateTime?
+  dueDate    DateTime
+  status     LoanStatus @default(ACTIVE)
+  notes      String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  userId     Int
+  documentId Int
+  dossierId  Int?
+  document   Document   @relation(fields: [documentId], references: [id])
+  dossier    Dossiers?  @relation(fields: [dossierId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+
+  @@map("loans")
+}
+
+model Structure {
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("structures")
+}
+
+model Beneficiary {
+  id        Int             @id @default(autoincrement())
+  name      String
+  type      BeneficiaryType
+  contact   String?
+  address   String?
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@map("beneficiaries")
+}
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  USER
+  VIEWER
+}
+
+enum DocumentType {
+  COMMUNIQUE
+  CONVENTION
+  JOURNAL
+  TEXTE
+  RAPPORT
+  AUTRE
+}
+
+enum DocumentStatus {
+  ACTIVE
+  ARCHIVED
+  DESTROYED
+  LOANED
+}
+
+enum DossiersStatus {
+  ACTIVE
+  ARCHIVED
+  CLOSED
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+  LOST
+}
+
+enum BeneficiaryType {
+  INDIVIDUAL
+  ORGANIZATION
+  GOVERNMENT
+  PRIVATE
 }

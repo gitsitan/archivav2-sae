@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Tableau de bord",
+    "href": "/",
+    "icon": "Home"
+  },
+  {
+    "title": "Recherches avancées",
+    "href": "/search",
+    "icon": "FileText"
+  },
+  {
+    "title": "Dossiers",
+    "href": "/dossiers",
+    "icon": "FileText",
+    "submenu": [
+      { "title": "Nouveau dossier", "href": "/dossiers/nouveau-dossier" },
+      { "title": "Gestion des dossiers", "href": "/dossiers/gestion-dossiers" },
+      { "title": "Gestion des prêts", "href": "/dossiers/gestion-prets" },
+      { "title": "Gestion des versements", "href": "/dossiers/gestion-versements" },
+      { "title": "Gestion des destructions", "href": "/dossiers/gestion-destructions" }
+    ]
+  },
+  {
+    "title": "Etats",
+    "href": "/reports",
+    "icon": "FileText",
+    "submenu": [
+      { "title": "Rapport1", "href": "/actualites" }
+    ]
+  },
+  {
+    "title": "Plan de classement",
+    "href": "/classification",
+    "icon": "FileText",
+    "submenu": [
+      { "title": "Series", "href": "/classification/series" },
+      { "title": "Adressage", "href": "/classification/adressage" }
+    ]
+  },
+  {
+    "title": "Paramètres",
+    "href": "/parameters",
+    "icon": "BookOpen",
+    "submenu": [
+      { "title": "Structures", "href": "/parameters/structures" },
+      { "title": "Bénéficiaires", "href": "/parameters/beneficiaires" },
+      { "title": "Paramètres géneraux", "href": "/parameters/generaux" }
+    ]
+  },
+  {
+    "title": "Administration",
+    "href": "/admin",
+    "icon": "Users",
+    "submenu": [
+      { "title": "Gestion des comptes", "href": "/admin/accounts" },
+      { "title": "Permissions", "href": "/admin/permissions" },
+      { "title": "Groupes", "href": "/admin/groups" },
+      { "title": "Piste d'audit", "href": "/admin/audit" }
+    ]
+  }
+]
