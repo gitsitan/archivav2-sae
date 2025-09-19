@@ -67,25 +67,28 @@ const StructurePage: React.FC = () => {
       const start = Date.now();
       try {
         const result = await getStructures();
+        const elapsed = Date.now() - start;
+        
         if (result.success && result.data) {
           setStructures(result.data);
         } else {
           console.error("Erreur de l'API:", result.error);
           showNotification(result.error || "Erreur lors du chargement", "error");
         }
-      } catch (error) {
-        console.error("Erreur lors du chargement des structures:", error);
-        showNotification("Erreur lors du chargement des structures", "error");
-      } finally {
-        const elapsed = Date.now() - start;
-        const minLoadingTime = 1500;
+        
+        // Ajuster le loading en fonction de la durée réelle
+        const minLoadingTime = 800; // Temps minimum réduit
         const remaining = minLoadingTime - elapsed;
-
+        
         if (remaining > 0) {
           setTimeout(() => setLoading(false), remaining);
         } else {
           setLoading(false);
         }
+      } catch (error) {
+        console.error("Erreur lors du chargement des structures:", error);
+        showNotification("Erreur lors du chargement des structures", "error");
+        setLoading(false); // Arrêter le loading immédiatement en cas d'erreur
       }
     };
     fetchData();

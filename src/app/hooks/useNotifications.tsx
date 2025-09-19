@@ -21,7 +21,7 @@ const useNotification = () => {
     useState<NotificationState>(initialState);
 
   const showNotification = useCallback(
-    (message: string, type: "success" | "error" | "loading", duration = 3000, isLoading = false) => {
+    (message: string, type: "success" | "error" | "loading", duration = 1000, isLoading = false) => {
       setNotification({ message, type, visible: true, isLoading });
 
       // Cache la notification après la durée spécifiée (sauf pour loading)

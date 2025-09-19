@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 import AdminLayout from "@/app/adminLayout";
 import { createBeneficiary } from "../actions";
 import { BeneficiaryType } from "@prisma/client";
+import MySpinner from "@/components/ui/my-spinner";
 
 // Schéma de validation Zod
 const beneficiarySchema = z.object({
@@ -22,7 +23,7 @@ const beneficiarySchema = z.object({
     .min(1, "Le nom est requis")
     .min(2, "Le nom doit contenir au moins 2 caractères"),
   type: z.nativeEnum(BeneficiaryType, {
-    errorMap: () => ({ message: "Veuillez sélectionner un type valide" }),
+    message: "Veuillez sélectionner un type valide",
   }),
   contact: z.string().optional(),
   address: z.string().optional(),
@@ -33,6 +34,7 @@ type BeneficiaryFormData = z.infer<typeof beneficiarySchema>;
 const CreateBeneficiaryPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {
     register,
     handleSubmit,
@@ -43,6 +45,19 @@ const CreateBeneficiaryPage = () => {
 
   const { notification, showNotification, hideNotification } =
     useNotification();
+
+  useEffect(() => {
+    const start = Date.now();
+    const elapsed = Date.now() - start;
+    const minLoadingTime = 800;
+    const remaining = minLoadingTime - elapsed;
+
+    if (remaining > 0) {
+      setTimeout(() => setLoading(false), remaining);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const handleBack = () => {
     router.back();
@@ -76,20 +91,29 @@ const CreateBeneficiaryPage = () => {
   return (
     <>
       <AdminLayout>
-        <AdminHeaders
-          title="Créer un Bénéficiaire"
-          desc="Ajoutez un nouveau bénéficiaire au système d'archivage."
-        />
+        {loading ? (
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+            <MySpinner size="lg" color="primary" />
+            <p className="mt-4 text-gray-600 font-medium">
+              Chargement ...
+            </p>
+          </div>
+        ) : (
+          <>
+            <AdminHeaders
+              title="Créer un Bénéficiaire"
+              desc="Ajoutez un nouveau bénéficiaire au système d'archivage."
+            />
 
-        {notification.visible && (
-          <Notification
-            message={notification.message}
-            type={notification.type}
-            onClose={hideNotification}
-          />
-        )}
+            {notification.visible && (
+              <Notification
+                message={notification.message}
+                type={notification.type}
+                onClose={hideNotification}
+              />
+            )}
 
-        <div className="w-full mx-auto mt-8 px-4 sm:px-6 lg:px-0">
+            <div className="w-full mx-auto mt-8 px-4 sm:px-6 lg:px-0">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
             <form
               onSubmit={handleSubmit(onSubmit)}
@@ -247,6 +271,8 @@ const CreateBeneficiaryPage = () => {
             </form>
           </div>
         </div>
+          </>
+        )}
       </AdminLayout>
     </>
   );

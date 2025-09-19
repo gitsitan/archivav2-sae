@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, FileText, Users, Shield, X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import menusData from "../../prisma/data/menus.json";
+import menusData from "../../public/data/menus.json";
 
 interface SidebarItem {
   title: string;
