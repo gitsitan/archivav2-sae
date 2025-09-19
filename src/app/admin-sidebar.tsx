@@ -51,7 +51,6 @@ const sidebarItems: SidebarItem[] = [
     icon: <FileText className="h-5 w-5" />,
     submenu: [
       { title: "Series", href: "/classification/series" },
-      { title: "Nature documents", href: "/classification/nature-documents" },
       { title: "Adressage", href: "/classification/adressage" },
     ],
   },
@@ -60,7 +59,6 @@ const sidebarItems: SidebarItem[] = [
     href: "/parameters",
     icon: <BookOpen className="h-5 w-5" />,
     submenu: [
-      { title: "Organisation", href: "/parameters/organisation" },
       { title: "Structures", href: "/parameters/structures" },
       { title: "Bénéficiaires", href: "/parameters/beneficiaires" },
       { title: "Paramètres géneraux", href: "/parameters/generaux" },

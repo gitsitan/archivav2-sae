@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: archivav2-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: archivav2-sae
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - archivav2-network
+
+volumes:
+  postgres_data:
+
+networks:
+  archivav2-network:
+    driver: bridge
