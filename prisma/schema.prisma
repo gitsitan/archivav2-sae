@@ -65,6 +65,8 @@ model Series {
   description String?
   parentId    Int?
   level       Int        @default(1)
+  dcl         Int        @default(10)
+  dua         Int        @default(1)
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
@@ -117,6 +119,8 @@ model Dossiers {
   id          Int            @id @default(autoincrement())
   name        String
   description String?
+  infoCompl String?
+  commentaire String?
   code        String         @unique
   status      DossiersStatus @default(ACTIVE)
   createdAt   DateTime       @default(now())
@@ -209,4 +213,13 @@ enum BeneficiaryType {
   ORGANIZATION
   GOVERNMENT
   PRIVATE
+}
+
+model Options {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

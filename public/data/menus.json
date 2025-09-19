@@ -45,6 +45,7 @@
     "submenu": [
       { "title": "Structures", "href": "/parameters/structures" },
       { "title": "Bénéficiaires", "href": "/parameters/beneficiaires" },
+      { "title": "Types dossier", "href": "/parameters/types-dossier" },
       { "title": "Paramètres géneraux", "href": "/parameters/generaux" }
     ]
   },
