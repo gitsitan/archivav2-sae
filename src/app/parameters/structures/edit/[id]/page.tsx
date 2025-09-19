@@ -8,48 +8,56 @@ import {
   Edit01FreeIcons,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import LoadingTchadFlag from "@/components/ui/LoadingTchadFlag";
+
 import z from "zod";
 import useNotification from "@/app/hooks/useNotifications";
 import AdminLayout from "@/app/adminLayout";
+import { getStructureById, updateStructure, getStructures } from "../../actions";
+import MySpinner from "@/components/ui/my-spinner";
+import Notification from "@/components/ui/notifications";
 
-interface JournalFormData {
-  annee: string;
-  type: string;
-  numero: string;
-  date_de_publication: string;
+interface StructureFormData {
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
 }
 
-//ici notre logique de formnulaire zode
-const journalSchema = z.object({
-  annee: z
+interface Structure {
+  id: number;
+  name: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Schéma de validation Zod
+const structureSchema = z.object({
+  name: z
     .string()
-    .min(1, "L'année est requise")
-    .regex(/^\d{4}$/, "Année invalide"),
-  numero: z
-    .string()
-    .min(1, "Le numéro est requis")
-    .regex(/^\d+$/, "Numéro invalide"),
-  type: z.string().min(1, "Le type est requis"),
-  date_de_publication: z
-    .string()
-    .min(1, "La date est requise")
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Date invalide"),
+    .min(1, "Le nom est requis")
+    .min(2, "Le nom doit contenir au moins 2 caractères"),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email("Format d'email invalide").optional().or(z.literal("")),
 });
 
-const UpdateJournalPage = () => {
+const UpdateStructurePage = () => {
   const router = useRouter();
   const params = useParams();
   const id = params?.id;
 
-  const [formData, setFormData] = useState<JournalFormData>({
-    annee: "",
-    type: "",
-    numero: "",
-    date_de_publication: "",
+  const [formData, setFormData] = useState<StructureFormData>({
+    name: "",
+    address: "",
+    phone: "",
+    email: "",
   });
-  console.log("tout donee recuperer");
 
+  const [structures, setStructures] = useState<Structure[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,31 +65,31 @@ const UpdateJournalPage = () => {
     useNotification();
 
   useEffect(() => {
-    const fetchJournalData = async () => {
+    const fetchStructureData = async () => {
       const start = Date.now();
 
       if (!id) {
-        setError("ID du journal manquant.");
+        setError("ID de la structure manquant.");
         setLoading(false);
         return;
       }
 
       try {
-        const res = await fetch(`/api/journaux/${id}`);
-        if (res.ok) {
-          const data = await res.json();
+        // Charger la structure à modifier
+        const result = await getStructureById(Number(id));
+        if (result.success && result.data) {
           setFormData({
-            annee: data.annee.toString(),
-            type: data.type,
-            numero: data.numero.toString(),
-            date_de_publication: data.date_de_publication.split("T")[0],
+            name: result.data.name,
+            address: result.data.address || "",
+            phone: result.data.phone || "",
+            email: result.data.email || "",
           });
         } else {
-          setError("Journal introuvable.");
+          setError(result.error || "Structure introuvable.");
         }
       } catch (err) {
         console.error("Erreur de chargement des données:", err);
-        setError("Erreur de chargement des données du journal.");
+        setError("Erreur de chargement des données de la structure.");
       } finally {
         const elapsed = Date.now() - start;
         const minLoadingTime = 1500;
@@ -95,22 +103,24 @@ const UpdateJournalPage = () => {
       }
     };
 
-    fetchJournalData();
+    fetchStructureData();
   }, [id]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (error) setError(null);
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
   const handleBack = () => {
     router.back();
   };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
-    const validation = journalSchema.safeParse(formData);
+    const validation = structureSchema.safeParse(formData);
 
     if (!validation.success) {
       const firstError =
@@ -120,31 +130,20 @@ const UpdateJournalPage = () => {
       return;
     }
 
-    const payload = {
-      ...validation.data,
-      annee: parseInt(validation.data.annee, 10),
-      numero: parseInt(validation.data.numero, 10),
-    };
-
     try {
-      const response = await fetch(`/api/journaux/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+      const result = await updateStructure(Number(id), validation.data);
 
-      if (response.ok) {
-        router.push("/admin/content/journals");
+      if (result.success) {
+        showNotification("Structure modifiée avec succès !", "success");
+        setTimeout(() => router.push("/parameters/structures"), 2000);
       } else {
-        const errorData = await response.json();
-        const errorMessage =
-          errorData.message || "Erreur lors de la mise à jour.";
-        setError(errorMessage);
-        console.error("Erreur serveur:", errorData);
+        setError(result.error || "Erreur lors de la mise à jour.");
+        showNotification(result.error || "Erreur lors de la mise à jour", "error");
       }
     } catch (err) {
       console.error("Erreur de soumission:", err);
       setError("Une erreur inattendue est survenue. Veuillez réessayer.");
+      showNotification("Une erreur inattendue est survenue", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -154,13 +153,25 @@ const UpdateJournalPage = () => {
     <>
       <AdminLayout>
         {loading ? (
-          <LoadingTchadFlag />
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+          <MySpinner size="lg" color="primary" />
+          <p className="mt-4 text-gray-600 font-medium">
+            Chargement ...
+          </p>
+        </div>
         ) : (
           <>
             <AdminHeaders
-              title="Éditer le Journal"
-              desc="Modifiez les informations de ce journal."
+              title="Éditer la structure"
+              desc="Modifiez les informations de cette structure."
             />
+            {notification.visible && (
+               <Notification
+              message={notification.message}
+              type={notification.type}
+              onClose={hideNotification}
+            />
+            )}
             <div className="w-full mx-auto mt-8 px-4 sm:px-6 lg:px-0">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                 <form onSubmit={handleSubmit} className="px-6 py-8 space-y-6">
@@ -172,80 +183,78 @@ const UpdateJournalPage = () => {
                       <span className="block sm:inline">{error}</span>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="annee"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                      >
-                        Année de publication{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="number"
-                        id="annee"
-                        name="annee"
-                        value={formData.annee}
-                        onChange={handleChange}
-                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        placeholder="Ex: 2024"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="numero"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                      >
-                        Numéro <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="number"
-                        id="numero"
-                        name="numero"
-                        value={formData.numero}
-                        onChange={handleChange}
-                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        placeholder="Ex: 123"
-                        required
-                      />
-                    </div>
+                  
+                  <div>
+                    <label
+                      htmlFor="name"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Nom de la structure{" "}
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                      placeholder="Ex: Ministère de l'Éducation"
+                      required
+                    />
                   </div>
+                  
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Adresse
+                    </label>
+                    <input
+                      type="text"
+                      id="address"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                      placeholder="Ex: Avenue Charles de Gaulle, N'Djamena"
+                    />
+                  </div>
+                  
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label
-                        htmlFor="type"
+                        htmlFor="phone"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                       >
-                        Type du journal <span className="text-red-500">*</span>
+                        Téléphone
                       </label>
                       <input
                         type="text"
-                        id="type"
-                        name="type"
-                        value={formData.type}
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
                         onChange={handleChange}
                         className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        placeholder="Ex: Officiel, Spécial"
-                        required
+                        placeholder="Ex: +235 XX XX XX XX"
                       />
                     </div>
                     <div>
                       <label
-                        htmlFor="date_de_publication"
+                        htmlFor="email"
                         className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                       >
-                        Date de Publication{" "}
-                        <span className="text-red-500">*</span>
+                        Email
                       </label>
                       <input
-                        type="date"
-                        id="date_de_publication"
-                        name="date_de_publication"
-                        value={formData.date_de_publication}
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
                         className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        required
+                        placeholder="Ex: contact@ministere.gouv.td"
                       />
                     </div>
                   </div>
@@ -298,7 +307,7 @@ const UpdateJournalPage = () => {
                     <button
                       onClick={handleBack}
                       type="button"
-                      className=" ml-auto w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
+                      className="ml-auto w-30 flex justify-center items-center py-3 px-4 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
                     >
                       <HugeiconsIcon
                         icon={ArrowTurnBackwardIcon}
@@ -318,4 +327,4 @@ const UpdateJournalPage = () => {
   );
 };
 
-export default UpdateJournalPage;
+export default UpdateStructurePage;

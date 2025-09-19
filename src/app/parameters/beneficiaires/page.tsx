@@ -9,13 +9,14 @@ import {
   Edit03Icon,
 } from "@hugeicons/core-free-icons";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
-import LoadingTchadFlag from "@/components/ui/LoadingTchadFlag";
+
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
 import { getBeneficiaries, deleteBeneficiary, toggleBeneficiaryStatus } from "./actions";
 import { BeneficiaryType } from "@prisma/client";
 import AdminHeaders from "@/app/components/adminHeader";
+import MySpinner from "@/components/ui/my-spinner";
 
 interface Beneficiary {
   id: number;
@@ -224,11 +225,16 @@ const BeneficiaryPage: React.FC = () => {
     <>
       <AdminLayout>
         {loading ? (
-          <LoadingTchadFlag />
+         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+          <MySpinner size="lg" color="primary" />
+          <p className="mt-4 text-gray-600 font-medium">
+            Chargement ...
+          </p>
+        </div>
         ) : (
           <>
             <AdminHeaders
-              title="Liste des Bénéficiaires"
+              title="Liste des bénéficiaires"
               desc="Gérez les bénéficiaires du système d'archivage"
             />
             {notification.visible && (
@@ -273,7 +279,7 @@ const BeneficiaryPage: React.FC = () => {
                       </span>
                     </th>
                     <th
-                      className="table-header-cell"
+                      className="table-header-cell" style={{ width: "150px" }}
                       onClick={() => handleSort("type")}
                     >
                       <span>
@@ -282,7 +288,7 @@ const BeneficiaryPage: React.FC = () => {
                       </span>
                     </th>
                     <th
-                      className="table-header-cell"
+                      className="table-header-cell" style={{ width: "200px" }}
                       onClick={() => handleSort("contact")}
                     >
                       <span>
@@ -290,17 +296,10 @@ const BeneficiaryPage: React.FC = () => {
                         <SortIcon />
                       </span>
                     </th>
+                 
                     <th
                       className="table-header-cell"
-                      onClick={() => handleSort("address")}
-                    >
-                      <span>
-                        Adresse
-                        <SortIcon />
-                      </span>
-                    </th>
-                    <th
-                      className="table-header-cell"
+                        style={{ width: "120px" }}
                       onClick={() => handleSort("isActive")}
                     >
                       <span>
@@ -308,7 +307,7 @@ const BeneficiaryPage: React.FC = () => {
                         <SortIcon />
                       </span>
                     </th>
-                    <th className="table-header-cell">
+                    <th className="table-header-cell" style={{ width: "100px" }}>
                       <span>Actions</span>
                     </th>
                   </tr>
@@ -331,9 +330,7 @@ const BeneficiaryPage: React.FC = () => {
                       <td className="table-body-cell">
                         {beneficiary.contact || "-"}
                       </td>
-                      <td className="table-body-cell">
-                        {beneficiary.address || "-"}
-                      </td>
+                     
                       <td className="table-body-cell">
                         <button
                           onClick={() => handleToggleStatus(beneficiary.id)}

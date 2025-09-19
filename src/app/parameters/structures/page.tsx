@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import AdminHeaders from "../../components/adminHeader";
 import { useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -10,17 +9,23 @@ import {
   Edit03Icon,
 } from "@hugeicons/core-free-icons";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
-import LoadingTchadFlag from "@/components/ui/LoadingTchadFlag";
+
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
+import { getStructures, deleteStructure, toggleStructureStatus } from "./actions";
+import AdminHeaders from "@/app/components/adminHeader";
+import MySpinner from "@/components/ui/my-spinner";
 
-interface Journal {
+interface Structure {
   id: number;
-  annee: number;
-  type: string;
-  numero: number;
-  date_de_publication: string;
+  name: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const SortIcon: React.FC = () => (
@@ -43,8 +48,8 @@ const SortIcon: React.FC = () => (
   </svg>
 );
 
-const ListeJournaux: React.FC = () => {
-  const [journaux, setJournaux] = useState<Journal[]>([]);
+const StructurePage: React.FC = () => {
+  const [structures, setStructures] = useState<Structure[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -52,7 +57,7 @@ const ListeJournaux: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const [sortColumn, setSortColumn] = useState<keyof Journal | null>(null);
+  const [sortColumn, setSortColumn] = useState<keyof Structure | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const { notification, showNotification, hideNotification } =
     useNotification();
@@ -61,15 +66,16 @@ const ListeJournaux: React.FC = () => {
     const fetchData = async () => {
       const start = Date.now();
       try {
-        const res = await fetch("/api/journaux");
-        if (res.ok) {
-          const data = await res.json();
-          setJournaux(data);
+        const result = await getStructures();
+        if (result.success && result.data) {
+          setStructures(result.data);
         } else {
-          console.error("Erreur de l'API:", res.statusText);
+          console.error("Erreur de l'API:", result.error);
+          showNotification(result.error || "Erreur lors du chargement", "error");
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des journaux:", error);
+        console.error("Erreur lors du chargement des structures:", error);
+        showNotification("Erreur lors du chargement des structures", "error");
       } finally {
         const elapsed = Date.now() - start;
         const minLoadingTime = 1500;
@@ -90,26 +96,27 @@ const ListeJournaux: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const filteredJournaux = journaux.filter((journal) =>
-    Object.values(journal).some((value) =>
+  const filteredStructures = structures.filter((structure) =>
+    Object.values(structure).some((value) =>
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
-  const sortedJournaux = [...filteredJournaux].sort((a, b) => {
+  const sortedStructures = [...filteredStructures].sort((a, b) => {
     if (!sortColumn) return 0;
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
 
+    if (aValue == null || bValue == null) return 0;
     if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
     if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
     return 0;
   });
 
-  const totalPages = Math.ceil(filteredJournaux.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredStructures.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentJournaux = sortedJournaux.slice(startIndex, endIndex);
+  const currentStructures = sortedStructures.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -118,11 +125,11 @@ const ListeJournaux: React.FC = () => {
   };
 
   const handleCreate = () => {
-    router.push("/journaux/new");
+    router.push("/parameters/structures/new");
   };
 
   const handleEdit = (id: number) => {
-    router.push(`/journaux/edit/${id}`);
+    router.push(`/parameters/structures/edit/${id}`);
   };
 
   const handleDelete = async (id: number) => {
@@ -133,20 +140,16 @@ const ListeJournaux: React.FC = () => {
   const handleConfirmDelete = async () => {
     if (itemToDeleteId !== null) {
       try {
-        const res = await fetch(`/api/journaux/${itemToDeleteId}`, {
-          method: "DELETE",
-        });
+        const result = await deleteStructure(itemToDeleteId);
 
-        if (res.ok) {
-          setJournaux((prevJournaux) =>
-            prevJournaux.filter((journal) => journal.id !== itemToDeleteId)
+        if (result.success) {
+          setStructures((prevStructures) =>
+            prevStructures.filter((structure) => structure.id !== itemToDeleteId)
           );
-          showNotification("Journal supprimé avec succès !", "success");
+          showNotification("Structure supprimée avec succès !", "success");
         } else {
-          const errorData = await res.json();
-          console.error("Erreur de suppression:", errorData.message);
           showNotification(
-            errorData.message || "Erreur lors de la suppression.",
+            result.error || "Erreur lors de la suppression.",
             "error"
           );
         }
@@ -167,7 +170,28 @@ const ListeJournaux: React.FC = () => {
     setItemToDeleteId(null);
   };
 
-  const handleSort = (column: keyof Journal) => {
+  const handleToggleStatus = async (id: number) => {
+    try {
+      const result = await toggleStructureStatus(id);
+      if (result.success) {
+        setStructures((prevStructures) =>
+          prevStructures.map((structure) =>
+            structure.id === id
+              ? { ...structure, isActive: !structure.isActive }
+              : structure
+          )
+        );
+        showNotification("Statut modifié avec succès !", "success");
+      } else {
+        showNotification(result.error || "Erreur lors de la modification", "error");
+      }
+    } catch (error) {
+      console.error("Erreur lors de la modification du statut:", error);
+      showNotification("Erreur lors de la modification du statut", "error");
+    }
+  };
+
+  const handleSort = (column: keyof Structure) => {
     if (sortColumn === column) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -180,12 +204,17 @@ const ListeJournaux: React.FC = () => {
     <>
       <AdminLayout>
         {loading ? (
-          <LoadingTchadFlag />
+         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+          <MySpinner size="lg" color="primary" />
+          <p className="mt-4 text-gray-600 font-medium">
+            Chargement ...
+          </p>
+        </div>
         ) : (
           <>
             <AdminHeaders
-              title="Liste des Journaux"
-              desc="Ceci décrit la liste des journaux"
+              title="Liste des Structures"
+              desc="Gérez les structures du système d'archivage"
             />
             {notification.visible && (
               <Notification
@@ -221,66 +250,90 @@ const ListeJournaux: React.FC = () => {
                   <tr className="table-row">
                     <th
                       className="table-header-cell"
-                      onClick={() => handleSort("annee")}
+                      onClick={() => handleSort("name")}
                     >
                       <span>
-                        Année
+                        Nom
                         <SortIcon />
                       </span>
                     </th>
                     <th
-                      className="table-header-cell"
-                      onClick={() => handleSort("type")}
+                      className="table-header-cell" style={{ width: "200px" }}
+                      onClick={() => handleSort("address")}
                     >
                       <span>
-                        Type
+                        Adresse
                         <SortIcon />
                       </span>
                     </th>
                     <th
-                      className="table-header-cell"
-                      onClick={() => handleSort("numero")}
+                      className="table-header-cell" style={{ width: "150px" }}
+                      onClick={() => handleSort("phone")}
                     >
                       <span>
-                        Numéro
+                        Téléphone
                         <SortIcon />
                       </span>
                     </th>
                     <th
-                      className="table-header-cell"
-                      onClick={() => handleSort("date_de_publication")}
+                      className="table-header-cell" style={{ width: "200px" }}
+                      onClick={() => handleSort("email")}
                     >
                       <span>
-                        Date de Publication
+                        Email
                         <SortIcon />
                       </span>
                     </th>
-
-                    <th className="table-header-cell">
+                    <th
+                      className="table-header-cell" style={{ width: "120px" }}
+                      onClick={() => handleSort("isActive")}
+                    >
+                      <span>
+                        Statut
+                        <SortIcon />
+                      </span>
+                    </th>
+                    <th className="table-header-cell" style={{ width: "100px" }}>
                       <span>Actions</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody key={currentPage} className="table-body">
-                  {currentJournaux.map((journal) => (
-                    <tr key={journal.id} className="table-row">
+                  {currentStructures.map((structure) => (
+                    <tr key={structure.id} className="table-row">
                       <td className="table-body-cell table-body-cell-bold">
-                        {journal.annee}
+                        {structure.name}
                       </td>
-                      <td className="table-body-cell">{journal.type}</td>
-                      <td className="table-body-cell">{journal.numero}</td>
                       <td className="table-body-cell">
-                        {journal.date_de_publication}
+                        {structure.address || "-"}
+                      </td>
+                      <td className="table-body-cell">
+                        {structure.phone || "-"}
+                      </td>
+                      <td className="table-body-cell">
+                        {structure.email || "-"}
                       </td>
                       <td className="table-body-cell">
                         <button
-                          onClick={() => handleEdit(journal.id)}
+                          onClick={() => handleToggleStatus(structure.id)}
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            structure.isActive
+                              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                          }`}
+                        >
+                          {structure.isActive ? "Actif" : "Inactif"}
+                        </button>
+                      </td>
+                      <td className="table-body-cell">
+                        <button
+                          onClick={() => handleEdit(structure.id)}
                           className="btn-action btn-action-edit"
                         >
                           <HugeiconsIcon icon={Edit03Icon} size={25} />
                         </button>
                         <button
-                          onClick={() => handleDelete(journal.id)}
+                          onClick={() => handleDelete(structure.id)}
                           className="btn-action btn-action-delete"
                         >
                           <HugeiconsIcon icon={Delete02Icon} size={25} />
@@ -316,9 +369,9 @@ const ListeJournaux: React.FC = () => {
                     Affichage de{" "}
                     <span className="font-medium">{startIndex + 1}</span> à{" "}
                     <span className="font-medium">
-                      {Math.min(endIndex, journaux.length)}
+                      {Math.min(endIndex, structures.length)}
                     </span>{" "}
-                    sur <span className="font-medium">{journaux.length}</span>{" "}
+                    sur <span className="font-medium">{structures.length}</span>{" "}
                     résultats
                   </p>
                 </div>
@@ -388,7 +441,7 @@ const ListeJournaux: React.FC = () => {
             {showDialog && (
               <ConfirmationDialog
                 title="Confirmation de suppression"
-                message="Voulez-vous vraiment supprimer ce journal ?"
+                message="Voulez-vous vraiment supprimer cette structure ?"
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
               />
@@ -400,4 +453,4 @@ const ListeJournaux: React.FC = () => {
   );
 };
 
-export default ListeJournaux;
+export default StructurePage;

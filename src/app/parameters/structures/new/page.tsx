@@ -1,54 +1,61 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import AdminHeaders from "@/app/components/adminHeader";
 import {
   ArrowTurnBackwardIcon,
-  Edit01FreeIcons,
+  Add01FreeIcons,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import z from "zod";
 import useNotification from "@/app/hooks/useNotifications";
 import AdminLayout from "@/app/adminLayout";
-import { getBeneficiaryById, updateBeneficiary } from "../../actions";
-import { BeneficiaryType } from "@prisma/client";
+import { createStructure, getStructures } from "../actions";
 import MySpinner from "@/components/ui/my-spinner";
 import Notification from "@/components/ui/notifications";
 
-interface BeneficiaryFormData {
+interface StructureFormData {
   name: string;
-  type: BeneficiaryType;
-  contact: string;
   address: string;
+  phone: string;
+  email: string;
+}
+
+interface Structure {
+  id: number;
+  name: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Schéma de validation Zod
-const beneficiarySchema = z.object({
+const structureSchema = z.object({
   name: z
     .string()
     .min(1, "Le nom est requis")
     .min(2, "Le nom doit contenir au moins 2 caractères"),
-  type: z.nativeEnum(BeneficiaryType, {
-    message: "Veuillez sélectionner un type valide",
-  }),
-  contact: z.string().optional(),
   address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email("Format d'email invalide").optional().or(z.literal("")),
 });
 
-const UpdateBeneficiaryPage = () => {
+const NewStructurePage = () => {
   const router = useRouter();
-  const params = useParams();
-  const id = params?.id;
 
-  const [formData, setFormData] = useState<BeneficiaryFormData>({
+  const [formData, setFormData] = useState<StructureFormData>({
     name: "",
-    type: BeneficiaryType.INDIVIDUAL,
-    contact: "",
     address: "",
+    phone: "",
+    email: "",
   });
 
+  const [structures, setStructures] = useState<Structure[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,45 +63,17 @@ const UpdateBeneficiaryPage = () => {
     useNotification();
 
   useEffect(() => {
-    const fetchBeneficiaryData = async () => {
-      const start = Date.now();
+    const start = Date.now();
+    const elapsed = Date.now() - start;
+    const minLoadingTime = 1000;
+    const remaining = minLoadingTime - elapsed;
 
-      if (!id) {
-        setError("ID du bénéficiaire manquant.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const result = await getBeneficiaryById(Number(id));
-        if (result.success && result.data) {
-          setFormData({
-            name: result.data.name,
-            type: result.data.type,
-            contact: result.data.contact || "",
-            address: result.data.address || "",
-          });
-        } else {
-          setError(result.error || "Bénéficiaire introuvable.");
-        }
-      } catch (err) {
-        console.error("Erreur de chargement des données:", err);
-        setError("Erreur de chargement des données du bénéficiaire.");
-      } finally {
-        const elapsed = Date.now() - start;
-        const minLoadingTime = 1500;
-        const remaining = minLoadingTime - elapsed;
-
-        if (remaining > 0) {
-          setTimeout(() => setLoading(false), remaining);
-        } else {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchBeneficiaryData();
-  }, [id]);
+    if (remaining > 0) {
+      setTimeout(() => setLoading(false), remaining);
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (error) setError(null);
@@ -110,7 +89,7 @@ const UpdateBeneficiaryPage = () => {
     setIsSubmitting(true);
     setError(null);
 
-    const validation = beneficiarySchema.safeParse(formData);
+    const validation = structureSchema.safeParse(formData);
 
     if (!validation.success) {
       const firstError =
@@ -121,14 +100,14 @@ const UpdateBeneficiaryPage = () => {
     }
 
     try {
-      const result = await updateBeneficiary(Number(id), validation.data);
+      const result = await createStructure(validation.data);
 
       if (result.success) {
-        showNotification("Bénéficiaire modifié avec succès !", "success");
-        setTimeout(() => router.push("/parameters/beneficiaires"), 2000);
+        showNotification("Structure créée avec succès !", "success");
+        setTimeout(() => router.push("/parameters/structures"), 2000);
       } else {
-        setError(result.error || "Erreur lors de la mise à jour.");
-        showNotification(result.error || "Erreur lors de la mise à jour", "error");
+        setError(result.error || "Erreur lors de la création.");
+        showNotification(result.error || "Erreur lors de la création", "error");
       }
     } catch (err) {
       console.error("Erreur de soumission:", err);
@@ -144,16 +123,16 @@ const UpdateBeneficiaryPage = () => {
       <AdminLayout>
         {loading ? (
           <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-          <MySpinner size="lg" color="primary" />
-          <p className="mt-4 text-gray-600 font-medium">
-            Chargement ...
-          </p>
-        </div>
+            <MySpinner size="lg" color="primary" />
+            <p className="mt-4 text-gray-600 font-medium">
+              Chargement ...
+            </p>
+          </div>
         ) : (
           <>
             <AdminHeaders
-              title="Éditer le bénéficiaire"
-              desc="Modifiez les informations de ce bénéficiaire."
+              title="Nouvelle Structure"
+              desc="Créez une nouvelle structure dans le système d'archivage."
             />
             {notification.visible && (
                <Notification
@@ -174,65 +153,23 @@ const UpdateBeneficiaryPage = () => {
                     </div>
                   )}
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                      >
-                        Nom du bénéficiaire{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        placeholder="Ex: Ministère de l'Éducation"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="type"
-                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                      >
-                        Type de bénéficiaire{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        id="type"
-                        name="type"
-                        value={formData.type}
-                        onChange={handleChange}
-                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                        required
-                      >
-                        <option value={BeneficiaryType.INDIVIDUAL}>Individuel</option>
-                        <option value={BeneficiaryType.ORGANIZATION}>Organisation</option>
-                        <option value={BeneficiaryType.GOVERNMENT}>Gouvernement</option>
-                        <option value={BeneficiaryType.PRIVATE}>Privé</option>
-                      </select>
-                    </div>
-                  </div>
-                  
                   <div>
                     <label
-                      htmlFor="contact"
+                      htmlFor="name"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                     >
-                      Contact
+                      Nom de la structure{" "}
+                      <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
-                      id="contact"
-                      name="contact"
-                      value={formData.contact}
+                      id="name"
+                      name="name"
+                      value={formData.name}
                       onChange={handleChange}
                       className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                      placeholder="Ex: +235 XX XX XX XX"
+                      placeholder="Ex: Ministère de l'Éducation"
+                      required
                     />
                   </div>
                   
@@ -243,15 +180,52 @@ const UpdateBeneficiaryPage = () => {
                     >
                       Adresse
                     </label>
-                    <textarea
+                    <input
+                      type="text"
                       id="address"
                       name="address"
                       value={formData.address}
                       onChange={handleChange}
-                      rows={3}
                       className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
                       placeholder="Ex: Avenue Charles de Gaulle, N'Djamena"
                     />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        Téléphone
+                      </label>
+                      <input
+                        type="text"
+                        id="phone"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                        placeholder="Ex: +235 XX XX XX XX"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                      >
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                        placeholder="Ex: contact@ministere.gouv.td"
+                      />
+                    </div>
                   </div>
 
                   <div className="pt-6 flex justify-between items-center space-x-4">
@@ -286,16 +260,16 @@ const UpdateBeneficiaryPage = () => {
                               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 8l3-3.709z"
                             ></path>
                           </svg>
-                          Sauvegarde...
+                          Création...
                         </span>
                       ) : (
                         <>
                           <HugeiconsIcon
-                            icon={Edit01FreeIcons}
+                            icon={Add01FreeIcons}
                             size={24}
                             className="mr-3"
                           />
-                          Modifier
+                          Créer
                         </>
                       )}
                     </button>
@@ -322,4 +296,4 @@ const UpdateBeneficiaryPage = () => {
   );
 };
 
-export default UpdateBeneficiaryPage;
+export default NewStructurePage;
