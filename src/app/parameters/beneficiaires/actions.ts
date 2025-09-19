@@ -2,12 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-export enum BeneficiaryType {
-  INDIVIDUAL = "INDIVIDUAL",
-  ORGANIZATION = "ORGANIZATION", 
-  GOVERNMENT = "GOVERNMENT",
-  PRIVATE = "PRIVATE"
-}
+import { BeneficiaryType } from "@prisma/client";
 
 export interface BeneficiaryFormData {
   name: string;
@@ -19,7 +14,7 @@ export interface BeneficiaryFormData {
 // Créer un bénéficiaire
 export async function createBeneficiary(data: BeneficiaryFormData) {
   try {
-    const beneficiary = await prisma.beneficiaire.create({
+    const beneficiary = await prisma.beneficiary.create({
       data: {
         name: data.name,
         type: data.type,
@@ -42,7 +37,7 @@ export async function createBeneficiary(data: BeneficiaryFormData) {
 // Récupérer tous les bénéficiaires
 export async function getBeneficiaries() {
   try {
-    const beneficiaries = await prisma.beneficiaries.findMany({
+    const beneficiaries = await prisma.beneficiary.findMany({
       orderBy: { createdAt: "desc" },
     });
     return { success: true, data: beneficiaries };
@@ -58,7 +53,7 @@ export async function getBeneficiaries() {
 // Récupérer un bénéficiaire par ID
 export async function getBeneficiaryById(id: number) {
   try {
-    const beneficiary = await prisma.beneficiaire.findUnique({
+    const beneficiary = await prisma.beneficiary.findUnique({
       where: { id },
     });
 
@@ -82,7 +77,7 @@ export async function getBeneficiaryById(id: number) {
 // Mettre à jour un bénéficiaire
 export async function updateBeneficiary(id: number, data: BeneficiaryFormData) {
   try {
-    const beneficiary = await prisma.beneficiaire.update({
+    const beneficiary = await prisma.beneficiary.update({
       where: { id },
       data: {
         name: data.name,
@@ -106,7 +101,7 @@ export async function updateBeneficiary(id: number, data: BeneficiaryFormData) {
 // Supprimer un bénéficiaire
 export async function deleteBeneficiary(id: number) {
   try {
-    await prisma.beneficiaire.delete({
+    await prisma.beneficiary.delete({
       where: { id },
     });
 
@@ -135,7 +130,7 @@ export async function toggleBeneficiaryStatus(id: number) {
       };
     }
 
-    const updatedBeneficiary = await prisma.beneficiaire.update({
+    const updatedBeneficiary = await prisma.beneficiary.update({
       where: { id },
       data: {
         isActive: !beneficiary.isActive,

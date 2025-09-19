@@ -22,7 +22,6 @@ model User {
   loans       Loan[]
   groups      UserGroup[]
 
-  @@map("users")
 }
 
 model Group {
@@ -34,7 +33,6 @@ model Group {
   updatedAt   DateTime    @updatedAt
   users       UserGroup[]
 
-  @@map("groups")
 }
 
 model UserGroup {
@@ -44,7 +42,6 @@ model UserGroup {
   user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, groupId])
-  @@map("user_groups")
 }
 
 model AuditLog {
@@ -59,7 +56,6 @@ model AuditLog {
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
 
-  @@map("audit_logs")
 }
 
 model Series {
@@ -76,7 +72,6 @@ model Series {
   parent      Series?    @relation("SeriesHierarchy", fields: [parentId], references: [id])
   children    Series[]   @relation("SeriesHierarchy")
 
-  @@map("series")
 }
 
 model Address {
@@ -90,7 +85,6 @@ model Address {
   updatedAt   DateTime   @updatedAt
   documents   Document[]
 
-  @@map("addresses")
 }
 
 model Document {
@@ -117,7 +111,6 @@ model Document {
   user            User           @relation(fields: [userId], references: [id])
   loans           Loan[]
 
-  @@map("documents")
 }
 
 model Dossiers {
@@ -131,7 +124,6 @@ model Dossiers {
   documents   Document[]
   loans       Loan[]
 
-  @@map("dossiers")
 }
 
 model Loan {
@@ -150,7 +142,6 @@ model Loan {
   dossier    Dossiers?  @relation(fields: [dossierId], references: [id])
   user       User       @relation(fields: [userId], references: [id])
 
-  @@map("loans")
 }
 
 model Structure {
@@ -163,7 +154,6 @@ model Structure {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("structures")
 }
 
 model Beneficiary {
@@ -176,7 +166,6 @@ model Beneficiary {
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
 
-  @@map("beneficiaries")
 }
 
 enum UserRole {

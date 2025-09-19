@@ -13,7 +13,8 @@ import LoadingTchadFlag from "@/components/ui/LoadingTchadFlag";
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
-import { getBeneficiaries, deleteBeneficiary, toggleBeneficiaryStatus, BeneficiaryType } from "./actions";
+import { getBeneficiaries, deleteBeneficiary, toggleBeneficiaryStatus } from "./actions";
+import { BeneficiaryType } from "@prisma/client";
 import AdminHeaders from "@/app/components/adminHeader";
 
 interface Beneficiary {
@@ -86,7 +87,7 @@ const BeneficiaryPage: React.FC = () => {
       const start = Date.now();
       try {
         const result = await getBeneficiaries();
-        if (result.success) {
+        if (result.success && result.data) {
           setBeneficiaries(result.data);
         } else {
           console.error("Erreur de l'API:", result.error);
@@ -126,6 +127,7 @@ const BeneficiaryPage: React.FC = () => {
     const aValue = a[sortColumn];
     const bValue = b[sortColumn];
 
+    if (aValue == null || bValue == null) return 0;
     if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
     if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
     return 0;
