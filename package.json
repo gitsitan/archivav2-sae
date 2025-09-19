@@ -15,7 +15,7 @@
     "db:pull": "prisma db pull",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
-    "db:migrate:reset": "npx prisma migrate reset --force",
+    "db:migrate:reset": "npx prisma migrate reset",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs postgres",

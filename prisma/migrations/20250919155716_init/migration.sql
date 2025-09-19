@@ -1,9 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the `User` table. If the table is not empty, all the data it contains will be lost.
-
-*/
 -- CreateEnum
 CREATE TYPE "public"."UserRole" AS ENUM ('ADMIN', 'MANAGER', 'USER', 'VIEWER');
 
@@ -22,11 +16,8 @@ CREATE TYPE "public"."LoanStatus" AS ENUM ('ACTIVE', 'RETURNED', 'OVERDUE', 'LOS
 -- CreateEnum
 CREATE TYPE "public"."BeneficiaryType" AS ENUM ('INDIVIDUAL', 'ORGANIZATION', 'GOVERNMENT', 'PRIVATE');
 
--- DropTable
-DROP TABLE "public"."User";
-
 -- CreateTable
-CREATE TABLE "public"."users" (
+CREATE TABLE "public"."User" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -37,11 +28,11 @@ CREATE TABLE "public"."users" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "lastLoginAt" TIMESTAMP(3),
 
-    CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."groups" (
+CREATE TABLE "public"."Group" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
@@ -49,19 +40,19 @@ CREATE TABLE "public"."groups" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Group_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."user_groups" (
+CREATE TABLE "public"."UserGroup" (
     "userId" INTEGER NOT NULL,
     "groupId" INTEGER NOT NULL,
 
-    CONSTRAINT "user_groups_pkey" PRIMARY KEY ("userId","groupId")
+    CONSTRAINT "UserGroup_pkey" PRIMARY KEY ("userId","groupId")
 );
 
 -- CreateTable
-CREATE TABLE "public"."audit_logs" (
+CREATE TABLE "public"."AuditLog" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "action" TEXT NOT NULL,
@@ -72,11 +63,11 @@ CREATE TABLE "public"."audit_logs" (
     "userAgent" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "audit_logs_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."series" (
+CREATE TABLE "public"."Series" (
     "id" SERIAL NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -87,11 +78,11 @@ CREATE TABLE "public"."series" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "series_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Series_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."addresses" (
+CREATE TABLE "public"."Address" (
     "id" SERIAL NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -101,11 +92,11 @@ CREATE TABLE "public"."addresses" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "addresses_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Address_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."documents" (
+CREATE TABLE "public"."Document" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -124,11 +115,11 @@ CREATE TABLE "public"."documents" (
     "addressId" INTEGER,
     "dossierId" INTEGER,
 
-    CONSTRAINT "documents_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Document_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."dossiers" (
+CREATE TABLE "public"."Dossiers" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT,
@@ -137,11 +128,11 @@ CREATE TABLE "public"."dossiers" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "dossiers_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Dossiers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."loans" (
+CREATE TABLE "public"."Loan" (
     "id" SERIAL NOT NULL,
     "loanDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "returnDate" TIMESTAMP(3),
@@ -154,11 +145,11 @@ CREATE TABLE "public"."loans" (
     "documentId" INTEGER NOT NULL,
     "dossierId" INTEGER,
 
-    CONSTRAINT "loans_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Loan_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."structures" (
+CREATE TABLE "public"."Structure" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "address" TEXT,
@@ -168,11 +159,11 @@ CREATE TABLE "public"."structures" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "structures_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Structure_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."beneficiaries" (
+CREATE TABLE "public"."Beneficiary" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "type" "public"."BeneficiaryType" NOT NULL,
@@ -182,56 +173,56 @@ CREATE TABLE "public"."beneficiaries" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "beneficiaries_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Beneficiary_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
+CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "groups_name_key" ON "public"."groups"("name");
+CREATE UNIQUE INDEX "Group_name_key" ON "public"."Group"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "series_code_key" ON "public"."series"("code");
+CREATE UNIQUE INDEX "Series_code_key" ON "public"."Series"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "addresses_code_key" ON "public"."addresses"("code");
+CREATE UNIQUE INDEX "Address_code_key" ON "public"."Address"("code");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "documents_reference_key" ON "public"."documents"("reference");
+CREATE UNIQUE INDEX "Document_reference_key" ON "public"."Document"("reference");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dossiers_code_key" ON "public"."dossiers"("code");
+CREATE UNIQUE INDEX "Dossiers_code_key" ON "public"."Dossiers"("code");
 
 -- AddForeignKey
-ALTER TABLE "public"."user_groups" ADD CONSTRAINT "user_groups_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."UserGroup" ADD CONSTRAINT "UserGroup_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "public"."Group"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."user_groups" ADD CONSTRAINT "user_groups_groupId_fkey" FOREIGN KEY ("groupId") REFERENCES "public"."groups"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."UserGroup" ADD CONSTRAINT "UserGroup_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."audit_logs" ADD CONSTRAINT "audit_logs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."AuditLog" ADD CONSTRAINT "AuditLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."series" ADD CONSTRAINT "series_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "public"."series"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Series" ADD CONSTRAINT "Series_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "public"."Series"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."documents" ADD CONSTRAINT "documents_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Document" ADD CONSTRAINT "Document_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "public"."Address"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."documents" ADD CONSTRAINT "documents_seriesId_fkey" FOREIGN KEY ("seriesId") REFERENCES "public"."series"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Document" ADD CONSTRAINT "Document_dossierId_fkey" FOREIGN KEY ("dossierId") REFERENCES "public"."Dossiers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."documents" ADD CONSTRAINT "documents_addressId_fkey" FOREIGN KEY ("addressId") REFERENCES "public"."addresses"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Document" ADD CONSTRAINT "Document_seriesId_fkey" FOREIGN KEY ("seriesId") REFERENCES "public"."Series"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."documents" ADD CONSTRAINT "documents_dossierId_fkey" FOREIGN KEY ("dossierId") REFERENCES "public"."dossiers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Document" ADD CONSTRAINT "Document_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."loans" ADD CONSTRAINT "loans_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_documentId_fkey" FOREIGN KEY ("documentId") REFERENCES "public"."Document"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."loans" ADD CONSTRAINT "loans_documentId_fkey" FOREIGN KEY ("documentId") REFERENCES "public"."documents"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_dossierId_fkey" FOREIGN KEY ("dossierId") REFERENCES "public"."Dossiers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."loans" ADD CONSTRAINT "loans_dossierId_fkey" FOREIGN KEY ("dossierId") REFERENCES "public"."dossiers"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Loan" ADD CONSTRAINT "Loan_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
