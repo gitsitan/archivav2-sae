@@ -77,6 +77,8 @@ const UpdateStructurePage = () => {
       try {
         // Charger la structure à modifier
         const result = await getStructureById(Number(id));
+        const elapsed = Date.now() - start;
+        
         if (result.success && result.data) {
           setFormData({
             name: result.data.name,
@@ -87,19 +89,20 @@ const UpdateStructurePage = () => {
         } else {
           setError(result.error || "Structure introuvable.");
         }
-      } catch (err) {
-        console.error("Erreur de chargement des données:", err);
-        setError("Erreur de chargement des données de la structure.");
-      } finally {
-        const elapsed = Date.now() - start;
-        const minLoadingTime = 1500;
+        
+        // Ajuster le loading en fonction de la durée réelle
+        const minLoadingTime = 800; // Temps minimum réduit
         const remaining = minLoadingTime - elapsed;
-
+        
         if (remaining > 0) {
           setTimeout(() => setLoading(false), remaining);
         } else {
           setLoading(false);
         }
+      } catch (err) {
+        console.error("Erreur de chargement des données:", err);
+        setError("Erreur de chargement des données de la structure.");
+        setLoading(false); // Arrêter le loading immédiatement en cas d'erreur
       }
     };
 

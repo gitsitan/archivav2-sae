@@ -65,7 +65,7 @@ const NewStructurePage = () => {
   useEffect(() => {
     const start = Date.now();
     const elapsed = Date.now() - start;
-    const minLoadingTime = 1000;
+    const minLoadingTime = 800; // Temps minimum réduit pour cohérence
     const remaining = minLoadingTime - elapsed;
 
     if (remaining > 0) {
