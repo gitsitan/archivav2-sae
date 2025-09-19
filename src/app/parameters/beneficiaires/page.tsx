@@ -14,6 +14,7 @@ import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
 import { getBeneficiaries, deleteBeneficiary, toggleBeneficiaryStatus, BeneficiaryType } from "./actions";
+import AdminHeaders from "@/app/components/adminHeader";
 
 interface Beneficiary {
   id: number;

@@ -42,7 +42,7 @@ export async function createBeneficiary(data: BeneficiaryFormData) {
 // Récupérer tous les bénéficiaires
 export async function getBeneficiaries() {
   try {
-    const beneficiaries = await prisma.beneficiaire.findMany({
+    const beneficiaries = await prisma.beneficiaries.findMany({
       orderBy: { createdAt: "desc" },
     });
     return { success: true, data: beneficiaries };
