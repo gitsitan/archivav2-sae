@@ -20,7 +20,13 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs postgres",
     "docker:restart": "docker-compose restart postgres",
-    "docker:status": "docker-compose ps"
+    "docker:status": "docker-compose ps",
+    "supabase:up": "docker-compose -f docker-compose-supabase.yml up -d",
+    "supabase:down": "docker-compose -f docker-compose-supabase.yml down",
+    "supabase:logs": "docker-compose -f docker-compose-supabase.yml logs",
+    "supabase:studio": "docker-compose -f docker-compose-supabase.yml up studio -d",
+    "supabase:simple": "docker-compose -f docker-compose-simple.yml up -d",
+    "supabase:simple:down": "docker-compose -f docker-compose-simple.yml down"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

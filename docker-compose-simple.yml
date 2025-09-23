@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL avec extensions Supabase
+  postgres:
+    image: supabase/postgres:15.1.0.147
+    container_name: archivav2-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: postgres
+      # Extensions Supabase
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./supabase/init:/docker-entrypoint-initdb.d
+    networks:
+      - archivav2-network
+
+  # pgAdmin pour l'administration de la base de données
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: archivav2-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - archivav2-network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  archivav2-network:
+    driver: bridge
