@@ -58,7 +58,7 @@ model AuditLog {
 
 }
 
-model Series {
+model Serie {
   id          Int        @id @default(autoincrement())
   code        String     @unique
   name        String
@@ -70,12 +70,25 @@ model Series {
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  parent      Series?    @relation("SeriesHierarchy", fields: [parentId], references: [id])
-  children    Series[]   @relation("SeriesHierarchy")
-
+  parent      Serie?    @relation("SerieHierarchy", fields: [parentId], references: [id])
+  children    Serie[]   @relation("SerieHierarchy")
+  liasses     Liasse[]
+  dossiers    Dossier[]
 }
 
-model Address {
+model Liasse {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  serieId     Int?
+  serie       Serie?         @relation(fields: [serieId], references: [id])
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  documents   Document[]
+}
+
+model Localisation {
   id          Int        @id @default(autoincrement())
   code        String     @unique
   name        String
@@ -84,10 +97,10 @@ model Address {
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
+  dossiers    Dossier[]
 }
 
-model Documents {
+model Document {
   id              Int            @id @default(autoincrement())
   title           String
   description     String?
@@ -99,37 +112,46 @@ model Documents {
   status          DocumentStatus @default(ACTIVE)
   retentionPeriod Int?
   destructionDate DateTime?
+  userId          Int
+  dossierId       Int?
+  typeId          Int?
+  liasseId        Int?
+  dossier         Dossier?      @relation(fields: [dossierId], references: [id])
+  type            TypeDocument? @relation(fields: [typeId], references: [id])
+  liasse          Liasse? @relation(fields: [liasseId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  userId          Int
-  seriesId        Int?
-  addressId       Int?
-  dossierId       Int?
-  address         Address?       @relation(fields: [addressId], references: [id])
-  dossier         Dossiers?      @relation(fields: [dossierId], references: [id])
-  series          Series?        @relation(fields: [seriesId], references: [id])
-  user            User           @relation(fields: [userId], references: [id])
-  loans           Loan[]
-
+  
+  
 }
 
-model TypesDocuments {
+model TypeDocument {
   id          Int            @id @default(autoincrement())
   name        String
   status      DossiersStatus @default(ACTIVE)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  documents   Document[]
 }
 
 
-model Dossiers {
+model Dossier {
   id          Int            @id @default(autoincrement())
-  name        String
   description String?
-  infoCompl String?
+  infoCompl   String?
   commentaire String?
   code        String         @unique
   status      DossiersStatus @default(ACTIVE)
+  metadata    Json
+  typeId      Int?
+  structureId Int?
+  serieId     Int?
+  localisationId  Int?
+  type        TypeDossier? @relation(fields: [typeId], references: [id])
+  structure   Structure?     @relation(fields: [structureId], references: [id])
+  serie       Serie?         @relation(fields: [serieId], references: [id])
+  localisation    Localisation?       @relation(fields: [localisationId], references: [id])
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   documents   Document[]
@@ -137,13 +159,14 @@ model Dossiers {
 
 }
 
-model TypesDossiers {
+model TypeDossier {
   id          Int            @id @default(autoincrement())
   name        String
-  metadata       Json
+  metadata    Json
   status      DossiersStatus @default(ACTIVE)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
+  dossiers    Dossier[]
 }
 
 model Loan {
@@ -155,11 +178,9 @@ model Loan {
   notes      String?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+  dossierId  Int
   userId     Int
-  documentId Int
-  dossierId  Int?
-  document   Document   @relation(fields: [documentId], references: [id])
-  dossier    Dossiers?  @relation(fields: [dossierId], references: [id])
+  dossier    Dossier?  @relation(fields: [dossierId], references: [id])
   user       User       @relation(fields: [userId], references: [id])
 
 }
@@ -170,10 +191,14 @@ model Structure {
   address   String?
   phone     String?
   email     String?
+  niveau    Int @default(1)
+  parentId    Int?
   isActive  Boolean  @default(true)
+  parent      Structure?    @relation("StructureHierarchy", fields: [parentId], references: [id])
+  children    Structure[]   @relation("StructureHierarchy")
+  dossiers    Dossier[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
 }
 
 model Beneficiary {
@@ -236,6 +261,7 @@ model Options {
   key       String   @unique
   value     Json
   category  String
+  isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

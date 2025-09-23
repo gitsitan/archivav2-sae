@@ -35,7 +35,8 @@
     "icon": "FileText",
     "submenu": [
       { "title": "Series", "href": "/classification/series" },
-      { "title": "Adressage", "href": "/classification/adressage" }
+      { "title": "Adressage", "href": "/classification/adressage" },
+      { "title": "Types de documents", "href": "/classification/types-documents" }
     ]
   },
   {
@@ -46,7 +47,7 @@
       { "title": "Structures", "href": "/parameters/structures" },
       { "title": "Bénéficiaires", "href": "/parameters/beneficiaires" },
       { "title": "Types dossier", "href": "/parameters/types-dossier" },
-      { "title": "Paramètres géneraux", "href": "/parameters/generaux" }
+      { "title": "Paramètres généraux", "href": "/parameters/generaux" }
     ]
   },
   {

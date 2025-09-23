@@ -8,10 +8,10 @@ const dataFile = path.join(process.cwd(), "public", "data", "journaux.json");
 // Gère la requête GET pour récupérer un seul journal par son ID.
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const journalId = parseInt(id, 10);
 
     if (isNaN(journalId)) {
@@ -43,11 +43,11 @@ export async function GET(
 // Gère la requête PUT pour mettre à jour un journal existant.
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const updatedJournalData = await request.json();
-    const { id } = params;
+    const { id } = await params;
 
     if (!id || isNaN(parseInt(id, 10))) {
       return NextResponse.json({ message: "ID invalide." }, { status: 400 });
@@ -86,10 +86,10 @@ export async function PUT(
 // Gère la requête DELETE pour supprimer un journal existant.
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const journalId = parseInt(id, 10);
 
     if (isNaN(journalId)) {

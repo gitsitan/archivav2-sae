@@ -18,9 +18,9 @@ export async function getGeneralSettings() {
     options.forEach((option) => {
       const category = option.category as SettingCategory;
       if (!settings[category]) {
-        settings[category] = {};
+        settings[category] = {} as any;
       }
-      settings[category][option.key] = option.value;
+      (settings[category] as any)[option.key] = option.value;
     });
 
     return { success: true, data: settings };
