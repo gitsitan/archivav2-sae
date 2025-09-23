@@ -8,7 +8,10 @@ export interface CompanyInfo {
   website?: string;
   logo?: string;
 }
-
+export interface OrganisationInfo {
+  niveauOrganigrame: number;
+  niveauAdressagePhysique: number;
+}
 export interface StorageSettings {
   path: string;
   maxFileSize: number; // en MB
@@ -45,13 +48,14 @@ export interface NotificationSettings {
 
 export interface GeneralSettings {
   company: CompanyInfo;
+  organisation: OrganisationInfo;
   storage: StorageSettings;
   session: SessionSettings;
   security: SecuritySettings;
   notifications: NotificationSettings;
 }
 
-export type SettingCategory = 'company' | 'storage' | 'session' | 'security' | 'notifications';
+export type SettingCategory = 'company' | 'organisation' | 'storage' | 'session' | 'security' | 'notifications';
 
 export interface OptionItem {
   id: number;

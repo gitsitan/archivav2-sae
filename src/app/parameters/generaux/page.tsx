@@ -31,6 +31,7 @@ const GeneralSettingsPage = () => {
 
   const tabs = [
     { id: "company" as SettingCategory, label: "Entreprise", icon: Building2 },
+    { id: "organisation" as SettingCategory, label: "Organisation", icon: Building2 },
     { id: "storage" as SettingCategory, label: "Stockage", icon: HardDrive },
     { id: "session" as SettingCategory, label: "Sessions", icon: Clock },
     { id: "security" as SettingCategory, label: "Sécurité", icon: Shield },
@@ -150,6 +151,79 @@ const GeneralSettingsPage = () => {
           />
         </div>
       </div>
+
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Téléphone
+          </label>
+          <input
+            type="text"
+            value={settings.company?.phone || ""}
+            onChange={(e) => updateSetting("company", "phone", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            placeholder="+235 XX XX XX XX"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Site web
+          </label>
+          <input
+            type="url"
+            value={settings.company?.website || ""}
+            onChange={(e) => updateSetting("company", "website", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            placeholder="https://www.entreprise.com"
+          />
+        </div>
+      </div>
+      
+      <div>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Adresse
+        </label>
+        <textarea
+          value={settings.company?.address || ""}
+          onChange={(e) => updateSetting("company", "address", e.target.value)}
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white"
+          placeholder="Adresse complète de l'entreprise"
+        />
+      </div>
+      
+   
+    </div>
+  );
+
+   const renderOrganisationSettings = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Nom de l'entreprise *
+          </label>
+          <input
+            type="text"
+            value={settings.company?.name || ""}
+            onChange={(e) => updateSetting("company", "name", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            placeholder="Nom de l'entreprise"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Email
+          </label>
+          <input
+            type="email"
+            value={settings.company?.email || ""}
+            onChange={(e) => updateSetting("company", "email", e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 dark:text-white"
+            placeholder="contact@entreprise.com"
+          />
+        </div>
+      </div>
       
       <div>
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -192,7 +266,6 @@ const GeneralSettingsPage = () => {
       </div>
     </div>
   );
-
   const renderStorageSettings = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -514,6 +587,8 @@ const GeneralSettingsPage = () => {
     switch (activeTab) {
       case "company":
         return renderCompanySettings();
+      case "organisation":
+        return renderOrganisationSettings();  
       case "storage":
         return renderStorageSettings();
       case "session":
