@@ -7,16 +7,9 @@ services:
     container_name: archivav2-supabase-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: postgres
+      POSTGRES_DB: archivav2-sae
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST: db
-      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/postgres
-      PGRST_DB_SCHEMAS: public,storage,graphql_public
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      PGRST_DB_USE_LEGACY_GUCS: "false"
-      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
 
 
     ports:
@@ -26,13 +19,29 @@ services:
     networks:
       - archivav2-network
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: archivav2-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - archivav2-network
   # API Supabase (PostgREST)
   api:
     image: postgrest/postgrest:v12.0.2
     container_name: archivav2-supabase-api
     restart: unless-stopped
     environment:
-      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/postgres
+      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/archivav2-sae
       PGRST_DB_SCHEMAS: public,storage,graphql_public
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
@@ -150,6 +159,7 @@ services:
 
 volumes:
   postgres_data:
+  pgadmin_data:
   storage_data:
 
 networks:
