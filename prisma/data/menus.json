@@ -53,7 +53,7 @@
     "href": "/admin",
     "icon": "Users",
     "submenu": [
-      { "title": "Gestion des comptes", "href": "/admin/accounts" },
+      { "title": "Gestion des comptes", "href": "/admin/" },
       { "title": "Permissions", "href": "/admin/permissions" },
       { "title": "Groupes", "href": "/admin/groups" },
       { "title": "Piste d'audit", "href": "/admin/audit" }
