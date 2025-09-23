@@ -25,15 +25,7 @@
     "supabase:up": "docker-compose -f docker-compose-supabase.yml up -d",
     "supabase:down": "docker-compose -f docker-compose-supabase.yml down",
     "supabase:logs": "docker-compose -f docker-compose-supabase.yml logs",
-    "supabase:studio": "docker-compose -f docker-compose-supabase.yml up studio -d",
-    "supabase:simple": "docker-compose -f docker-compose-simple.yml up -d",
-    "supabase:simple:down": "docker-compose -f docker-compose-simple.yml down",
-    "docker:fixed": "docker-compose -f docker-compose-fixed.yml up -d",
-    "docker:fixed:down": "docker-compose -f docker-compose-fixed.yml down",
-    "docker:fixed:logs": "docker-compose -f docker-compose-fixed.yml logs",
-    "docker:working": "docker-compose -f docker-compose-working.yml up -d",
-    "docker:working:down": "docker-compose -f docker-compose-working.yml down",
-    "docker:working:logs": "docker-compose -f docker-compose-working.yml logs"
+    "supabase:studio": "docker-compose -f docker-compose-supabase.yml up studio -d"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",

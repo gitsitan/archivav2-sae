@@ -7,15 +7,21 @@ services:
     container_name: archivav2-supabase-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: archivav2-sae
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-
-
+      POSTGRES_HOST: db
+      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/postgres
+      PGRST_DB_SCHEMAS: public,storage,graphql_public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./supabase/init:/docker-entrypoint-initdb.d
     networks:
       - archivav2-network
 
