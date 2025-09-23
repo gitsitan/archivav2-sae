@@ -1,0 +1,62 @@
+[
+  {
+    "id": "dashboard.view",
+    "name": "Accès au tableau de bord",
+    "description": "Permet de visualiser les données et les statistiques principales."
+  },
+  {
+    "id": "users.read",
+    "name": "Lire les utilisateurs",
+    "description": "Permet de visualiser la liste complète des utilisateurs et leurs informations."
+  },
+  {
+    "id": "users.write",
+    "name": "Gérer les utilisateurs",
+    "description": "Permet de créer, modifier et supprimer des comptes d'utilisateurs."
+  },
+  {
+    "id": "groups.read",
+    "name": "Lire les groupes",
+    "description": "Permet de visualiser la liste des groupes et leurs permissions."
+  },
+  {
+    "id": "groups.write",
+    "name": "Gérer les groupes",
+    "description": "Permet de créer, modifier et supprimer des groupes d'utilisateurs."
+  },
+  {
+    "id": "files.upload",
+    "name": "Télécharger des fichiers",
+    "description": "Permet d'ajouter de nouveaux fichiers au système d'archivage."
+  },
+  {
+    "id": "files.download",
+    "name": "Télécharger des fichiers",
+    "description": "Permet de télécharger des fichiers existants."
+  },
+  {
+    "id": "files.delete",
+    "name": "Supprimer des fichiers",
+    "description": "Permet de supprimer des fichiers existants."
+  },
+  {
+    "id": "settings.read",
+    "name": "Lire les paramètres système",
+    "description": "Permet de visualiser les paramètres de configuration de l'application."
+  },
+  {
+    "id": "settings.write",
+    "name": "Modifier les paramètres système",
+    "description": "Permet de modifier les paramètres de configuration de l'application."
+  },
+  {
+    "id": "beneficiaries.read",
+    "name": "Lire les bénéficiaires",
+    "description": "Permet de visualiser la liste et les détails des bénéficiaires."
+  },
+  {
+    "id": "beneficiaries.write",
+    "name": "Gérer les bénéficiaires",
+    "description": "Permet de créer, modifier et supprimer des bénéficiaires."
+  }
+]
