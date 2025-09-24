@@ -34,6 +34,8 @@ interface AvailablePermission {
   id: string;
   name: string;
   description: string;
+  category: string;
+  actions: string[];
 }
 
 interface EditPermissionsPageProps {
@@ -68,10 +70,22 @@ const EditPermissionsPage = ({ params }: EditPermissionsPageProps) => {
   const resolvedParams = React.use(params);
   const groupId = resolvedParams.id;
 
-  const availableActions = ["read", "write", "delete", "create", "update"];
-  const [activeTab, setActiveTab] = useState("permission");
+  // Fonction pour traduire les actions
+  const translateAction = (action: string) => {
+    switch (action) {
+      case "C":
+        return "Créer";
+      case "U":
+        return "Modifier";
+      case "D":
+        return "Supprimer";
+      default:
+        return action;
+    }
+  };
+  const [activeTab, setActiveTab] = useState("permissionf");
 
-  const tabs = [{ id: "permission", label: "Permissions" }];
+  const tabs = [{ id: "permissionf", label: "Permissions sur les fonctionnalités" },{ id: "permissionr", label: "Permissions sur les ressources"  }];
 
   const handleDetailedPermissionChange = (
     permissionId: string,
@@ -195,7 +209,7 @@ const EditPermissionsPage = ({ params }: EditPermissionsPageProps) => {
         ) : (
           <>
             <AdminHeaders
-              title={groupName}
+              title={`Permissions du groupe [${groupName}]`}
               desc="Mettez à jour les permissions de ce groupe d'utilisateurs."
             />
 
@@ -236,90 +250,98 @@ const EditPermissionsPage = ({ params }: EditPermissionsPageProps) => {
                 >
                   <div className="grid grid-cols-1 gap-6">
                     {/* Contenu de l'onglet "Général" */}
-                    {activeTab === "permission" && (
+                    {activeTab === "permissionf" && (
                       <>
                         {/* Liste de cases à cocher pour les permissions */}
                         <div>
-                          <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                            Permissions
-                          </label>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
-                            {permissionsList.map((permission) => (
-                              <div
-                                key={permission.id}
-                                className="flex items-start"
-                              >
-                                <input
-                                  type="checkbox"
-                                  id={permission.id}
-                                  value={permission.id}
-                                  {...register("permissions")}
-                                  className="mt-1 h-4 w-4 text-blue-600 bg-gray-200 border-gray-300 rounded focus:ring-blue-500"
-                                />
-                                <div className="ml-3 text-sm flex-1">
-                                  <label
-                                    htmlFor={permission.id}
-                                    className="font-medium text-gray-700 dark:text-gray-300"
-                                  >
-                                    {permission.name}
-                                  </label>
-                                  <p className="text-gray-500 dark:text-gray-400 mb-2">
-                                    {permission.description}
-                                  </p>
+                     
+                          
+                          {/* Grouper les permissions par catégorie */}
+                          {(() => {
+                            const groupedPermissions = permissionsList.reduce((acc, permission) => {
+                              const category = permission.category || 'Autres';
+                              if (!acc[category]) {
+                                acc[category] = [];
+                              }
+                              acc[category].push(permission);
+                              return acc;
+                            }, {} as Record<string, AvailablePermission[]>);
 
-                                  <div className="mt-2">
-                                    <details className="group">
-                                      <summary className="cursor-pointer text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
-                                        Actions détaillées ▼
-                                      </summary>
-                                      <div className="mt-2 ml-2 space-y-1">
-                                        {availableActions.map((action) => (
-                                          <div
-                                            key={action}
-                                            className="flex items-center"
-                                          >
-                                            <input
-                                              type="checkbox"
-                                              id={`${permission.id}-${action}`}
-                                              checked={
-                                                detailedPermissions[
-                                                  permission.id
-                                                ]?.[action] || false
-                                              }
-                                              onChange={(e) =>
-                                                handleDetailedPermissionChange(
-                                                  permission.id,
-                                                  action,
-                                                  e.target.checked
-                                                )
-                                              }
-                                              className="h-3 w-3 text-green-600 bg-gray-200 border-gray-300 rounded focus:ring-green-500"
-                                            />
-                                            <label
-                                              htmlFor={`${permission.id}-${action}`}
-                                              className="ml-2 text-xs text-gray-600 dark:text-gray-400 capitalize"
-                                            >
-                                              {action === "read"
-                                                ? "Lecture"
-                                                : action === "write"
-                                                ? "Écriture"
-                                                : action === "delete"
-                                                ? "Suppression"
-                                                : action === "create"
-                                                ? "Création"
-                                                : action === "update"
-                                                ? "Modification"
-                                                : action}
-                                            </label>
-                                          </div>
-                                        ))}
+                            return Object.entries(groupedPermissions).map(([category, permissions]) => (
+                              <div key={category} className="mb-6">
+                                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 pb-2 border-b border-gray-200 dark:border-gray-600">
+                                  {category}
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
+                                  {permissions.map((permission) => (
+                                    <div
+                                      key={permission.id}
+                                      className="flex items-start"
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        id={permission.id}
+                                        value={permission.id}
+                                        {...register("permissions")}
+                                        className="mt-1 h-4 w-4 text-blue-600 bg-gray-200 border-gray-300 rounded focus:ring-blue-500"
+                                      />
+                                      <div className="ml-3 text-sm flex-1">
+                                        <label
+                                          htmlFor={permission.id}
+                                          className="font-medium text-gray-700 dark:text-gray-300"
+                                        >
+                                          {permission.name}
+                                        </label>
+                                        <p className="text-gray-500 dark:text-gray-400 mb-2">
+                                          {permission.description}
+                                        </p>
+
+                                        <div className="mt-2">
+                                          <details className="group">
+                                            <summary className="cursor-pointer text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+                                              Actions détaillées ▼
+                                            </summary>
+                                            <div className="mt-2 ml-2 space-y-1">
+                                              {permission.actions.map((action) => (
+                                                <div
+                                                  key={action}
+                                                  className="flex items-center"
+                                                >
+                                                  <input
+                                                    type="checkbox"
+                                                    id={`${permission.id}-${action}`}
+                                                    checked={
+                                                      detailedPermissions[
+                                                        permission.id
+                                                      ]?.[action] || false
+                                                    }
+                                                    onChange={(e) =>
+                                                      handleDetailedPermissionChange(
+                                                        permission.id,
+                                                        action,
+                                                        e.target.checked
+                                                      )
+                                                    }
+                                                    className="h-3 w-3 text-green-600 bg-gray-200 border-gray-300 rounded focus:ring-green-500"
+                                                  />
+                                                  <label
+                                                    htmlFor={`${permission.id}-${action}`}
+                                                    className="ml-2 text-xs text-gray-600 dark:text-gray-400 capitalize"
+                                                  >
+                                                    {translateAction(action)}
+                                                  </label>
+                                                </div>
+                                              ))}
+                                            </div>
+                                          </details>
+                                        </div>
                                       </div>
-                                    </details>
-                                  </div>
+                                    </div>
+                                  ))}
                                 </div>
                               </div>
-                            ))}
-                          </div>
+                            ));
+                          })()}
                         </div>
                       </>
                     )}

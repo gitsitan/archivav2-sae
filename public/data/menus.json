@@ -14,7 +14,7 @@
     "href": "/dossiers",
     "icon": "FileText",
     "submenu": [
-      { "title": "Nouveau dossier", "href": "/dossiers/nouveau-dossier" },
+
       { "title": "Gestion des dossiers", "href": "/dossiers/gestion-dossiers" },
       { "title": "Gestion des prêts", "href": "/dossiers/gestion-prets" },
       { "title": "Gestion des versements", "href": "/dossiers/gestion-versements" },

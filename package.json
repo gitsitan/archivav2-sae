@@ -14,7 +14,7 @@
     "db:generate": "npx prisma generate",
     "db:generate:force": "rm -rf node_modules/.prisma && prisma generate",
     "db:pull": "prisma db pull",
-    "db:seed": "tsx prisma/seed.ts",
+    "db:seed": "npx tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
     "db:migrate:reset": "npx prisma migrate reset",
     "docker:up": "docker-compose up -d",
