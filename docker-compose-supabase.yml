@@ -145,6 +145,8 @@ services:
         NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
         # Uncomment to use Big Query backend for analytics
         # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+      ports:
+        - "3001:3000"
       networks:
         - archivav2-network
 
