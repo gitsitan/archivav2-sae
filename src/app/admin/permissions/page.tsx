@@ -141,7 +141,7 @@ const PermissionsPage: React.FC = () => {
         ) : (
           <>
             <AdminHeaders
-              title="Gestion des Permissions"
+              title="Gestion des permissions"
               desc="Configurez les permissions détaillées pour chaque groupe d'utilisateurs."
             />
             {notification.visible && (
