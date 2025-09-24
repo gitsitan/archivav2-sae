@@ -1,0 +1,167 @@
+[
+  {
+    "id": "search.read",
+    "name": "Recherches avancées",
+    "description": "Permet d'effectuer des recherches avancées dans les documents et dossiers."
+  },
+  {
+    "id": "dossiers.read",
+    "name": "Consulter les dossiers",
+    "description": "Permet de visualiser la liste et les détails des dossiers."
+  },
+  {
+    "id": "dossiers.write",
+    "name": "Gérer les dossiers",
+    "description": "Permet de créer, modifier et supprimer des dossiers."
+  },
+  {
+    "id": "dossiers.pret.read",
+    "name": "Consulter les prêts",
+    "description": "Permet de visualiser la liste et les détails des prêts de dossiers."
+  },
+  {
+    "id": "dossiers.pret.write",
+    "name": "Gérer les prêts",
+    "description": "Permet de créer, modifier et gérer les prêts de dossiers."
+  },
+  {
+    "id": "dossiers.versement.read",
+    "name": "Consulter les versements",
+    "description": "Permet de visualiser la liste et les détails des versements."
+  },
+  {
+    "id": "dossiers.versement.write",
+    "name": "Gérer les versements",
+    "description": "Permet de créer, modifier et gérer les versements de dossiers."
+  },
+  {
+    "id": "dossiers.destruction.read",
+    "name": "Consulter les destructions",
+    "description": "Permet de visualiser la liste et les détails des destructions de dossiers."
+  },
+  {
+    "id": "dossiers.destruction.write",
+    "name": "Gérer les destructions",
+    "description": "Permet de créer, modifier et gérer les destructions de dossiers."
+  },
+  {
+    "id": "classification.series.read",
+    "name": "Consulter les séries",
+    "description": "Permet de visualiser la liste et les détails des séries de classification."
+  },
+  {
+    "id": "classification.series.write",
+    "name": "Gérer les séries",
+    "description": "Permet de créer, modifier et supprimer des séries de classification."
+  },
+  {
+    "id": "classification.adressage.read",
+    "name": "Consulter l'adressage",
+    "description": "Permet de visualiser la liste et les détails de l'adressage."
+  },
+  {
+    "id": "classification.adressage.write",
+    "name": "Gérer l'adressage",
+    "description": "Permet de créer, modifier et supprimer des adresses."
+  },
+  {
+    "id": "classification.types-documents.read",
+    "name": "Consulter les types de documents",
+    "description": "Permet de visualiser la liste et les détails des types de documents."
+  },
+  {
+    "id": "classification.types-documents.write",
+    "name": "Gérer les types de documents",
+    "description": "Permet de créer, modifier et supprimer des types de documents."
+  },
+  {
+    "id": "parameters.structures.read",
+    "name": "Consulter les structures",
+    "description": "Permet de visualiser la liste et les détails des structures organisationnelles."
+  },
+  {
+    "id": "parameters.structures.write",
+    "name": "Gérer les structures",
+    "description": "Permet de créer, modifier et supprimer des structures organisationnelles."
+  },
+  {
+    "id": "parameters.beneficiaires.read",
+    "name": "Consulter les bénéficiaires",
+    "description": "Permet de visualiser la liste et les détails des bénéficiaires."
+  },
+  {
+    "id": "parameters.beneficiaires.write",
+    "name": "Gérer les bénéficiaires",
+    "description": "Permet de créer, modifier et supprimer des bénéficiaires."
+  },
+  {
+    "id": "parameters.types-dossier.read",
+    "name": "Consulter les types de dossiers",
+    "description": "Permet de visualiser la liste et les détails des types de dossiers."
+  },
+  {
+    "id": "parameters.types-dossier.write",
+    "name": "Gérer les types de dossiers",
+    "description": "Permet de créer, modifier et supprimer des types de dossiers."
+  },
+  {
+    "id": "parameters.generaux.read",
+    "name": "Consulter les paramètres généraux",
+    "description": "Permet de visualiser les paramètres généraux de l'application."
+  },
+  {
+    "id": "parameters.generaux.write",
+    "name": "Modifier les paramètres généraux",
+    "description": "Permet de modifier les paramètres généraux de l'application."
+  },
+  {
+    "id": "admin.accounts.read",
+    "name": "Consulter les comptes",
+    "description": "Permet de visualiser la liste et les détails des comptes utilisateurs."
+  },
+  {
+    "id": "admin.accounts.write",
+    "name": "Gérer les comptes",
+    "description": "Permet de créer, modifier et supprimer des comptes utilisateurs."
+  },
+  {
+    "id": "admin.permissions.read",
+    "name": "Consulter les permissions",
+    "description": "Permet de visualiser la liste et les détails des permissions."
+  },
+  {
+    "id": "admin.permissions.write",
+    "name": "Gérer les permissions",
+    "description": "Permet de créer, modifier et supprimer des permissions."
+  },
+  {
+    "id": "admin.groups.read",
+    "name": "Consulter les groupes",
+    "description": "Permet de visualiser la liste et les détails des groupes d'utilisateurs."
+  },
+  {
+    "id": "admin.groups.write",
+    "name": "Gérer les groupes",
+    "description": "Permet de créer, modifier et supprimer des groupes d'utilisateurs."
+  },
+  {
+    "id": "admin.audit.read",
+    "name": "Consulter l'audit",
+    "description": "Permet de visualiser les pistes d'audit et l'historique des actions."
+  },
+  {
+    "id": "reports.read",
+    "name": "Consulter les rapports",
+    "description": "Permet de visualiser et générer des rapports et états."
+  },
+  {
+    "id": "reports.write",
+    "name": "Gérer les rapports",
+    "description": "Permet de créer, modifier et supprimer des rapports personnalisés."
+  },
+  {
+    "id": "system.admin",
+    "name": "Administrateur système",
+    "description": "Accès complet à toutes les fonctionnalités de l'application."
+  }
+]
