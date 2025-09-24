@@ -1,172 +1,113 @@
 version: '3.8'
 
 services:
-  # Base de données PostgreSQL (Supabase)
   db:
-    image: supabase/postgres:15.1.0.147
-    container_name: archivav2-supabase-db
+    container_name: archivav2-db
+    image: supabase/postgres:15.8.1.049
     restart: unless-stopped
+    volumes:
+      - ./supabase/db/realtime.sql:/docker-entrypoint-initdb.d/migrations/99-realtime.sql:Z
+      - ./supabase/db/webhooks.sql:/docker-entrypoint-initdb.d/init-scripts/98-webhooks.sql:Z
+      - ./supabase/db/roles.sql:/docker-entrypoint-initdb.d/init-scripts/99-roles.sql:Z
+      - ./supabase/db/jwt.sql:/docker-entrypoint-initdb.d/init-scripts/99-jwt.sql:Z
+      - ./supabase/db/data:/var/lib/postgresql/data:Z
+      - ./supabase/db/_supabase.sql:/docker-entrypoint-initdb.d/migrations/97-_supabase.sql:Z
+      - ./supabase/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
+      - ./supabase/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
+      - db-config:/etc/postgresql-custom
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "postgres",
+          "-h",
+          "localhost"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # depends_on:
+      # vector:
+      #   condition: service_healthy
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST: db
-      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/postgres
-      PGRST_DB_SCHEMAS: public,storage,graphql_public
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      PGRST_DB_USE_LEGACY_GUCS: "false"
-      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
+      POSTGRES_HOST: /var/run/postgresql
+      PGPORT: ${POSTGRES_PORT}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXP: ${JWT_EXPIRY}
     ports:
       - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./supabase/init:/docker-entrypoint-initdb.d
+    command:
+      [
+        "postgres",
+        "-c",
+        "config_file=/etc/postgresql/postgresql.conf",
+        "-c",
+        "log_min_messages=fatal"
+      ]
     networks:
-      - archivav2-network
+      archivav2-network:
+
 
   pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: archivav2-pgadmin
-    restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - db
-    networks:
-      - archivav2-network
-  # API Supabase (PostgREST)
-  api:
-    image: postgrest/postgrest:v12.0.2
-    container_name: archivav2-supabase-api
-    restart: unless-stopped
-    environment:
-      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/archivav2-sae
-      PGRST_DB_SCHEMAS: public,storage,graphql_public
-      PGRST_DB_ANON_ROLE: anon
-      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      PGRST_DB_USE_LEGACY_GUCS: "false"
-    ports:
-      - "3001:3000"
-    depends_on:
-      - db
-    networks:
-      - archivav2-network
+      image: dpage/pgadmin4:latest
+      container_name: archivav2-pgadmin
+      restart: unless-stopped
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
+        PGADMIN_DEFAULT_PASSWORD: admin
+        PGADMIN_CONFIG_SERVER_MODE: 'False'
+      ports:
+        - "5050:80"
+      volumes:
+        - pgadmin_data:/var/lib/pgadmin
+      depends_on:
+        - db
+      networks:
+        - archivav2-network
 
-  # Auth Supabase (GoTrue)
-  auth:
-    image: supabase/gotrue:v2.158.1
-    container_name: archivav2-supabase-auth
-    restart: unless-stopped
-    environment:
-      GOTRUE_API_HOST: 0.0.0.0
-      GOTRUE_API_PORT: 9999
-      GOTRUE_DB_DRIVER: postgres
-      GOTRUE_DB_DATABASE_URL: postgres://authenticator:postgres@db:5432/postgres
-      GOTRUE_SITE_URL: http://localhost:3000
-      GOTRUE_URI_ALLOW_LIST: "*"
-      GOTRUE_DISABLE_SIGNUP: "false"
-      GOTRUE_JWT_ADMIN_ROLES: service_role
-      GOTRUE_JWT_AUD: authenticated
-      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
-      GOTRUE_JWT_EXP: 3600
-      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
-      GOTRUE_MAILER_AUTOCONFIRM: "true"
-      GOTRUE_SMTP_ADMIN_EMAIL: admin@example.com
-      GOTRUE_SMTP_HOST: localhost
-      GOTRUE_SMTP_PORT: 2500
-      GOTRUE_SMTP_USER: fake_mail_user
-      GOTRUE_SMTP_PASS: fake_mail_password
-      GOTRUE_SMTP_SENDER_NAME: fake_sender
-    ports:
-      - "9999:9999"
-    depends_on:
-      - db
-    networks:
-      - archivav2-network
-
-  # Storage Supabase
-  storage:
-    image: supabase/storage-api:v1.10.3
-    container_name: archivav2-supabase-storage
-    restart: unless-stopped
-    environment:
-      ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-      SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
-      POSTGREST_URL: http://api:3000
-      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      FILE_SIZE_LIMIT: 52428800
-      STORAGE_BACKEND: file
-      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
-      TENANT_ID: archivav2-sae
-      REGION: local
-      GLOBAL_S3_BUCKET: archivav2-sae
-    ports:
-      - "5000:5000"
-    volumes:
-      - storage_data:/var/lib/storage
-    depends_on:
-      - db
-      - api
-    networks:
-      - archivav2-network
-
-  # Meta API (pour le Studio)
-  meta:
-    image: supabase/postgres-meta:v0.84.2
-    container_name: archivav2-supabase-meta
-    restart: unless-stopped
-    environment:
-      PG_META_PORT: 8080
-      PG_META_DB_HOST: db
-      PG_META_DB_PORT: 5432
-      PG_META_DB_NAME: postgres
-      PG_META_DB_USER: postgres
-      PG_META_DB_PASSWORD: postgres
-    ports:
-      - "8081:8080"
-    depends_on:
-      - db
-    networks:
-      - archivav2-network
-
-  # Dashboard Supabase (Studio) - Version simplifiée
-  studio:
-    image: supabase/studio:latest
-    container_name: archivav2-supabase-studio
-    restart: unless-stopped
-    environment:
-      STUDIO_PG_META_URL: http://meta:8080
-      POSTGRES_PASSWORD: postgres
-      DEFAULT_ORGANIZATION_NAME: Archivav2
-      DEFAULT_PROJECT_NAME: Archivav2 SAE
-      SUPABASE_URL: http://localhost:8000
-      SUPABASE_PUBLIC_URL: http://localhost:8000
-      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-      - api
-      - auth
-      - storage
-      - meta
-    networks:
-      - archivav2-network
+  # vector:
+  #   container_name: archivav2-vector
+  #   image: timberio/vector:0.28.1-alpine
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./supabase/logs/vector.yml:/etc/vector/vector.yml:ro,z
+  #     - ${DOCKER_SOCKET_LOCATION}:/var/run/docker.sock:ro,z
+  #   healthcheck:
+  #     test:
+  #       [
+  #         "CMD",
+  #         "wget",
+  #         "--no-verbose",
+  #         "--tries=1",
+  #         "--spider",
+  #         "http://vector:9001/health"
+  #       ]
+  #     timeout: 5s
+  #     interval: 5s
+  #     retries: 3
+  #   environment:
+  #     LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
+  #   command:
+  #     [
+  #       "--config",
+  #       "/etc/vector/vector.yml"
+  #     ]
+  #   security_opt:
+  #     - "label=disable"
+  #   networks:
+  #     archivav2-network:
 
 volumes:
-  postgres_data:
+  db-config:
   pgadmin_data:
-  storage_data:
+
 
 networks:
   archivav2-network:

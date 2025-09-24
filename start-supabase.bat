@@ -27,18 +27,22 @@ docker exec archivav2-supabase-db psql -U postgres -d archivav2-sae -c "SELECT v
 
 echo.
 echo 6. Vérification de l'utilisateur prisma...
-docker exec archivav2-supabase-db psql -U postgres -d archivav2-sae -c "SELECT rolname, rolcreatedb FROM pg_roles WHERE rolname = 'prisma';"
+docker exec archivav2-supabase-db psql -U postgres -d archivav2-sae -c "SELECT rolname, rolsuper, rolcreatedb FROM pg_roles WHERE rolname = 'prisma';"
 
 echo.
-echo 7. Application du schéma Prisma...
+echo 7. Réparation de l'utilisateur prisma si nécessaire...
+docker exec archivav2-supabase-db psql -U postgres -c "DROP ROLE IF EXISTS prisma; CREATE ROLE prisma LOGIN PASSWORD 'prisma_password' CREATEDB CREATEROLE SUPERUSER;"
+
+echo.
+echo 8. Application du schéma Prisma...
 call npm run db:push
 
 echo.
-echo 8. Génération du client Prisma...
+echo 9. Génération du client Prisma...
 call npm run db:generate
 
 echo.
-echo 9. Démarrage de l'application Next.js...
+echo 10. Démarrage de l'application Next.js...
 echo.
 echo ========================================
 echo   Services disponibles :
