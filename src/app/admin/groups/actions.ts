@@ -1,80 +1,3 @@
-// "use server";
-
-// import { prisma } from "@/lib/prisma";
-// import { group } from "console";
-// import { revalidatePath } from "next/cache";
-
-// //Fonction pur creer les groupes
-// export interface GroupFormData {
-//   name: string;
-//   description: string | null;
-//   permissions: any | null;
-// }
-
-// export async function createGroup(data: GroupFormData) {
-//   try {
-//     const group = await prisma.group.create({
-//       data: {
-//         name: data.name,
-//         description: data.description || null,
-//         permissions: data.permissions || null,
-//       },
-//     });
-//     revalidatePath("/admin/groups");
-//     return { success: true, data: group };
-//   } catch (error) {
-//     console.error("Erreur lors de la création du groupe:", error);
-//     return {
-//       success: false,
-//       error: "Erreur lors de la création du groupe",
-//     };
-//   }
-// }
-// // Fonction pour récupérer tous les groupes
-// export async function getGroups() {
-//   try {
-//     const groups = await prisma.group.findMany({
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//     });
-//     return { success: true, data: groups };
-//   } catch (error) {
-//     console.error(
-//       "Erreur de l'API lors de la récupération des groupes:",
-//       error
-//     );
-//     return {
-//       success: false,
-//       error: "Erreur lors de la récupération des groupes.",
-//     };
-//   }
-// }
-// //Fonction pour modifier les groupes
-// export async function updateGroup(groupId: number, data: GroupFormData) {
-//   try {
-//     const group = await prisma.group.update({
-//       where: {
-//         id: groupId,
-//       },
-//       data: {
-//         name: data.name,
-//         description: data.description || null,
-//         permissions: data.permissions || null,
-//       },
-//     });
-//     revalidatePath("/admin/groups");
-//     return { success: true, data: group };
-//   } catch (error) {
-//     console.error("Erreur lors de la mise à jour du groupe:", error);
-//     return {
-//       success: false,
-//       error: "Erreur lors de la mise à jour du groupe",
-//     };
-//   }
-// }
-// //Fonction pour regrouper par
-
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -146,13 +69,21 @@ export async function createGroup(data: GroupFormData) {
 
 // Fonction pour modifier les groupes
 export async function updateGroup(
-  groupId: number,
+  groupId: string | number,
   data: GroupFormData
 ): Promise<ActionResponse<any>> {
   try {
+    // Convertir l'ID en nombre si c'est une chaîne
+    const numericGroupId =
+      typeof groupId === "string" ? parseInt(groupId, 10) : groupId;
+
+    if (isNaN(numericGroupId)) {
+      return { success: false, error: "ID de groupe invalide" };
+    }
+
     const group = await prisma.group.update({
       where: {
-        id: groupId,
+        id: numericGroupId,
       },
       data: {
         name: data.name,

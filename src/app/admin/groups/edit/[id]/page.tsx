@@ -29,9 +29,9 @@ type GroupFormData = z.infer<typeof groupSchema>;
 
 // Typage des props de la page, notamment les paramètres de l'URL
 interface EditGroupPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 const EditGroupPage = ({ params }: EditGroupPageProps) => {
@@ -39,6 +39,8 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [permissionsList, setPermissionsList] = useState<any[]>([]);
+  const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
+
   const {
     register,
     handleSubmit,
@@ -50,7 +52,8 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
 
   const { notification, showNotification, hideNotification } =
     useNotification();
-  const groupId = params.id;
+  const resolvedParams = React.use(params);
+  const groupId = resolvedParams.id;
 
   useEffect(() => {
     // Fonction asynchrone pour charger les données
@@ -64,7 +67,9 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
           const group = groupResult.data;
           setValue("name", group.name);
           setValue("description", group.description);
-          setValue("permissions", group.permissions);
+
+          // Utilisation de `setCheckedPermissions` pour mettre à jour l'état local
+          setCheckedPermissions(group.permissions || []);
         } else {
           showNotification(groupResult.error || "Groupe non trouvé.", "error");
           router.push("/admin/groups");
@@ -95,7 +100,12 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
   const onSubmit = async (data: GroupFormData) => {
     try {
       setIsSubmitting(true);
-      const result = await updateGroup(groupId, data);
+
+      // Assure que les permissions sont bien transmises
+      const result = await updateGroup(groupId, {
+        ...data,
+        permissions: checkedPermissions,
+      });
 
       if (result.success) {
         showNotification("Groupe mis à jour avec succès !", "success");
@@ -182,7 +192,19 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
                               type="checkbox"
                               id={permission.id}
                               value={permission.id}
-                              {...register("permissions")}
+                              checked={checkedPermissions.includes(
+                                permission.id
+                              )}
+                              onChange={(e) => {
+                                const { value, checked } = e.target;
+                                const newCheckedPermissions = checked
+                                  ? [...checkedPermissions, value]
+                                  : checkedPermissions.filter(
+                                      (id) => id !== value
+                                    );
+                                setCheckedPermissions(newCheckedPermissions);
+                                setValue("permissions", newCheckedPermissions);
+                              }}
                               className="mt-1 h-4 w-4 text-blue-600 bg-gray-200 border-gray-300 rounded focus:ring-blue-500"
                             />
                             <div className="ml-3 text-sm">
