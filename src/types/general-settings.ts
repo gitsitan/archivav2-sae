@@ -12,6 +12,11 @@ export interface OrganisationInfo {
   niveauOrganigrame: number;
   niveauAdressagePhysique: number;
 }
+export interface PermissionInfo {
+  nom: string;
+  description: string;
+  permission: [];
+}
 export interface StorageSettings {
   path: string;
   maxFileSize: number; // en MB
@@ -53,9 +58,17 @@ export interface GeneralSettings {
   session: SessionSettings;
   security: SecuritySettings;
   notifications: NotificationSettings;
+  permission: PermissionInfo;
 }
 
-export type SettingCategory = 'company' | 'organisation' | 'storage' | 'session' | 'security' | 'notifications';
+export type SettingCategory =
+  | "company"
+  | "organisation"
+  | "storage"
+  | "session"
+  | "security"
+  | "notifications"
+  | "permission";
 
 export interface OptionItem {
   id: number;
