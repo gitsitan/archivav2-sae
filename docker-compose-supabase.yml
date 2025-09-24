@@ -1,7 +1,7 @@
 
 services:
   db:
-    container_name: archivav2-db
+    container_name: db
     image: supabase/postgres:15.8.1.049
     # image: postgres:15
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       # JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
       # JWT_EXP: 3600
     ports:
-      - "5432:5432"
+      - ${POSTGRES_PORT}:5432
     command:
       [
         "postgres",
@@ -58,7 +58,7 @@ services:
 
   pgadmin:
       image: dpage/pgadmin4:latest
-      container_name: archivav2-pgadmin
+      container_name: pgadmin
       restart: unless-stopped
       environment:
         PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
@@ -104,6 +104,79 @@ services:
   #     - "label=disable"
   #   networks:
   #     archivav2-network:
+
+# Dashboard Supabase (Studio) - Version simplifiée
+  studio:
+      container_name: studio
+      image: supabase/studio:20250224-d10db0f
+      restart: unless-stopped
+      healthcheck:
+        test:
+          [
+            "CMD",
+            "node",
+            "-e",
+            "fetch('http://studio:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})"
+          ]
+        timeout: 10s
+        interval: 5s
+        retries: 3
+      # depends_on:
+        # analytics:
+        #   condition: service_healthy
+      environment:
+        STUDIO_PG_META_URL: http://meta:8080
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+        DEFAULT_ORGANIZATION_NAME: ${STUDIO_DEFAULT_ORGANIZATION}
+        DEFAULT_PROJECT_NAME: ${STUDIO_DEFAULT_PROJECT}
+        OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+
+        SUPABASE_URL: http://kong:8000
+        SUPABASE_PUBLIC_URL: ${SUPABASE_PUBLIC_URL}
+        SUPABASE_ANON_KEY: ${ANON_KEY}
+        SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+        AUTH_JWT_SECRET: ${JWT_SECRET}
+
+        LOGFLARE_API_KEY: ${LOGFLARE_API_KEY}
+        LOGFLARE_URL: http://analytics:4000
+        NEXT_PUBLIC_ENABLE_LOGS: true
+        # Comment to use Big Query backend for analytics
+        NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
+        # Uncomment to use Big Query backend for analytics
+        # NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
+      networks:
+        - archivav2-network
+
+  kong:
+      container_name: kong
+      image: kong:2.8.1
+      restart: unless-stopped
+      ports:
+        - ${KONG_HTTP_PORT}:8000/tcp
+        - ${KONG_HTTPS_PORT}:8443/tcp
+      volumes:
+        # https://github.com/supabase/supabase/issues/12661
+        - ./supabase/api/kong.yml:/home/kong/temp.yml:ro,z
+      # depends_on:
+      #   analytics:
+      #     condition: service_healthy
+      environment:
+        KONG_DATABASE: "off"
+        KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+        # https://github.com/supabase/cli/issues/14
+        KONG_DNS_ORDER: LAST,A,CNAME
+        KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
+        KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
+        KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
+        SUPABASE_ANON_KEY: ${ANON_KEY}
+        SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+        DASHBOARD_USERNAME: ${DASHBOARD_USERNAME}
+        DASHBOARD_PASSWORD: ${DASHBOARD_PASSWORD}
+      # https://unix.stackexchange.com/a/294837
+      entrypoint: bash -c 'eval "echo \"$$(cat ~/temp.yml)\"" > ~/kong.yml && /docker-entrypoint.sh kong docker-start'
+      networks:
+        - archivav2-network
 
 volumes:
   db-config:
