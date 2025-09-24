@@ -1,3 +1,6 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -5,43 +8,41 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id          Int         @id @default(autoincrement())
-  name        String
-  email       String      @unique
-  password    String
-  role        UserRole    @default(USER)
-  isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  lastLoginAt DateTime?
-  auditLogs   AuditLog[]
-  documents   Document[]
-  loans       Loan[]
-  groups      UserGroup[]
-
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  role      UserRole @default(USER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  groups    UserGroup[]
+  auditLogs AuditLog[]
+  documents Document[]
+  loans     Loan[]
 }
 
 model Group {
-  id          Int         @id @default(autoincrement())
-  name        String      @unique
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
   description String?
-  permissions Json
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   users       UserGroup[]
-
 }
 
 model UserGroup {
+  id      Int @id @default(autoincrement())
   userId  Int
   groupId Int
-  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id])
 
-  @@id([userId, groupId])
+  @@unique([userId, groupId])
 }
 
 model AuditLog {
@@ -55,7 +56,6 @@ model AuditLog {
   userAgent String?
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
-
 }
 
 model Serie {
@@ -122,8 +122,6 @@ model Document {
   user            User          @relation(fields: [userId], references: [id])
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
-  
-  
 }
 
 model TypeDocument {
@@ -134,7 +132,6 @@ model TypeDocument {
   updatedAt   DateTime       @updatedAt
   documents   Document[]
 }
-
 
 model Dossier {
   id          Int            @id @default(autoincrement())
@@ -156,7 +153,6 @@ model Dossier {
   updatedAt   DateTime       @updatedAt
   documents   Document[]
   loans       Loan[]
-
 }
 
 model TypeDossier {
@@ -173,7 +169,6 @@ model Loan {
   id         Int        @id @default(autoincrement())
   loanDate   DateTime   @default(now())
   returnDate DateTime?
-  dueDate    DateTime
   status     LoanStatus @default(ACTIVE)
   notes      String?
   createdAt  DateTime   @default(now())
@@ -182,7 +177,6 @@ model Loan {
   userId     Int
   dossier    Dossier?  @relation(fields: [dossierId], references: [id])
   user       User       @relation(fields: [userId], references: [id])
-
 }
 
 model Structure {
@@ -210,7 +204,6 @@ model Beneficiary {
   isActive  Boolean         @default(true)
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
-
 }
 
 enum UserRole {
@@ -233,13 +226,12 @@ enum DocumentStatus {
   ACTIVE
   ARCHIVED
   DESTROYED
-  LOANED
 }
 
 enum DossiersStatus {
   ACTIVE
   ARCHIVED
-  CLOSED
+  DESTROYED
 }
 
 enum LoanStatus {

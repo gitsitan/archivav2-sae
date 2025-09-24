@@ -25,13 +25,29 @@ services:
     networks:
       - archivav2-network
 
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: archivav2-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@archivav2.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+    networks:
+      - archivav2-network
   # API Supabase (PostgREST)
   api:
     image: postgrest/postgrest:v12.0.2
     container_name: archivav2-supabase-api
     restart: unless-stopped
     environment:
-      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/postgres
+      PGRST_DB_URI: postgres://authenticator:postgres@db:5432/archivav2-sae
       PGRST_DB_SCHEMAS: public,storage,graphql_public
       PGRST_DB_ANON_ROLE: anon
       PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
@@ -103,30 +119,6 @@ services:
     networks:
       - archivav2-network
 
-  # Dashboard Supabase (Studio)
-  studio:
-    image: supabase/studio:20241218-0b8b8b8
-    container_name: archivav2-supabase-studio
-    restart: unless-stopped
-    environment:
-      STUDIO_PG_META_URL: http://meta:8080
-      POSTGRES_PASSWORD: postgres
-      DEFAULT_ORGANIZATION_NAME: Archivav2
-      DEFAULT_PROJECT_NAME: Archivav2 SAE
-      SUPABASE_URL: http://localhost:8000
-      SUPABASE_PUBLIC_URL: http://localhost:8000
-      SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
-    ports:
-      - "3000:3000"
-    depends_on:
-      - db
-      - api
-      - auth
-      - storage
-    networks:
-      - archivav2-network
-
   # Meta API (pour le Studio)
   meta:
     image: supabase/postgres-meta:v0.84.2
@@ -146,27 +138,34 @@ services:
     networks:
       - archivav2-network
 
-  # Edge Functions (optionnel)
-  functions:
-    image: supabase/edge-runtime:v1.58.2
-    container_name: archivav2-supabase-functions
+  # Dashboard Supabase (Studio) - Version simplifiée
+  studio:
+    image: supabase/studio:latest
+    container_name: archivav2-supabase-studio
     restart: unless-stopped
     environment:
-      JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PASSWORD: postgres
+      DEFAULT_ORGANIZATION_NAME: Archivav2
+      DEFAULT_PROJECT_NAME: Archivav2 SAE
       SUPABASE_URL: http://localhost:8000
+      SUPABASE_PUBLIC_URL: http://localhost:8000
       SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0
-      SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
+      SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU
     ports:
-      - "54321:54321"
-    volumes:
-      - ./supabase/functions:/home/deno/functions
+      - "3000:3000"
     depends_on:
       - db
+      - api
+      - auth
+      - storage
+      - meta
     networks:
       - archivav2-network
 
 volumes:
   postgres_data:
+  pgadmin_data:
   storage_data:
 
 networks:

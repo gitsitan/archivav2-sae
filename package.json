@@ -9,9 +9,10 @@
     "lint": "bunx tsc --noEmit && next lint",
     "format": "bunx biome format --write",
     "db:migrate": "npx prisma migrate dev --name",
+    "db:push": "npx prisma db push",
+    "db:push:force": "npx prisma db push --force-reset",
     "db:generate": "npx prisma generate",
     "db:generate:force": "rm -rf node_modules/.prisma && prisma generate",
-    "db:push": "prisma db push",
     "db:pull": "prisma db pull",
     "db:seed": "tsx prisma/seed.ts",
     "db:studio": "npx prisma studio",
@@ -20,7 +21,11 @@
     "docker:down": "docker-compose down",
     "docker:logs": "docker-compose logs postgres",
     "docker:restart": "docker-compose restart postgres",
-    "docker:status": "docker-compose ps"
+    "docker:status": "docker-compose ps",
+    "supabase:up": "docker-compose -f docker-compose-supabase.yml up -d",
+    "supabase:down": "docker-compose -f docker-compose-supabase.yml down",
+    "supabase:logs": "docker-compose -f docker-compose-supabase.yml logs",
+    "supabase:studio": "docker-compose -f docker-compose-supabase.yml up studio -d"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
