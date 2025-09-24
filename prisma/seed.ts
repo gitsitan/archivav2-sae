@@ -42,11 +42,14 @@ async function seedMenus() {
 //   }
 }
 
+async function seedPermissions() {
+
+}
+
 
 async function main() {
 
-  await seedMenus();
-
+  await seedPermissions();
 
   console.log("Seed terminé avec succès.");
 }
