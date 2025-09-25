@@ -41,7 +41,7 @@ const CreateUserPage = () => {
   const [groups, setGroups] = useState<Group[]>([]);
   const [groupsLoading, setGroupsLoading] = useState(true);
   const [selectedGroupIds, setSelectedGroupIds] = useState<number[]>([]);
-  
+
   const {
     register,
     handleSubmit,
@@ -55,7 +55,8 @@ const CreateUserPage = () => {
     },
   });
 
-  const { notification, showNotification, hideNotification } = useNotification();
+  const { notification, showNotification, hideNotification } =
+    useNotification();
 
   useEffect(() => {
     const start = Date.now();
@@ -72,7 +73,7 @@ const CreateUserPage = () => {
       }
     };
     fetchGroups();
-    
+
     const elapsed = Date.now() - start;
     const minLoadingTime = 800;
     const remaining = minLoadingTime - elapsed;
@@ -89,10 +90,10 @@ const CreateUserPage = () => {
   };
 
   const handleGroupChange = (groupId: number, checked: boolean) => {
-    const newGroupIds = checked 
+    const newGroupIds = checked
       ? [...selectedGroupIds, groupId]
-      : selectedGroupIds.filter(id => id !== groupId);
-    
+      : selectedGroupIds.filter((id) => id !== groupId);
+
     setSelectedGroupIds(newGroupIds);
     setValue("groupIds", newGroupIds);
   };
@@ -100,7 +101,7 @@ const CreateUserPage = () => {
   const onSubmit = async (data: UserFormData) => {
     try {
       setIsSubmitting(true);
-      
+
       const result = await createUser({
         ...data,
         role: "USER" as UserRole, // Rôle par défaut
@@ -132,9 +133,7 @@ const CreateUserPage = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
             <MySpinner size="lg" color="primary" />
-            <p className="mt-4 text-gray-600 font-medium">
-              Chargement ...
-            </p>
+            <p className="mt-4 text-gray-600 font-medium">Chargement ...</p>
           </div>
         ) : (
           <>
@@ -211,7 +210,10 @@ const CreateUserPage = () => {
                       {...register("isActive")}
                       className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                     />
-                    <label htmlFor="isActive" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                    <label
+                      htmlFor="isActive"
+                      className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                    >
                       Compte actif
                     </label>
                   </div>
@@ -224,20 +226,32 @@ const CreateUserPage = () => {
                     {groupsLoading ? (
                       <div className="flex items-center justify-center py-4">
                         <MySpinner size="sm" />
-                        <span className="ml-2 text-sm text-gray-500">Chargement des groupes...</span>
+                        <span className="ml-2 text-sm text-gray-500">
+                          Chargement des groupes...
+                        </span>
                       </div>
                     ) : (
                       <div className="border border-gray-300 dark:border-gray-600 rounded-lg p-4 max-h-48 overflow-y-auto bg-gray-50 dark:bg-gray-700">
                         {groups.length === 0 ? (
-                          <p className="text-sm text-gray-500 text-center">Aucun groupe disponible</p>
+                          <p className="text-sm text-gray-500 text-center">
+                            Aucun groupe disponible
+                          </p>
                         ) : (
                           <div className="space-y-2">
                             {groups.map((group) => (
-                              <label key={group.id} className="flex items-center">
+                              <label
+                                key={group.id}
+                                className="flex items-center"
+                              >
                                 <input
                                   type="checkbox"
                                   checked={selectedGroupIds.includes(group.id)}
-                                  onChange={(e) => handleGroupChange(group.id, e.target.checked)}
+                                  onChange={(e) =>
+                                    handleGroupChange(
+                                      group.id,
+                                      e.target.checked
+                                    )
+                                  }
                                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
                                 />
                                 <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
@@ -254,8 +268,10 @@ const CreateUserPage = () => {
                   {/* Note d'information */}
                   <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
                     <p className="text-sm text-blue-800 dark:text-blue-200">
-                      <strong>Note :</strong> Un mot de passe initial sera généré automatiquement. 
-                      L'utilisateur devra le changer lors de sa première connexion. Le rôle sera défini sur "Utilisateur" par défaut.
+                      <strong>Note :</strong> Un mot de passe initial sera
+                      généré automatiquement. L'utilisateur devra le changer
+                      lors de sa première connexion. Le rôle sera défini sur
+                      "Utilisateur" par défaut.
                     </p>
                   </div>
 

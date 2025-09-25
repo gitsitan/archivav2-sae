@@ -5,7 +5,11 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CosIcon } from "@hugeicons/core-free-icons";
+import {
+  Cancel02FreeIcons,
+  CosIcon,
+  Edit03Icon,
+} from "@hugeicons/core-free-icons";
 import { createLiasse, updateLiasse, LiasseWithSerie } from "./actions";
 
 interface LiasseModalProps {
@@ -117,7 +121,7 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
           onClick={handleClose}
         />
-        
+
         {/* Modal */}
         <div className="relative w-full max-w-md transform rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all">
           {/* Header */}
@@ -128,14 +132,17 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-red-500 hover:text-red-900 dark:hover:text-gray-300 transition-colors"
             >
-              <HugeiconsIcon icon={CosIcon} size={24} />
+              <HugeiconsIcon icon={Cancel02FreeIcons} size={24} />
             </button>
           </div>
 
           {/* Body */}
-          <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="px-6 py-4 space-y-4"
+          >
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 {error}
@@ -166,7 +173,9 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
                 disabled={isSubmitting}
               />
               {errors.name && (
-                <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
@@ -223,7 +232,7 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center"
+                className="px-4 py-2 text-sm font-medium text-white btn-primary hover:btn-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center"
               >
                 {isSubmitting ? (
                   <>
@@ -251,7 +260,11 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
                   </>
                 ) : (
                   <>
-                    <HugeiconsIcon icon={CosIcon} size={16} className="mr-2" />
+                    <HugeiconsIcon
+                      icon={Edit03Icon}
+                      size={16}
+                      className="mr-2"
+                    />
                     {liasse ? "Modifier" : "Créer"}
                   </>
                 )}

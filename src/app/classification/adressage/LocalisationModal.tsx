@@ -5,7 +5,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X, Save } from "lucide-react";
-import { createLocalisation, updateLocalisation, getParentLocalisations, getLocalisationById, LocalisationWithParent } from "./actions";
+import {
+  createLocalisation,
+  updateLocalisation,
+  getParentLocalisations,
+  getLocalisationById,
+  LocalisationWithParent,
+} from "./actions";
 
 interface LocalisationModalProps {
   isOpen: boolean;
@@ -27,7 +33,11 @@ const localisationSchema = z.object({
     .min(2, "Le nom doit contenir au moins 2 caractères"),
   isActive: z.boolean(),
 });
-const LEVEL_NAME=[{level:1,name:"Batiment"},{level:2,name:"Salle"},{level:3,name:"Rayon"}];
+const LEVEL_NAME = [
+  { level: 1, name: "Batiment" },
+  { level: 2, name: "Salle" },
+  { level: 3, name: "Rayon" },
+];
 type LocalisationFormData = z.infer<typeof localisationSchema>;
 
 const LocalisationModal: React.FC<LocalisationModalProps> = ({
@@ -60,7 +70,7 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
 
   // Fonction pour obtenir le nom du niveau
   const getLevelName = (level: number) => {
-    const levelInfo = LEVEL_NAME.find(item => item.level === level);
+    const levelInfo = LEVEL_NAME.find((item) => item.level === level);
     return levelInfo ? levelInfo.name : "Localisation";
   };
 
@@ -85,7 +95,10 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
             setParentLevel((result.data as any).level || 0);
           }
         } catch (error) {
-          console.error("Erreur lors du chargement du niveau du parent:", error);
+          console.error(
+            "Erreur lors du chargement du niveau du parent:",
+            error
+          );
         }
       };
       loadParentLevel();
@@ -102,7 +115,10 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
             setParentLocalisations(result.data);
           }
         } catch (error) {
-          console.error("Erreur lors du chargement des localisations parentes:", error);
+          console.error(
+            "Erreur lors du chargement des localisations parentes:",
+            error
+          );
         }
       };
       loadParentLocalisations();
@@ -134,7 +150,12 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
       setIsSubmitting(true);
       setError(null);
 
-      console.log("Modal onSubmit - parentId:", parentId, "parentName:", parentName);
+      console.log(
+        "Modal onSubmit - parentId:",
+        parentId,
+        "parentName:",
+        parentName
+      );
 
       const localisationData = {
         ...data,
@@ -175,16 +196,17 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
           onClick={handleClose}
         />
-        
+
         {/* Modal */}
         <div className="relative w-full max-w-md transform rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {localisation 
-                ? `Modifier le ${getLevelName(localisation.level).toLowerCase()}` 
-                : `Nouveau ${getLevelName(getNextLevel()).toLowerCase()}`
-              }
+              {localisation
+                ? `Modifier le ${getLevelName(
+                    localisation.level
+                  ).toLowerCase()}`
+                : `Nouveau ${getLevelName(getNextLevel()).toLowerCase()}`}
             </h3>
             <button
               onClick={handleClose}
@@ -196,7 +218,10 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
           </div>
 
           {/* Body */}
-          <form onSubmit={handleSubmit(onSubmit)} className="px-6 py-4 space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="px-6 py-4 space-y-4"
+          >
             {error && (
               <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
                 {error}
@@ -210,7 +235,8 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                   <strong>Localisation parente :</strong> {parentName}
                 </p>
                 <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                  ✓ Le niveau sera calculé automatiquement selon la localisation parente
+                  ✓ Le niveau sera calculé automatiquement selon la localisation
+                  parente
                 </p>
               </div>
             )}
@@ -221,18 +247,22 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                 htmlFor="code"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Code  <span className="text-red-500">*</span>
+                Code <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="code"
                 {...register("code")}
                 className="block w-full py-2 px-3 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder={`Ex: ${getLevelName(getNextLevel()).toUpperCase()}001`}
+                placeholder={`Ex: ${getLevelName(
+                  getNextLevel()
+                ).toUpperCase()}001`}
                 disabled={isSubmitting}
               />
               {errors.code && (
-                <p className="text-sm text-red-600 mt-1">{errors.code.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.code.message}
+                </p>
               )}
             </div>
 
@@ -253,7 +283,9 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                 disabled={isSubmitting}
               />
               {errors.name && (
-                <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
@@ -287,7 +319,7 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center"
+                className="px-4 py-2 text-sm font-medium text-white btn-primary hover:btn-primary rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 flex items-center"
               >
                 {isSubmitting ? (
                   <>

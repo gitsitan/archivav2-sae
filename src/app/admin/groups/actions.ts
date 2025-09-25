@@ -15,6 +15,7 @@ export interface GroupFormData {
   name: string;
   description: string | null;
   permissions: string[] | null; // Permissions is an array of strings
+  autorisations?: any | null; // JSON blob for autorisations (optional on input)
 }
 
 // Fonction pour récupérer un groupe par son ID
@@ -54,6 +55,7 @@ export async function createGroup(data: GroupFormData) {
         name: data.name,
         description: data.description || null,
         permissions: data.permissions || [],
+        autorisations: data.autorisations ?? {},
       },
     });
     revalidatePath("/admin/groups");
@@ -89,6 +91,7 @@ export async function updateGroup(
         name: data.name,
         description: data.description || null,
         permissions: data.permissions || [],
+        autorisations: data.autorisations ?? {},
       },
     });
     revalidatePath("/admin/groups");

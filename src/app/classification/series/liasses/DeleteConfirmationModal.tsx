@@ -2,7 +2,7 @@
 
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { CosIcon, Alert01Icon } from "@hugeicons/core-free-icons";
+import { CosIcon, Alert01Icon, Cancel02Icon } from "@hugeicons/core-free-icons";
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -29,17 +29,17 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
           className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
           onClick={onClose}
         />
-        
+
         {/* Modal */}
         <div className="relative w-full max-w-md transform rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <HugeiconsIcon 
-                  icon={Alert01Icon} 
-                  size={24} 
-                  className="text-red-600" 
+                <HugeiconsIcon
+                  icon={Alert01Icon}
+                  size={24}
+                  className="text-red-600"
                 />
               </div>
               <div className="ml-3">
@@ -51,9 +51,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
             <button
               onClick={onClose}
               disabled={isDeleting}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-red-500 hover:text-red-900 dark:hover:text-gray-300 transition-colors"
             >
-              <HugeiconsIcon icon={CosIcon} size={24} />
+              <HugeiconsIcon icon={Cancel02Icon} size={24} />
             </button>
           </div>
 
@@ -69,8 +69,9 @@ const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
               </p>
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
                 <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                  <strong>Attention :</strong> Cette action est irréversible. 
-                  Si cette liasse contient des documents, vous devrez d'abord les supprimer.
+                  <strong>Attention :</strong> Cette action est irréversible. Si
+                  cette liasse contient des documents, vous devrez d'abord les
+                  supprimer.
                 </p>
               </div>
             </div>
