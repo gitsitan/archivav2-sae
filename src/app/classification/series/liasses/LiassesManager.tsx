@@ -1,49 +1,59 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
+import {
+  Plus,
+  Edit,
+  Trash2,
   Folder,
-  ToggleLeft, 
-  ToggleRight
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
-import { 
-  getLiassesBySerie, 
-  deleteLiasse, 
-  toggleLiasseStatus, 
-  LiasseWithSerie 
+import {
+  getLiassesBySerie,
+  deleteLiasse,
+  toggleLiasseStatus,
+  LiasseWithSerie,
 } from "./actions";
 import LiasseModal from "./LiasseModal";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Delete02Icon, Edit03Icon } from "@hugeicons/core-free-icons";
 
 interface LiassesManagerProps {
   serieId: number;
   serieName: string;
 }
 
-const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) => {
+const LiassesManager: React.FC<LiassesManagerProps> = ({
+  serieId,
+  serieName,
+}) => {
   const [liasses, setLiasses] = useState<LiasseWithSerie[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedLiasse, setSelectedLiasse] = useState<LiasseWithSerie | null>(null);
-  const [liasseToDelete, setLiasseToDelete] = useState<LiasseWithSerie | null>(null);
+  const [selectedLiasse, setSelectedLiasse] = useState<LiasseWithSerie | null>(
+    null
+  );
+  const [liasseToDelete, setLiasseToDelete] = useState<LiasseWithSerie | null>(
+    null
+  );
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterActive, setFilterActive] = useState<boolean | null>(null);
 
-  const { notification, showNotification, hideNotification } = useNotification();
+  const { notification, showNotification, hideNotification } =
+    useNotification();
 
   // Charger les liasses
   const loadLiasses = async () => {
     try {
       setLoading(true);
       const result = await getLiassesBySerie(serieId);
-      
+
       if (result.success && result.data) {
         setLiasses(result.data);
       } else {
@@ -62,10 +72,13 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
   }, [serieId]);
 
   // Filtrer les liasses
-  const filteredLiasses = liasses.filter(liasse => {
-    const matchesSearch = liasse.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (liasse.description && liasse.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesFilter = filterActive === null || liasse.isActive === filterActive;
+  const filteredLiasses = liasses.filter((liasse) => {
+    const matchesSearch =
+      liasse.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (liasse.description &&
+        liasse.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesFilter =
+      filterActive === null || liasse.isActive === filterActive;
     return matchesSearch && matchesFilter;
   });
 
@@ -111,7 +124,10 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
         await loadLiasses();
         handleCloseDeleteModal();
       } else {
-        showNotification(result.error || "Erreur lors de la suppression", "error");
+        showNotification(
+          result.error || "Erreur lors de la suppression",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
@@ -132,7 +148,10 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
         );
         await loadLiasses();
       } else {
-        showNotification(result.error || "Erreur lors du changement de statut", "error");
+        showNotification(
+          result.error || "Erreur lors du changement de statut",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erreur lors du changement de statut:", error);
@@ -143,7 +162,9 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
   const handleModalSuccess = () => {
     loadLiasses();
     showNotification(
-      selectedLiasse ? "Liasse modifiée avec succès" : "Liasse créée avec succès",
+      selectedLiasse
+        ? "Liasse modifiée avec succès"
+        : "Liasse créée avec succès",
       "success"
     );
   };
@@ -152,7 +173,9 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
     return (
       <div className="flex items-center justify-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-        <span className="ml-2 text-gray-600 dark:text-gray-400">Chargement des liasses...</span>
+        <span className="ml-2 text-gray-600 dark:text-gray-400">
+          Chargement des liasses...
+        </span>
       </div>
     );
   }
@@ -175,7 +198,7 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
           </h3>
           <button
             onClick={handleCreate}
-            className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+            className="inline-flex items-center px-4 py-2 btn-primary hover:btn-primary text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus size={16} className="mr-2" />
             Nouvelle liasse
@@ -198,7 +221,7 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
               onClick={() => setFilterActive(null)}
               className={`px-3 py-2 text-sm rounded-lg transition-colors ${
                 filterActive === null
-                  ? "bg-indigo-600 text-white"
+                  ? "btn-primary text-white"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
               }`}
             >
@@ -208,7 +231,7 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
               onClick={() => setFilterActive(true)}
               className={`px-3 py-2 text-sm rounded-lg transition-colors ${
                 filterActive === true
-                  ? "bg-indigo-600 text-white"
+                  ? "btn-primary text-white"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
               }`}
             >
@@ -218,7 +241,7 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
               onClick={() => setFilterActive(false)}
               className={`px-3 py-2 text-sm rounded-lg transition-colors ${
                 filterActive === false
-                  ? "bg-indigo-600 text-white"
+                  ? "btn-primary text-white"
                   : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
               }`}
             >
@@ -236,10 +259,9 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
             {liasses.length === 0 ? "Aucune liasse" : "Aucune liasse trouvée"}
           </h4>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
-            {liasses.length === 0 
+            {liasses.length === 0
               ? "Commencez par créer votre première liasse pour cette série."
-              : "Essayez de modifier vos critères de recherche."
-            }
+              : "Essayez de modifier vos critères de recherche."}
           </p>
           {liasses.length === 0 && (
             <button
@@ -280,31 +302,36 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({ serieId, serieName }) =
                     </p>
                   )}
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Créée le {new Date(liasse.createdAt).toLocaleDateString('fr-FR')}
+                    Créée le{" "}
+                    {new Date(liasse.createdAt).toLocaleDateString("fr-FR")}
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleToggleStatus(liasse)}
                     className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     title={liasse.isActive ? "Désactiver" : "Activer"}
                   >
-                    {liasse.isActive ? <ToggleRight size={20} /> : <ToggleLeft size={20} />}
+                    {liasse.isActive ? (
+                      <ToggleRight size={20} />
+                    ) : (
+                      <ToggleLeft size={20} />
+                    )}
                   </button>
                   <button
                     onClick={() => handleEdit(liasse)}
-                    className="p-2 text-indigo-600 hover:text-indigo-700 transition-colors"
+                    className="p-2 btn-action btn-action-edit hover:btn-action btn-action-edit transition-colors"
                     title="Modifier"
                   >
-                    <Edit size={20} />
+                    <HugeiconsIcon icon={Edit03Icon} size={20} />
                   </button>
                   <button
                     onClick={() => handleOpenDeleteModal(liasse)}
-                    className="p-2 text-red-600 hover:text-red-700 transition-colors"
+                    className="p-2 btn-action btn-action-delete hover:btn-action btn-action-delete transition-colors"
                     title="Supprimer"
                   >
-                    <Trash2 size={20} />
+                    <HugeiconsIcon icon={Delete02Icon} size={20} />
                   </button>
                 </div>
               </div>
