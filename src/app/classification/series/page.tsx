@@ -73,15 +73,15 @@ const SerieTreeItem: React.FC<{
               onClick={() => setIsExpanded(!isExpanded)}
               className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
             >
-              <HugeiconsIcon 
-                icon={isExpanded ? ArrowDown01Icon : ArrowRight01Icon} 
-                size={16} 
+              <HugeiconsIcon
+                icon={isExpanded ? ArrowDown01Icon : ArrowRight01Icon}
+                size={16}
               />
             </button>
           ) : (
             <div className="w-6" />
           )}
-          
+
           <div className="flex items-center space-x-2">
             {/* <span className="text-sm font-medium text-gray-500">
               Niveau {serie.level}
@@ -89,9 +89,7 @@ const SerieTreeItem: React.FC<{
             <span className="text-lg font-semibold text-gray-900 dark:text-white">
               {serie.name}
             </span>
-            <span className="text-sm text-gray-500">
-              ({serie.code})
-            </span>
+            <span className="text-sm text-gray-500">({serie.code})</span>
           </div>
         </div>
 
@@ -120,13 +118,13 @@ const SerieTreeItem: React.FC<{
             onClick={() => onEdit(serie.id)}
             className="btn-action btn-action-edit"
           >
-            <HugeiconsIcon icon={Edit03Icon} size={20} />
+            <HugeiconsIcon icon={Edit03Icon} size={25} />
           </button>
           <button
             onClick={() => onDelete(serie.id)}
             className="btn-action btn-action-delete"
           >
-            <HugeiconsIcon icon={Delete02Icon} size={20} />
+            <HugeiconsIcon icon={Delete02Icon} size={25} />
           </button>
         </div>
       </div>
@@ -162,7 +160,8 @@ const SeriesPage: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
   const router = useRouter();
-  const { notification, showNotification, hideNotification } = useNotification();
+  const { notification, showNotification, hideNotification } =
+    useNotification();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -170,18 +169,21 @@ const SeriesPage: React.FC = () => {
       try {
         const result = await getSeries();
         const elapsed = Date.now() - start;
-        
+
         if (result.success && result.data) {
           setSeries(result.data);
         } else {
           console.error("Erreur de l'API:", result.error);
-          showNotification(result.error || "Erreur lors du chargement", "error");
+          showNotification(
+            result.error || "Erreur lors du chargement",
+            "error"
+          );
         }
-        
+
         // Ajuster le loading en fonction de la durée réelle
         const minLoadingTime = 800;
         const remaining = minLoadingTime - elapsed;
-        
+
         if (remaining > 0) {
           setTimeout(() => setLoading(false), remaining);
         } else {
@@ -259,7 +261,10 @@ const SeriesPage: React.FC = () => {
         }
         showNotification("Statut modifié avec succès !", "success");
       } else {
-        showNotification(result.error || "Erreur lors de la modification", "error");
+        showNotification(
+          result.error || "Erreur lors de la modification",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erreur lors de la modification du statut:", error);
@@ -270,22 +275,29 @@ const SeriesPage: React.FC = () => {
   // Fonction pour filtrer les séries selon le terme de recherche
   const filterSeries = (series: Serie[], searchTerm: string): Serie[] => {
     if (!searchTerm) return series;
-    
-    return series.filter(serie => {
-      const matchesSearch = 
-        serie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        serie.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (serie.description && serie.description.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const filteredChildren = serie.children.length > 0 
-        ? filterSeries(serie.children, searchTerm)
-        : [];
-      
-      return matchesSearch || filteredChildren.length > 0;
-    }).map(serie => ({
-      ...serie,
-      children: serie.children.length > 0 ? filterSeries(serie.children, searchTerm) : []
-    }));
+
+    return series
+      .filter((serie) => {
+        const matchesSearch =
+          serie.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          serie.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (serie.description &&
+            serie.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const filteredChildren =
+          serie.children.length > 0
+            ? filterSeries(serie.children, searchTerm)
+            : [];
+
+        return matchesSearch || filteredChildren.length > 0;
+      })
+      .map((serie) => ({
+        ...serie,
+        children:
+          serie.children.length > 0
+            ? filterSeries(serie.children, searchTerm)
+            : [],
+      }));
   };
 
   const filteredSeries = filterSeries(series, searchTerm);
@@ -294,12 +306,10 @@ const SeriesPage: React.FC = () => {
     <>
       <AdminLayout>
         {loading ? (
-         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-          <MySpinner size="lg" color="primary" />
-          <p className="mt-4 text-gray-600 font-medium">
-            Chargement ...
-          </p>
-        </div>
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+            <MySpinner size="lg" color="primary" />
+            <p className="mt-4 text-gray-600 font-medium">Chargement ...</p>
+          </div>
         ) : (
           <>
             <AdminHeaders
@@ -341,14 +351,17 @@ const SeriesPage: React.FC = () => {
                     Hiérarchie des séries
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    DCL = Durée de Conservation Légale | DUA = Durée d'Utilité Administrative
+                    DCL = Durée de Conservation Légale | DUA = Durée d'Utilité
+                    Administrative
                   </p>
                 </div>
 
                 {filteredSeries.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-gray-500 dark:text-gray-400">
-                      {searchTerm ? "Aucune série ne correspond à votre recherche" : "Aucune série trouvée"}
+                      {searchTerm
+                        ? "Aucune série ne correspond à votre recherche"
+                        : "Aucune série trouvée"}
                     </p>
                   </div>
                 ) : (

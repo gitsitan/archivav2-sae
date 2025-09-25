@@ -6,11 +6,13 @@ import { revalidatePath } from "next/cache";
 export interface TypeDocumentFormData {
   name: string;
   status?: "ACTIVE" | "ARCHIVED" | "DESTROYED";
+  description?: string | null;
 }
 
 export interface TypeDocumentItem {
   id: number;
   name: string;
+  description: string | null;
   status: "ACTIVE" | "ARCHIVED" | "DESTROYED";
   createdAt: Date;
   updatedAt: Date;

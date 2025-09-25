@@ -85,20 +85,6 @@ const TypeDocumentsPage: React.FC = () => {
     setItemToDeleteId(null);
   };
 
-  const handleToggleStatus = async (id: number) => {
-    const result = await toggleTypeDocumentStatus(id);
-    if (result.success) {
-      const refreshed = await getTypeDocuments();
-      if (refreshed.success && refreshed.data) setItems(refreshed.data);
-      showNotification("Statut modifié avec succès !", "success");
-    } else {
-      showNotification(
-        result.error || "Erreur lors de la modification",
-        "error"
-      );
-    }
-  };
-
   const filtered = items.filter((i) =>
     i.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -159,7 +145,7 @@ const TypeDocumentsPage: React.FC = () => {
                     <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                       <thead className="bg-gray-50 dark:bg-gray-700/40">
                         <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-full">
                             Nom
                           </th>
                           <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -171,12 +157,33 @@ const TypeDocumentsPage: React.FC = () => {
                       <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         {filtered.map((item) => (
                           <tr key={item.id}>
-                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
+                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 w-full">
                               {item.name}
                             </td>
                             <td className="px-4 py-3">
                               <button
-                                onClick={() => handleToggleStatus(item.id)}
+                                onClick={() =>
+                                  toggleTypeDocumentStatus(item.id).then(
+                                    async (res) => {
+                                      if (res.success) {
+                                        const refreshed =
+                                          await getTypeDocuments();
+                                        if (refreshed.success && refreshed.data)
+                                          setItems(refreshed.data);
+                                        showNotification(
+                                          "Statut modifié avec succès !",
+                                          "success"
+                                        );
+                                      } else {
+                                        showNotification(
+                                          res.error ||
+                                            "Erreur lors de la modification",
+                                          "error"
+                                        );
+                                      }
+                                    }
+                                  )
+                                }
                                 className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                                   item.status === "ACTIVE"
                                     ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"

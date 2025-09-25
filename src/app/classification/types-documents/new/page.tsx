@@ -19,7 +19,7 @@ const schema = z.object({
     .string()
     .min(1, "Le nom est requis")
     .min(2, "Le nom doit contenir au moins 2 caractères"),
-  status: z.enum(["ACTIVE", "ARCHIVED", "DESTROYED"]).optional(),
+  description: z.string().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -36,7 +36,7 @@ const NewTypeDocumentPage = () => {
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", status: "ACTIVE" },
+    defaultValues: { name: "", description: "" },
   });
 
   const handleBack = () => router.back();
@@ -98,23 +98,22 @@ const NewTypeDocumentPage = () => {
                     </p>
                   )}
                 </div>
-                <div>
-                  <label
-                    htmlFor="status"
-                    className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
-                  >
-                    Statut
-                  </label>
-                  <select
-                    id="status"
-                    {...register("status")}
-                    className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
-                  >
-                    <option value="ACTIVE">Actif</option>
-                    <option value="ARCHIVED">Archivé</option>
-                    <option value="DESTROYED">Détruit</option>
-                  </select>
-                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300"
+                >
+                  Description (optionnel)
+                </label>
+                <textarea
+                  id="description"
+                  {...register("description")}
+                  rows={3}
+                  className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                  placeholder="Décrivez ce type de document..."
+                />
               </div>
 
               <div className="pt-6 flex justify-between items-center space-x-4">

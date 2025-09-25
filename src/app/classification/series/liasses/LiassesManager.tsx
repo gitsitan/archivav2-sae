@@ -201,7 +201,6 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({
             className="inline-flex items-center px-4 py-2 btn-primary hover:btn-primary text-white text-sm font-medium rounded-lg transition-colors"
           >
             <Plus size={16} className="mr-2" />
-            Nouvelle liasse
           </button>
         </div>
 
@@ -324,14 +323,14 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({
                     className="p-2 btn-action btn-action-edit hover:btn-action btn-action-edit transition-colors"
                     title="Modifier"
                   >
-                    <HugeiconsIcon icon={Edit03Icon} size={20} />
+                    <HugeiconsIcon icon={Edit03Icon} size={25} />
                   </button>
                   <button
                     onClick={() => handleOpenDeleteModal(liasse)}
                     className="p-2 btn-action btn-action-delete hover:btn-action btn-action-delete transition-colors"
                     title="Supprimer"
                   >
-                    <HugeiconsIcon icon={Delete02Icon} size={20} />
+                    <HugeiconsIcon icon={Delete02Icon} size={25} />
                   </button>
                 </div>
               </div>
