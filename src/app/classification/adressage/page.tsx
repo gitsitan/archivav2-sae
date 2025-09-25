@@ -1,12 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, ToggleLeft, ToggleRight, MapPin, Search } from "lucide-react";
-import { 
-  getLocalisations, 
-  deleteLocalisation, 
-  toggleLocalisationStatus, 
-  LocalisationWithChildren 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  MapPin,
+  Search,
+} from "lucide-react";
+import {
+  getLocalisations,
+  deleteLocalisation,
+  toggleLocalisationStatus,
+  LocalisationWithChildren,
 } from "./actions";
 import LocalisationModal from "./LocalisationModal";
 import DeleteConfirmationModal from "./DeleteConfirmationModal";
@@ -18,36 +26,43 @@ import MySpinner from "@/components/ui/my-spinner";
 
 const MAX_LEVEL = 3;
 
-
-
 const AdressagePage: React.FC = () => {
-  const [localisations, setLocalisations] = useState<LocalisationWithChildren[]>([]);
+  const [localisations, setLocalisations] = useState<
+    LocalisationWithChildren[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [selectedLocalisation, setSelectedLocalisation] = useState<LocalisationWithChildren | null>(null);
-  const [selectedParentId, setSelectedParentId] = useState<number | undefined>(undefined);
-  const [selectedParentName, setSelectedParentName] = useState<string | undefined>(undefined);
-  const [localisationToDelete, setLocalisationToDelete] = useState<LocalisationWithChildren | null>(null);
+  const [selectedLocalisation, setSelectedLocalisation] =
+    useState<LocalisationWithChildren | null>(null);
+  const [selectedParentId, setSelectedParentId] = useState<number | undefined>(
+    undefined
+  );
+  const [selectedParentName, setSelectedParentName] = useState<
+    string | undefined
+  >(undefined);
+  const [localisationToDelete, setLocalisationToDelete] =
+    useState<LocalisationWithChildren | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterActive, setFilterActive] = useState<boolean | null>(null);
   const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
 
-  const { notification, showNotification, hideNotification } = useNotification();
+  const { notification, showNotification, hideNotification } =
+    useNotification();
 
   // Charger les localisations
   const loadLocalisations = async () => {
     try {
       setLoading(true);
       const result = await getLocalisations();
-      
+
       if (result.success && result.data) {
         setLocalisations(result.data);
         // Ouvrir tous les éléments par défaut
         const allIds = new Set<number>();
         const collectIds = (items: LocalisationWithChildren[]) => {
-          items.forEach(item => {
+          items.forEach((item) => {
             allIds.add(item.id);
             if (item.children) {
               collectIds(item.children);
@@ -72,35 +87,45 @@ const AdressagePage: React.FC = () => {
   }, []);
 
   // Filtrer les localisations
-  const filterLocalisations = (items: LocalisationWithChildren[]): LocalisationWithChildren[] => {
-    return items.filter(item => {
-      const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           item.code.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = filterActive === null || item.isActive === filterActive;
-      
-      if (matchesSearch && matchesFilter) {
-        return true;
-      }
-      
-      // Vérifier les enfants
-      if (item.children && item.children.length > 0) {
-        const filteredChildren = filterLocalisations(item.children);
-        if (filteredChildren.length > 0) {
+  const filterLocalisations = (
+    items: LocalisationWithChildren[]
+  ): LocalisationWithChildren[] => {
+    return items
+      .filter((item) => {
+        const matchesSearch =
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.code.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesFilter =
+          filterActive === null || item.isActive === filterActive;
+
+        if (matchesSearch && matchesFilter) {
           return true;
         }
-      }
-      
-      return false;
-    }).map(item => ({
-      ...item,
-      children: item.children ? filterLocalisations(item.children) : []
-    }));
+
+        // Vérifier les enfants
+        if (item.children && item.children.length > 0) {
+          const filteredChildren = filterLocalisations(item.children);
+          if (filteredChildren.length > 0) {
+            return true;
+          }
+        }
+
+        return false;
+      })
+      .map((item) => ({
+        ...item,
+        children: item.children ? filterLocalisations(item.children) : [],
+      }));
   };
 
   const filteredLocalisations = filterLocalisations(localisations);
 
   // Gestion des modals
-  const handleOpenModal = (parentId?: number, parentName?: string, localisation?: LocalisationWithChildren) => {
+  const handleOpenModal = (
+    parentId?: number,
+    parentName?: string,
+    localisation?: LocalisationWithChildren
+  ) => {
     setSelectedLocalisation(localisation || null);
     setSelectedParentId(parentId);
     setSelectedParentName(parentName);
@@ -146,7 +171,10 @@ const AdressagePage: React.FC = () => {
         await loadLocalisations();
         handleCloseDeleteModal();
       } else {
-        showNotification(result.error || "Erreur lors de la suppression", "error");
+        showNotification(
+          result.error || "Erreur lors de la suppression",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erreur lors de la suppression:", error);
@@ -162,12 +190,17 @@ const AdressagePage: React.FC = () => {
 
       if (result.success) {
         showNotification(
-          `Localisation ${localisation.isActive ? "désactivée" : "activée"} avec succès`,
+          `Localisation ${
+            localisation.isActive ? "désactivée" : "activée"
+          } avec succès`,
           "success"
         );
         await loadLocalisations();
       } else {
-        showNotification(result.error || "Erreur lors du changement de statut", "error");
+        showNotification(
+          result.error || "Erreur lors du changement de statut",
+          "error"
+        );
       }
     } catch (error) {
       console.error("Erreur lors du changement de statut:", error);
@@ -178,7 +211,9 @@ const AdressagePage: React.FC = () => {
   const handleModalSuccess = () => {
     loadLocalisations();
     showNotification(
-      selectedLocalisation ? "Localisation modifiée avec succès" : "Localisation créée avec succès",
+      selectedLocalisation
+        ? "Localisation modifiée avec succès"
+        : "Localisation créée avec succès",
       "success"
     );
   };
@@ -199,7 +234,8 @@ const AdressagePage: React.FC = () => {
     localisation: LocalisationWithChildren;
     level: number;
   }> = ({ localisation, level }) => {
-    const hasChildren = localisation.children && localisation.children.length > 0;
+    const hasChildren =
+      localisation.children && localisation.children.length > 0;
     const isExpanded = expandedItems.has(localisation.id);
     const canAddChild = level < MAX_LEVEL;
     const isMaxLevel = level >= MAX_LEVEL;
@@ -213,14 +249,17 @@ const AdressagePage: React.FC = () => {
                 onClick={() => toggleExpansion(localisation.id)}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
               >
-                {isExpanded ? <ToggleLeft size={16} /> : <ToggleRight size={16} />}
+                {isExpanded ? (
+                  <ToggleLeft size={16} />
+                ) : (
+                  <ToggleRight size={16} />
+                )}
               </button>
             ) : (
               <div className="w-6" />
             )}
-            
+
             <div className="flex items-center space-x-2">
-   
               <div>
                 <div className="flex items-center space-x-2">
                   <span className="font-medium text-gray-900 dark:text-white">
@@ -238,18 +277,19 @@ const AdressagePage: React.FC = () => {
                   >
                     {localisation.isActive ? "Active" : "Inactive"}
                   </span>
-      
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {canAddChild && (
               <button
                 onClick={() => handleCreate(localisation.id, localisation.name)}
                 className="p-2 text-green-600 hover:text-green-700 transition-colors"
-                title={`Ajouter une sous-localisation (niveau ${localisation.level + 1})`}
+                title={`Ajouter une sous-localisation (niveau ${
+                  localisation.level + 1
+                })`}
               >
                 <Plus size={16} />
               </button>
@@ -259,7 +299,11 @@ const AdressagePage: React.FC = () => {
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               title={localisation.isActive ? "Désactiver" : "Activer"}
             >
-              {localisation.isActive ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
+              {localisation.isActive ? (
+                <ToggleRight size={16} />
+              ) : (
+                <ToggleLeft size={16} />
+              )}
             </button>
             <button
               onClick={() => handleEdit(localisation)}
@@ -277,7 +321,7 @@ const AdressagePage: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         {hasChildren && isExpanded && (
           <div className="ml-4">
             {localisation.children.map((child) => (
@@ -331,10 +375,9 @@ const AdressagePage: React.FC = () => {
               </h3>
               <button
                 onClick={() => handleCreate()}
-                className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+                className="inline-flex items-center px-4 py-2 btn-primary hover:btn-primary text-white text-sm font-medium rounded-lg transition-colors"
               >
-                <Plus size={16} className="mr-2" />
-                Nouvelle localisation
+                <Plus size={25} />
               </button>
             </div>
 
@@ -342,7 +385,10 @@ const AdressagePage: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  <Search
+                    size={16}
+                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  />
                   <input
                     type="text"
                     placeholder="Rechercher une localisation..."
@@ -351,38 +397,6 @@ const AdressagePage: React.FC = () => {
                     className="w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   />
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setFilterActive(null)}
-                  className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    filterActive === null
-                      ? "bg-indigo-600 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  Toutes
-                </button>
-                <button
-                  onClick={() => setFilterActive(true)}
-                  className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    filterActive === true
-                      ? "bg-indigo-600 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  Actives
-                </button>
-                <button
-                  onClick={() => setFilterActive(false)}
-                  className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    filterActive === false
-                      ? "bg-indigo-600 text-white"
-                      : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-                  }`}
-                >
-                  Inactives
-                </button>
               </div>
             </div>
           </div>
@@ -393,18 +407,19 @@ const AdressagePage: React.FC = () => {
               <div className="text-center py-8">
                 <MapPin size={48} className="mx-auto text-gray-400 mb-4" />
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  {localisations.length === 0 ? "Aucune localisation" : "Aucune localisation trouvée"}
+                  {localisations.length === 0
+                    ? "Aucune localisation"
+                    : "Aucune localisation trouvée"}
                 </h4>
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {localisations.length === 0 
+                  {localisations.length === 0
                     ? "Commencez par créer votre première localisation."
-                    : "Essayez de modifier vos critères de recherche."
-                  }
+                    : "Essayez de modifier vos critères de recherche."}
                 </p>
                 {localisations.length === 0 && (
                   <button
                     onClick={() => handleCreate()}
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+                    className="inline-flex items-center px-4 py-2 btn-primary hover:btn-primary text-white text-sm font-medium rounded-lg transition-colors"
                   >
                     <Plus size={16} className="mr-2" />
                     Créer la première localisation

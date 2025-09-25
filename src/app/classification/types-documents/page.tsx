@@ -199,7 +199,7 @@ const TypeDocumentsPage: React.FC = () => {
                                   onClick={() => handleEdit(item.id)}
                                   className="btn-action btn-action-edit"
                                 >
-                                  <HugeiconsIcon icon={Edit03Icon} size={20} />
+                                  <HugeiconsIcon icon={Edit03Icon} size={25} />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item.id)}
@@ -207,7 +207,7 @@ const TypeDocumentsPage: React.FC = () => {
                                 >
                                   <HugeiconsIcon
                                     icon={Delete02Icon}
-                                    size={20}
+                                    size={25}
                                   />
                                 </button>
                               </div>
