@@ -229,7 +229,7 @@ const CreateSeriePage = () => {
                       <option value="">Aucune série parente (série racine)</option>
                       {parentSeries.map((parent) => (
                         <option key={parent.id} value={parent.id}>
-                          {parent.name} ({parent.code}) - Niveau {parent.level}
+                          {parent.name} ({parent.code})
                         </option>
                       ))}
                     </select>

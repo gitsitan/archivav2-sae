@@ -15,6 +15,7 @@ import AdminLayout from "@/app/adminLayout";
 import { getSerieById, updateSerie, getParentSeries } from "../../actions";
 import MySpinner from "@/components/ui/my-spinner";
 import Notification from "@/components/ui/notifications";
+import LiassesManager from "../../liasses/LiassesManager";
 
 interface ParentSerie {
   id: number;
@@ -218,7 +219,7 @@ const UpdateSeriePage = () => {
         ) : (
           <>
             <AdminHeaders
-              title="Éditer la série"
+              title={`Éditer la série ${formData.name}`}
               desc="Modifiez les informations de cette série documentaire."
             />
             {notification.visible && (
@@ -330,7 +331,7 @@ const UpdateSeriePage = () => {
                       <option value="">Aucune série parente (série racine)</option>
                       {parentSeries.map((parent) => (
                         <option key={parent.id} value={parent.id}>
-                          {parent.name} ({parent.code}) - Niveau {parent.level}
+                          {parent.name} ({parent.code})
                         </option>
                       ))}
                     </select>
@@ -489,51 +490,10 @@ const UpdateSeriePage = () => {
                 {/* Onglet Liasses - seulement si niveau > 1 */}
                 {serieLevel > 1 && activeTab === "liasses" && (
                   <div className="px-6 py-8">
-                    <div className="mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                        Gestion des liasses
-                      </h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Gérez les liasses (chemises) associées à cette série documentaire.
-                      </p>
-                    </div>
-
-                    {/* Contenu de l'onglet Liasses */}
-                    <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
-                      <div className="text-center">
-                        <div className="mx-auto h-12 w-12 bg-gray-200 dark:bg-gray-600 rounded-full flex items-center justify-center mb-4">
-                          <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </div>
-                        <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                          Gestion des liasses
-                        </h4>
-                        <p className="text-gray-600 dark:text-gray-400 mb-4">
-                          Cette fonctionnalité sera bientôt disponible pour gérer les liasses associées à cette série.
-                        </p>
-                        <div className="flex justify-center space-x-3">
-                          <button
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                            </svg>
-                            Ajouter une liasse
-                          </button>
-                          <button
-                            type="button"
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            <svg className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                            </svg>
-                            Voir toutes les liasses
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+                    <LiassesManager 
+                      serieId={Number(id)} 
+                      serieName={formData.name || "Série"} 
+                    />
                   </div>
                 )}
               </div>
