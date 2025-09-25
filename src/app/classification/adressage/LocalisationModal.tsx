@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X, Save } from "lucide-react";
-import { createLocalisation, updateLocalisation, getParentLocalisations, LocalisationFormData, LocalisationWithParent } from "./actions";
+import { createLocalisation, updateLocalisation, getParentLocalisations, getLocalisationById, LocalisationWithParent } from "./actions";
 
 interface LocalisationModalProps {
   isOpen: boolean;
@@ -27,7 +27,7 @@ const localisationSchema = z.object({
     .min(2, "Le nom doit contenir au moins 2 caractères"),
   isActive: z.boolean(),
 });
-
+const LEVEL_NAME=[{level:1,name:"Batiment"},{level:2,name:"Salle"},{level:3,name:"Rayon"}];
 type LocalisationFormData = z.infer<typeof localisationSchema>;
 
 const LocalisationModal: React.FC<LocalisationModalProps> = ({
@@ -41,6 +41,7 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [parentLocalisations, setParentLocalisations] = useState<any[]>([]);
+  const [parentLevel, setParentLevel] = useState<number>(0);
 
   const {
     register,
@@ -56,6 +57,40 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
       isActive: true,
     },
   });
+
+  // Fonction pour obtenir le nom du niveau
+  const getLevelName = (level: number) => {
+    const levelInfo = LEVEL_NAME.find(item => item.level === level);
+    return levelInfo ? levelInfo.name : "Localisation";
+  };
+
+  // Fonction pour obtenir le niveau suivant
+  const getNextLevel = () => {
+    if (localisation) {
+      return localisation.level;
+    }
+    if (parentId) {
+      return parentLevel + 1;
+    }
+    return 1; // Niveau racine
+  };
+
+  // Charger le niveau du parent
+  useEffect(() => {
+    if (parentId && isOpen) {
+      const loadParentLevel = async () => {
+        try {
+          const result = await getLocalisationById(parentId);
+          if (result.success && result.data) {
+            setParentLevel((result.data as any).level || 0);
+          }
+        } catch (error) {
+          console.error("Erreur lors du chargement du niveau du parent:", error);
+        }
+      };
+      loadParentLevel();
+    }
+  }, [parentId, isOpen]);
 
   // Charger les localisations parentes
   useEffect(() => {
@@ -101,7 +136,7 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
 
       console.log("Modal onSubmit - parentId:", parentId, "parentName:", parentName);
 
-      const localisationData: LocalisationFormData = {
+      const localisationData = {
         ...data,
         parentId: parentId || undefined,
       };
@@ -146,7 +181,10 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
           {/* Header */}
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {localisation ? "Modifier la localisation" : "Nouvelle localisation"}
+              {localisation 
+                ? `Modifier le ${getLevelName(localisation.level).toLowerCase()}` 
+                : `Nouveau ${getLevelName(getNextLevel()).toLowerCase()}`
+              }
             </h3>
             <button
               onClick={handleClose}
@@ -183,14 +221,14 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                 htmlFor="code"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Code de la localisation <span className="text-red-500">*</span>
+                Code  <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="code"
                 {...register("code")}
                 className="block w-full py-2 px-3 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Ex: LOC001"
+                placeholder={`Ex: ${getLevelName(getNextLevel()).toUpperCase()}001`}
                 disabled={isSubmitting}
               />
               {errors.code && (
@@ -204,14 +242,14 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Nom de la localisation <span className="text-red-500">*</span>
+                Nom <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="name"
                 {...register("name")}
                 className="block w-full py-2 px-3 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="Ex: Bureau 101"
+                placeholder={`Ex: ${getLevelName(getNextLevel())} 101`}
                 disabled={isSubmitting}
               />
               {errors.name && (
@@ -232,7 +270,7 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                 htmlFor="isActive"
                 className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
               >
-                Localisation active
+                Actif
               </label>
             </div>
 
