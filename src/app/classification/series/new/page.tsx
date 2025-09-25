@@ -13,6 +13,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 import AdminLayout from "@/app/adminLayout";
 import { createSerie, getParentSeries } from "../actions";
+import { createLiasse } from "../liasses/actions";
 import MySpinner from "@/components/ui/my-spinner";
 
 interface ParentSerie {
@@ -115,6 +116,21 @@ const CreateSeriePage = () => {
       });
 
       if (result.success) {
+        // Si la série a un parent (niveau > 1), créer une liasse par défaut "@Racine"
+        if (selectedParentId && result.data) {
+          try {
+            await createLiasse({
+              name: "@Racine",
+              description: "Liasse par défaut pour les documents non classés",
+              serieId: result.data.id,
+              isActive: true,
+            });
+          } catch (liasseError) {
+            console.error("Erreur lors de la création de la liasse par défaut:", liasseError);
+            // Ne pas bloquer la création de la série si la liasse échoue
+          }
+        }
+
         showNotification("Série créée avec succès !", "success");
         setTimeout(() => router.push("/classification/series"), 2000);
       } else {
@@ -234,9 +250,14 @@ const CreateSeriePage = () => {
                       ))}
                     </select>
                     {selectedParentId && (
-                      <p className="text-sm text-blue-600 mt-1">
-                        Le niveau sera calculé automatiquement selon la série parente
-                      </p>
+                      <div className="mt-2 space-y-1">
+                        <p className="text-sm text-blue-600">
+                          Le niveau sera calculé automatiquement selon la série parente
+                        </p>
+                        <p className="text-sm text-green-600">
+                          ✓ Une liasse "@Racine" sera créée automatiquement pour cette sous-série
+                        </p>
+                      </div>
                     )}
                   </div>
 
