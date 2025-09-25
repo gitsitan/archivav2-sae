@@ -14,6 +14,7 @@ import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 import AdminLayout from "@/app/adminLayout";
 import MySpinner from "@/components/ui/my-spinner";
 import { updateGroup, getGroupById } from "../../actions";
+import type { GroupFormData as ServerGroupFormData } from "../../actions";
 
 // Schéma de validation Zod pour le formulaire de groupe
 const groupSchema = z.object({
@@ -38,8 +39,7 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [permissionsList, setPermissionsList] = useState<any[]>([]);
-  const [checkedPermissions, setCheckedPermissions] = useState<string[]>([]);
+  // permissions removed from edit UI per request
 
   const {
     register,
@@ -67,22 +67,13 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
           const group = groupResult.data;
           setValue("name", group.name);
           setValue("description", group.description);
-
-          // Utilisation de `setCheckedPermissions` pour mettre à jour l'état local
-          setCheckedPermissions(group.permissions || []);
         } else {
           showNotification(groupResult.error || "Groupe non trouvé.", "error");
           router.push("/admin/groups");
           return;
         }
 
-        // Chargement des permissions depuis le fichier public
-        const permissionsResponse = await fetch("/data/permissions.json");
-        if (!permissionsResponse.ok) {
-          throw new Error("Failed to fetch permissions data");
-        }
-        const permissionsData = await permissionsResponse.json();
-        setPermissionsList(permissionsData);
+        // permissions not loaded for edit page
       } catch (error) {
         console.error("Erreur de chargement des données:", error);
         showNotification("Erreur de chargement des données", "error");
@@ -101,11 +92,14 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
     try {
       setIsSubmitting(true);
 
-      // Assure que les permissions sont bien transmises
-      const result = await updateGroup(groupId, {
-        ...data,
-        permissions: checkedPermissions,
-      });
+      // Normalize payload to match server GroupFormData; permissions intentionally empty
+      const payload: ServerGroupFormData = {
+        name: data.name,
+        description: data.description ?? null,
+        permissions: [],
+      };
+
+      const result = await updateGroup(groupId, payload);
 
       if (result.success) {
         showNotification("Groupe mis à jour avec succès !", "success");
@@ -180,48 +174,7 @@ const EditGroupPage = ({ params }: EditGroupPageProps) => {
                       )}
                     </div>
 
-                    {/* Liste de cases à cocher pour les permissions */}
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Permissions
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
-                        {permissionsList.map((permission) => (
-                          <div key={permission.id} className="flex items-start">
-                            <input
-                              type="checkbox"
-                              id={permission.id}
-                              value={permission.id}
-                              checked={checkedPermissions.includes(
-                                permission.id
-                              )}
-                              onChange={(e) => {
-                                const { value, checked } = e.target;
-                                const newCheckedPermissions = checked
-                                  ? [...checkedPermissions, value]
-                                  : checkedPermissions.filter(
-                                      (id) => id !== value
-                                    );
-                                setCheckedPermissions(newCheckedPermissions);
-                                setValue("permissions", newCheckedPermissions);
-                              }}
-                              className="mt-1 h-4 w-4 text-blue-600 bg-gray-200 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <div className="ml-3 text-sm">
-                              <label
-                                htmlFor={permission.id}
-                                className="font-medium text-gray-700 dark:text-gray-300"
-                              >
-                                {permission.name}
-                              </label>
-                              <p className="text-gray-500 dark:text-gray-400">
-                                {permission.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    {/* Permissions removed from edit page */}
 
                     {/* Description du groupe */}
                     <div>
