@@ -14,6 +14,7 @@ import { ArrowTurnBackwardIcon } from "@hugeicons/core-free-icons";
 import AdminLayout from "@/app/adminLayout";
 import MySpinner from "@/components/ui/my-spinner";
 import { createGroup } from "../actions";
+import type { GroupFormData as ServerGroupFormData } from "../actions";
 
 // Schéma de validation Zod pour le formulaire de groupe
 const groupSchema = z.object({
@@ -31,7 +32,6 @@ const CreateGroupPage = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [permissionsList, setPermissionsList] = useState<any[]>([]);
   const {
     register,
     handleSubmit,
@@ -44,26 +44,9 @@ const CreateGroupPage = () => {
     useNotification();
 
   useEffect(() => {
-    // Fonction asynchrone pour charger les données
-    const loadPermissions = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/data/permissions.json");
-        if (!response.ok) {
-          throw new Error("Failed to fetch permissions data");
-        }
-        const data = await response.json();
-        setPermissionsList(data);
-      } catch (error) {
-        console.error("Erreur de chargement des permissions:", error);
-        showNotification("Erreur de chargement des permissions", "error");
-      } finally {
-        setTimeout(() => setLoading(false), 800);
-      }
-    };
-
-    loadPermissions();
-  }, [showNotification]);
+    // No permissions to load anymore; keep a short delay for spinner UX
+    setTimeout(() => setLoading(false), 300);
+  }, []);
 
   const handleBack = () => {
     router.back();
@@ -73,7 +56,13 @@ const CreateGroupPage = () => {
     try {
       setIsSubmitting(true);
 
-      const result = await createGroup(data);
+      const payload: ServerGroupFormData = {
+        name: data.name,
+        description: data.description ?? null,
+        permissions: [],
+      };
+
+      const result = await createGroup(payload);
 
       if (result.success) {
         showNotification("Groupe créé avec succès !", "success");
@@ -148,35 +137,7 @@ const CreateGroupPage = () => {
                         </p>
                       )}
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
-                        Permissions
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
-                        {permissionsList.map((permission) => (
-                          <div key={permission.id} className="flex items-start">
-                            <input
-                              type="checkbox"
-                              id={permission.id}
-                              value={permission.id}
-                              {...register("permissions")}
-                              className="mt-1 h-4 w-4 text-blue-600 bg-gray-200 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <div className="ml-3 text-sm">
-                              <label
-                                htmlFor={permission.id}
-                                className="font-medium text-gray-700 dark:text-gray-300"
-                              >
-                                {permission.name}
-                              </label>
-                              <p className="text-gray-500 dark:text-gray-400">
-                                {permission.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    {/* Permissions removed */}
 
                     {/* Description du groupe */}
                     <div>
