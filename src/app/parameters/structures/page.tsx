@@ -9,15 +9,22 @@ import {
   Edit03Icon,
   Search01Icon,
   Building01Icon,
+  ArrowDown01Icon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons";
+
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
 
 import useNotification from "@/app/hooks/useNotifications";
 import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
-import { getStructures, deleteStructure, toggleStructureStatus } from "./actions";
+import { getStructures, deleteStructure, toggleStructureStatus, StructureWithChildren } from "./actions";
 import AdminHeaders from "@/app/components/adminHeader";
 import MySpinner from "@/components/ui/my-spinner";
+import { Plus } from "lucide-react";
+import StructureModal from "./StructureModal";
+
+const MAX_LEVEL = 3;
 
 interface Structure {
   id: number;
@@ -32,12 +39,17 @@ interface Structure {
 
 
 const StructurePage: React.FC = () => {
-  const [structures, setStructures] = useState<Structure[]>([]);
+  const [structures, setStructures] = useState<StructureWithChildren[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const [showDialog, setShowDialog] = useState(false);
   const [itemToDeleteId, setItemToDeleteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStructure, setSelectedStructure] = useState<StructureWithChildren | null>(null);
+  const [selectedParentId, setSelectedParentId] = useState<number | undefined>(undefined);
+  const [selectedParentName, setSelectedParentName] = useState<string | undefined>(undefined);
+  const [expandedItems, setExpandedItems] = useState<Set<number>>(new Set());
   const { notification, showNotification, hideNotification } =
     useNotification();
 
@@ -50,6 +62,18 @@ const StructurePage: React.FC = () => {
         
         if (result.success && result.data) {
           setStructures(result.data);
+          // Ouvrir tous les éléments par défaut
+          const allIds = new Set<number>();
+          const collectIds = (items: StructureWithChildren[]) => {
+            items.forEach((item) => {
+              allIds.add(item.id);
+              if (item.children) {
+                collectIds(item.children);
+              }
+            });
+          };
+          collectIds(result.data);
+          setExpandedItems(allIds);
         } else {
           console.error("Erreur de l'API:", result.error);
           showNotification(result.error || "Erreur lors du chargement", "error");
@@ -77,18 +101,106 @@ const StructurePage: React.FC = () => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredStructures = structures.filter((structure) =>
-    Object.values(structure).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  // Fonction pour filtrer les structures selon le terme de recherche
+  const filterStructures = (structures: StructureWithChildren[], searchTerm: string): StructureWithChildren[] => {
+    if (!searchTerm) return structures;
 
-  const handleCreate = () => {
-    router.push("/parameters/structures/new");
+    return structures
+      .filter((structure) => {
+        const matchesSearch =
+          structure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (structure.address && structure.address.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (structure.phone && structure.phone.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (structure.email && structure.email.toLowerCase().includes(searchTerm.toLowerCase()));
+
+        const filteredChildren =
+          structure.children.length > 0
+            ? filterStructures(structure.children, searchTerm)
+            : [];
+
+        return matchesSearch || filteredChildren.length > 0;
+      })
+      .map((structure) => ({
+        ...structure,
+        children:
+          structure.children.length > 0
+            ? filterStructures(structure.children, searchTerm)
+            : [],
+      }));
   };
 
-  const handleEdit = (id: number) => {
-    router.push(`/parameters/structures/edit/${id}`);
+  const filteredStructures = filterStructures(structures, searchTerm);
+
+  const handleCreate = () => {
+    setSelectedStructure(null);
+    setSelectedParentId(undefined);
+    setSelectedParentName(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleCreateChild = (parentId: number, parentName: string) => {
+    setSelectedStructure(null);
+    setSelectedParentId(parentId);
+    setSelectedParentName(parentName);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (structure: StructureWithChildren) => {
+    setSelectedStructure(structure);
+    setSelectedParentId(undefined);
+    setSelectedParentName(undefined);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedStructure(null);
+    setSelectedParentId(undefined);
+    setSelectedParentName(undefined);
+  };
+
+  const handleModalSuccess = () => {
+    // Recharger les données
+    const loadStructures = async () => {
+      try {
+        const result = await getStructures();
+        if (result.success && result.data) {
+          setStructures(result.data);
+          // Ouvrir tous les éléments par défaut
+          const allIds = new Set<number>();
+          const collectIds = (items: StructureWithChildren[]) => {
+            items.forEach((item) => {
+              allIds.add(item.id);
+              if (item.children) {
+                collectIds(item.children);
+              }
+            });
+          };
+          collectIds(result.data);
+          setExpandedItems(allIds);
+        }
+      } catch (error) {
+        console.error("Erreur lors du rechargement des structures:", error);
+      }
+    };
+    loadStructures();
+    showNotification(
+      selectedStructure
+        ? "Structure modifiée avec succès"
+        : "Structure créée avec succès",
+      "success"
+    );
+  };
+
+  // Gestion de l'expansion
+  const toggleExpansion = (id: number) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedItems(newExpanded);
   };
 
   const handleDelete = async (id: number) => {
@@ -129,17 +241,22 @@ const StructurePage: React.FC = () => {
     setItemToDeleteId(null);
   };
 
-  const handleToggleStatus = async (id: number) => {
+  const handleToggleStatus = async (structure: StructureWithChildren) => {
     try {
-      const result = await toggleStructureStatus(id);
+      const result = await toggleStructureStatus(structure.id);
       if (result.success) {
-        setStructures((prevStructures) =>
-          prevStructures.map((structure) =>
-            structure.id === id
-              ? { ...structure, isActive: !structure.isActive }
-              : structure
-          )
-        );
+        // Recharger les données
+        const loadStructures = async () => {
+          try {
+            const result = await getStructures();
+            if (result.success && result.data) {
+              setStructures(result.data);
+            }
+          } catch (error) {
+            console.error("Erreur lors du rechargement des structures:", error);
+          }
+        };
+        loadStructures();
         showNotification("Statut modifié avec succès !", "success");
       } else {
         showNotification(result.error || "Erreur lors de la modification", "error");
@@ -148,6 +265,116 @@ const StructurePage: React.FC = () => {
       console.error("Erreur lors de la modification du statut:", error);
       showNotification("Erreur lors de la modification du statut", "error");
     }
+  };
+
+  // Composant récursif pour l'affichage hiérarchique
+  const StructureTreeItem: React.FC<{
+    structure: StructureWithChildren;
+    level: number;
+  }> = ({ structure, level }) => {
+    const hasChildren = structure.children && structure.children.length > 0;
+    const isExpanded = expandedItems.has(structure.id);
+    const canAddChild = level < MAX_LEVEL;
+
+    return (
+      <div className="border-l-2 border-gray-200 dark:border-gray-700 ml-4">
+        <div className="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-2 hover:shadow-md transition-shadow">
+          <div className="flex items-center space-x-3 flex-1">
+            {hasChildren ? (
+              <button
+                onClick={() => toggleExpansion(structure.id)}
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
+              >
+                <HugeiconsIcon
+                  icon={isExpanded ? ArrowDown01Icon : ArrowRight01Icon}
+                  size={16}
+                />
+              </button>
+            ) : (
+              <div className="w-6" />
+            )}
+
+            <div className="flex items-center space-x-2">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {structure.name}
+                  </span>
+                </div>
+                {(structure.address || structure.phone || structure.email) && (
+                  <div className="mt-1 space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                    {structure.address && (
+                      <p>
+                        <span className="font-medium">Adresse:</span> {structure.address}
+                      </p>
+                    )}
+                    {structure.phone && (
+                      <p>
+                        <span className="font-medium">Téléphone:</span> {structure.phone}
+                      </p>
+                    )}
+                    {structure.email && (
+                      <p>
+                        <span className="font-medium">Email:</span> {structure.email}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleToggleStatus(structure)}
+              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                structure.isActive
+                  ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                  : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+              }`}
+            >
+              {structure.isActive ? "Actif" : "Inactif"}
+            </button>
+
+            {canAddChild && (
+              <button
+                onClick={() => handleCreateChild(structure.id, structure.name)}
+                className="p-2 hover:btn-primary transition-colors"
+                title="Ajouter une sous-structure"
+              >
+                <HugeiconsIcon icon={Add01FreeIcons} size={20} />
+              </button>
+            )}
+            <button
+              onClick={() => handleEdit(structure)}
+              className="p-2 hover:btn-primary transition-colors"
+              title="Modifier"
+            >
+              <HugeiconsIcon icon={Edit03Icon} size={20} />
+            </button>
+            <button
+              onClick={() => handleDelete(structure.id)}
+              className="p-2 text-red-600 hover:text-red-700 transition-colors"
+              title="Supprimer"
+            >
+              <HugeiconsIcon icon={Delete02Icon} size={20} />
+            </button>
+          </div>
+        </div>
+
+        {hasChildren && isExpanded && (
+          <div className="ml-4">
+            {structure.children.map((child) => (
+              <StructureTreeItem
+                key={child.id}
+                structure={child}
+                level={level + 1}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
   };
 
 
@@ -246,72 +473,13 @@ const StructurePage: React.FC = () => {
                 )}
               </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-2">
                 {filteredStructures.map((structure) => (
-                  <div
+                  <StructureTreeItem
                     key={structure.id}
-                    className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-3">
-                        <HugeiconsIcon
-                          icon={Building01Icon}
-                          size={24}
-                          className="text-gray-400"
-                        />
-                        <div>
-                          <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
-                            {structure.name}
-                          </h4>
-                          <div className="mt-1 space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                            {structure.address && (
-                              <p>
-                                <span className="font-medium">Adresse:</span> {structure.address}
-                              </p>
-                            )}
-                            {structure.phone && (
-                              <p>
-                                <span className="font-medium">Téléphone:</span> {structure.phone}
-                              </p>
-                            )}
-                            {structure.email && (
-                              <p>
-                                <span className="font-medium">Email:</span> {structure.email}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <button
-                        onClick={() => handleToggleStatus(structure.id)}
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          structure.isActive
-                            ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                            : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
-                        }`}
-                      >
-                        {structure.isActive ? "Actif" : "Inactif"}
-                      </button>
-
-                      <button
-                        onClick={() => handleEdit(structure.id)}
-                        className="p-2 text-gray-600 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
-                        title="Modifier"
-                      >
-                        <HugeiconsIcon icon={Edit03Icon} size={20} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(structure.id)}
-                        className="p-2 text-gray-600 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
-                        title="Supprimer"
-                      >
-                        <HugeiconsIcon icon={Delete02Icon} size={20} />
-                      </button>
-                    </div>
-                  </div>
+                    structure={structure}
+                    level={1}
+                  />
                 ))}
               </div>
             )}
@@ -329,6 +497,16 @@ const StructurePage: React.FC = () => {
           onClose={handleCancelDelete}
         />
       )}
+
+      {/* Modal de structure */}
+      <StructureModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        parentId={selectedParentId}
+        parentName={selectedParentName}
+        structure={selectedStructure}
+        onSuccess={handleModalSuccess}
+      />
     </AdminLayout>
   );
 };

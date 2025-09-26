@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import AdminHeaders from "@/app/components/adminHeader";
 import {
   ArrowTurnBackwardIcon,
@@ -46,6 +46,7 @@ const structureSchema = z.object({
 
 const NewStructurePage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [formData, setFormData] = useState<StructureFormData>({
     name: "",
@@ -73,6 +74,15 @@ const NewStructurePage = () => {
           setStructures(result.data);
         }
         
+        // Pré-remplir le parentId si présent dans l'URL
+        const parentIdParam = searchParams.get('parentId');
+        if (parentIdParam) {
+          setFormData(prev => ({
+            ...prev,
+            parentId: parseInt(parentIdParam)
+          }));
+        }
+        
         const minLoadingTime = 800;
         const remaining = minLoadingTime - elapsed;
         
@@ -88,7 +98,7 @@ const NewStructurePage = () => {
     };
     
     loadStructures();
-  }, []);
+  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (error) setError(null);

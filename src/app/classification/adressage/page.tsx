@@ -285,6 +285,8 @@ const AdressagePage: React.FC = () => {
           </div>
 
           <div className="flex items-center space-x-2">
+
+
           <button
             onClick={() => handleToggleStatus(localisation)}
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -295,6 +297,18 @@ const AdressagePage: React.FC = () => {
           >
             {localisation.isActive ? "Actif" : "Inactif"}
           </button>
+
+          {canAddChild && (
+              <button
+                onClick={() => handleCreate(localisation.id, localisation.name)}
+                className="p-2  hover:btn-primary transition-colors"
+                title={`Ajouter une sous-localisation (niveau ${
+                  localisation.level + 1
+                })`}
+              >
+                <Plus size={16} />
+              </button>
+            )}
      
             <button
               onClick={() => handleEdit(localisation)}
