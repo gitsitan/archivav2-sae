@@ -24,6 +24,8 @@ import AdminLayout from "@/app/adminLayout";
 import AdminHeaders from "@/app/components/adminHeader";
 import MySpinner from "@/components/ui/my-spinner";
 import {
+  ArrowDown01Icon,
+  ArrowRight01Icon,
   Delete02Icon,
   Edit01Icon,
   Edit02Icon,
@@ -256,11 +258,12 @@ const AdressagePage: React.FC = () => {
                 onClick={() => toggleExpansion(localisation.id)}
                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
               >
-                {isExpanded ? (
-                  <ToggleLeft size={16} />
-                ) : (
-                  <ToggleRight size={16} />
-                )}
+
+<HugeiconsIcon
+                icon={isExpanded ? ArrowDown01Icon : ArrowRight01Icon}
+                size={16}
+              />
+          
               </button>
             ) : (
               <div className="w-6" />
@@ -275,32 +278,24 @@ const AdressagePage: React.FC = () => {
                   <span className="text-sm text-gray-500 dark:text-gray-400">
                     ({localisation.code})
                   </span>
-                  <span
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      localisation.isActive
-                        ? "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400"
-                        : "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
-                    }`}
-                  >
-                    {localisation.isActive ? "Active" : "Inactive"}
-                  </span>
+       
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleToggleStatus(localisation)}
-              className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-              title={localisation.isActive ? "Désactiver" : "Activer"}
-            >
-              {localisation.isActive ? (
-                <ToggleRight size={16} />
-              ) : (
-                <ToggleLeft size={16} />
-              )}
-            </button>
+          <div className="flex items-center space-x-2">
+          <button
+            onClick={() => handleToggleStatus(localisation)}
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              localisation.isActive
+                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+            }`}
+          >
+            {localisation.isActive ? "Actif" : "Inactif"}
+          </button>
+     
             <button
               onClick={() => handleEdit(localisation)}
               className="p-2  hover:btn-primary transition-colors"
