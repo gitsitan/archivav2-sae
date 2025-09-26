@@ -200,7 +200,7 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({
             onClick={handleCreate}
             className="inline-flex items-center px-4 py-2 btn-primary hover:btn-primary text-white text-sm font-medium rounded-lg transition-colors"
           >
-            <Plus size={16} className="mr-2" />
+            <Plus size={20} />
           </button>
         </div>
 
@@ -214,38 +214,6 @@ const LiassesManager: React.FC<LiassesManagerProps> = ({
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setFilterActive(null)}
-              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                filterActive === null
-                  ? "btn-primary text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              Toutes
-            </button>
-            <button
-              onClick={() => setFilterActive(true)}
-              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                filterActive === true
-                  ? "btn-primary text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              Actives
-            </button>
-            <button
-              onClick={() => setFilterActive(false)}
-              className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                filterActive === false
-                  ? "btn-primary text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
-              }`}
-            >
-              Inactives
-            </button>
           </div>
         </div>
       </div>

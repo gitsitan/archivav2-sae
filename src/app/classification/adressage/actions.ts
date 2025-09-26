@@ -43,13 +43,13 @@ export async function createLocalisation(data: LocalisationFormData) {
     if (data.parentId) {
       const parent = await prisma.localisation.findUnique({
         where: { id: data.parentId },
-        select: { level: true }
+        select: { level: true },
       });
-      
+
       if (parent && parent.level >= MAX_LEVEL) {
-        return { 
-          success: false, 
-          error: `Impossible de créer une localisation : le niveau maximum (${MAX_LEVEL}) serait dépassé.` 
+        return {
+          success: false,
+          error: `Impossible de créer une localisation : le niveau maximum (${MAX_LEVEL}) serait dépassé.`,
         };
       }
     }
@@ -59,7 +59,7 @@ export async function createLocalisation(data: LocalisationFormData) {
     if (data.parentId) {
       const parent = await prisma.localisation.findUnique({
         where: { id: data.parentId },
-        select: { level: true }
+        select: { level: true },
       });
       if (parent) {
         level = parent.level + 1;
@@ -76,18 +76,18 @@ export async function createLocalisation(data: LocalisationFormData) {
       },
       include: {
         parent: {
-          select: { id: true, name: true, code: true }
-        }
-      }
+          select: { id: true, name: true, code: true },
+        },
+      },
     });
 
     revalidatePath("/classification/adressage");
     return { success: true, data: localisation };
   } catch (error) {
     console.error("Erreur lors de la création de la localisation:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la création de la localisation" 
+    return {
+      success: false,
+      error: "Erreur lors de la création de la localisation",
     };
   }
 }
@@ -104,19 +104,21 @@ export async function getLocalisations() {
               include: {
                 children: {
                   include: {
-                    children: true
-                  }
-                }
-              }
-            }
-          }
-        }
+                    children: true,
+                  },
+                },
+              },
+            },
+          },
+        },
       },
-      orderBy: { name: 'asc' }
+      orderBy: { name: "asc" },
     });
 
     // Convertir les données pour correspondre au type LocalisationWithChildren
-    const convertToLocalisationWithChildren = (item: any): LocalisationWithChildren => ({
+    const convertToLocalisationWithChildren = (
+      item: any
+    ): LocalisationWithChildren => ({
       id: item.id,
       code: item.code,
       name: item.name,
@@ -125,17 +127,21 @@ export async function getLocalisations() {
       isActive: item.isActive,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
-      children: item.children ? item.children.map(convertToLocalisationWithChildren) : []
+      children: item.children
+        ? item.children.map(convertToLocalisationWithChildren)
+        : [],
     });
 
-    const convertedLocalisations = localisations.map(convertToLocalisationWithChildren);
+    const convertedLocalisations = localisations.map(
+      convertToLocalisationWithChildren
+    );
 
     return { success: true, data: convertedLocalisations };
   } catch (error) {
     console.error("Erreur lors de la récupération des localisations:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la récupération des localisations" 
+    return {
+      success: false,
+      error: "Erreur lors de la récupération des localisations",
     };
   }
 }
@@ -147,42 +153,45 @@ export async function getLocalisationById(id: number) {
       where: { id },
       include: {
         parent: {
-          select: { id: true, name: true, code: true }
-        }
-      }
+          select: { id: true, name: true, code: true },
+        },
+      },
     });
 
     if (!localisation) {
-      return { 
-        success: false, 
-        error: "Localisation introuvable" 
+      return {
+        success: false,
+        error: "Localisation introuvable",
       };
     }
 
     return { success: true, data: localisation };
   } catch (error) {
     console.error("Erreur lors de la récupération de la localisation:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la récupération de la localisation" 
+    return {
+      success: false,
+      error: "Erreur lors de la récupération de la localisation",
     };
   }
 }
 
 // Mettre à jour une localisation
-export async function updateLocalisation(id: number, data: LocalisationFormData) {
+export async function updateLocalisation(
+  id: number,
+  data: LocalisationFormData
+) {
   try {
     // Vérifier le niveau maximum si on change le parent
     if (data.parentId) {
       const parent = await prisma.localisation.findUnique({
         where: { id: data.parentId },
-        select: { level: true }
+        select: { level: true },
       });
-      
+
       if (parent && parent.level >= MAX_LEVEL) {
-        return { 
-          success: false, 
-          error: `Impossible de modifier la localisation : le niveau maximum (${MAX_LEVEL}) serait dépassé.` 
+        return {
+          success: false,
+          error: `Impossible de modifier la localisation : le niveau maximum (${MAX_LEVEL}) serait dépassé.`,
         };
       }
     }
@@ -192,7 +201,7 @@ export async function updateLocalisation(id: number, data: LocalisationFormData)
     if (data.parentId) {
       const parent = await prisma.localisation.findUnique({
         where: { id: data.parentId },
-        select: { level: true }
+        select: { level: true },
       });
       if (parent) {
         level = parent.level + 1;
@@ -210,18 +219,18 @@ export async function updateLocalisation(id: number, data: LocalisationFormData)
       },
       include: {
         parent: {
-          select: { id: true, name: true, code: true }
-        }
-      }
+          select: { id: true, name: true, code: true },
+        },
+      },
     });
 
     revalidatePath("/classification/adressage");
     return { success: true, data: updatedLocalisation };
   } catch (error) {
     console.error("Erreur lors de la mise à jour de la localisation:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la mise à jour de la localisation" 
+    return {
+      success: false,
+      error: "Erreur lors de la mise à jour de la localisation",
     };
   }
 }
@@ -231,39 +240,39 @@ export async function deleteLocalisation(id: number) {
   try {
     // Vérifier s'il y a des enfants
     const childrenCount = await prisma.localisation.count({
-      where: { parentId: id }
+      where: { parentId: id },
     });
 
     if (childrenCount > 0) {
-      return { 
-        success: false, 
-        error: `Impossible de supprimer cette localisation car elle contient ${childrenCount} sous-localisation(s). Supprimez d'abord les sous-localisations.` 
+      return {
+        success: false,
+        error: `Impossible de supprimer cette localisation car elle contient ${childrenCount} sous-localisation(s). Supprimez d'abord les sous-localisations.`,
       };
     }
 
     // Vérifier s'il y a des dossiers associés
     const dossiersCount = await prisma.dossier.count({
-      where: { localisationId: id }
+      where: { localisationId: id },
     });
 
     if (dossiersCount > 0) {
-      return { 
-        success: false, 
-        error: `Impossible de supprimer cette localisation car elle contient ${dossiersCount} dossier(s). Supprimez d'abord les dossiers.` 
+      return {
+        success: false,
+        error: `Impossible de supprimer cette localisation car elle contient ${dossiersCount} dossier(s). Supprimez d'abord les dossiers.`,
       };
     }
 
     await prisma.localisation.delete({
-      where: { id }
+      where: { id },
     });
 
     revalidatePath("/classification/adressage");
     return { success: true };
   } catch (error) {
     console.error("Erreur lors de la suppression de la localisation:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la suppression de la localisation" 
+    return {
+      success: false,
+      error: "Erreur lors de la suppression de la localisation",
     };
   }
 }
@@ -273,13 +282,13 @@ export async function toggleLocalisationStatus(id: number) {
   try {
     const localisation = await prisma.localisation.findUnique({
       where: { id },
-      select: { isActive: true }
+      select: { isActive: true },
     });
 
     if (!localisation) {
-      return { 
-        success: false, 
-        error: "Localisation introuvable" 
+      return {
+        success: false,
+        error: "Localisation introuvable",
       };
     }
 
@@ -288,18 +297,18 @@ export async function toggleLocalisationStatus(id: number) {
       data: { isActive: !localisation.isActive },
       include: {
         parent: {
-          select: { id: true, name: true, code: true }
-        }
-      }
+          select: { id: true, name: true, code: true },
+        },
+      },
     });
 
     revalidatePath("/classification/adressage");
     return { success: true, data: updatedLocalisation };
   } catch (error) {
     console.error("Erreur lors du changement de statut:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors du changement de statut" 
+    return {
+      success: false,
+      error: "Erreur lors du changement de statut",
     };
   }
 }
@@ -308,20 +317,23 @@ export async function toggleLocalisationStatus(id: number) {
 export async function getParentLocalisations() {
   try {
     const localisations = await prisma.localisation.findMany({
-      where: { 
+      where: {
         isActive: true,
-        level: { lt: MAX_LEVEL } // Seulement les niveaux < MAX_LEVEL
+        level: { lt: MAX_LEVEL }, // Seulement les niveaux < MAX_LEVEL
       },
       select: { id: true, name: true, code: true, level: true },
-      orderBy: { name: 'asc' }
+      orderBy: { name: "asc" },
     });
 
     return { success: true, data: localisations };
   } catch (error) {
-    console.error("Erreur lors de la récupération des localisations parentes:", error);
-    return { 
-      success: false, 
-      error: "Erreur lors de la récupération des localisations parentes" 
+    console.error(
+      "Erreur lors de la récupération des localisations parentes:",
+      error
+    );
+    return {
+      success: false,
+      error: "Erreur lors de la récupération des localisations parentes",
     };
   }
 }

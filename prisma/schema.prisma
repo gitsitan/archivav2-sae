@@ -93,7 +93,7 @@ model Liasse {
 
 model Localisation {
   id          Int        @id @default(autoincrement())
-  code        String     @unique
+  code        String?     @unique
   name        String
   parentId    Int?
   level       Int        @default(1)
