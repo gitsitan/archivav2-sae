@@ -130,95 +130,93 @@ const TypeDocumentsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-              <div className="p-6">
-                {filtered.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 dark:text-gray-400">
-                      {searchTerm
-                        ? "Aucun type ne correspond à votre recherche"
-                        : "Aucun type de document trouvé"}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                      <thead className="bg-gray-50 dark:bg-gray-700/40">
-                        <tr>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-full">
-                            Nom
-                          </th>
-                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Statut
-                          </th>
-                          <th className="px-4 py-3" />
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                        {filtered.map((item) => (
-                          <tr key={item.id}>
-                            <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100 w-full">
-                              {item.name}
-                            </td>
-                            <td className="px-4 py-3">
-                              <button
-                                onClick={() =>
-                                  toggleTypeDocumentStatus(item.id).then(
-                                    async (res) => {
-                                      if (res.success) {
-                                        const refreshed =
-                                          await getTypeDocuments();
-                                        if (refreshed.success && refreshed.data)
-                                          setItems(refreshed.data);
-                                        showNotification(
-                                          "Statut modifié avec succès !",
-                                          "success"
-                                        );
-                                      } else {
-                                        showNotification(
-                                          res.error ||
-                                            "Erreur lors de la modification",
-                                          "error"
-                                        );
-                                      }
-                                    }
-                                  )
+            <div className="tableContainer">
+              {filtered.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500 dark:text-gray-400">
+                    {searchTerm
+                      ? "Aucun type ne correspond à votre recherche"
+                      : "Aucun type de document trouvé"}
+                  </p>
+                </div>
+              ) : (
+                <table className="table-main">
+                  <thead className="table-header">
+                    <tr className="table-row">
+                      <th className="table-header-cell">
+                        <span>Nom</span>
+                      </th>
+                      <th
+                        className="table-header-cell"
+                        style={{ width: "120px" }}
+                      >
+                        <span>Statut</span>
+                      </th>
+                      <th
+                        className="table-header-cell"
+                        style={{ width: "100px" }}
+                      >
+                        <span>Actions</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="table-body">
+                    {filtered.map((item) => (
+                      <tr key={item.id} className="table-row">
+                        <td className="table-body-cell table-body-cell-bold">
+                          {item.name}
+                        </td>
+                        <td className="table-body-cell">
+                          <button
+                            onClick={() =>
+                              toggleTypeDocumentStatus(item.id).then(
+                                async (res) => {
+                                  if (res.success) {
+                                    const refreshed = await getTypeDocuments();
+                                    if (refreshed.success && refreshed.data)
+                                      setItems(refreshed.data);
+                                    showNotification(
+                                      "Statut modifié avec succès !",
+                                      "success"
+                                    );
+                                  } else {
+                                    showNotification(
+                                      res.error ||
+                                        "Erreur lors de la modification",
+                                      "error"
+                                    );
+                                  }
                                 }
-                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                  item.status === "ACTIVE"
-                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                                    : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-                                }`}
-                              >
-                                {item.status === "ACTIVE" ? "Actif" : "Archivé"}
-                              </button>
-                            </td>
-                            <td className="px-4 py-3 text-right">
-                              <div className="flex items-center justify-end space-x-2">
-                                <button
-                                  onClick={() => handleEdit(item.id)}
-                                  className="btn-action btn-action-edit"
-                                >
-                                  <HugeiconsIcon icon={Edit03Icon} size={25} />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(item.id)}
-                                  className="btn-action btn-action-delete"
-                                >
-                                  <HugeiconsIcon
-                                    icon={Delete02Icon}
-                                    size={25}
-                                  />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
+                              )
+                            }
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              item.status === "ACTIVE"
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+                            }`}
+                          >
+                            {item.status === "ACTIVE" ? "Actif" : "Archivé"}
+                          </button>
+                        </td>
+                        <td className="table-body-cell">
+                          <button
+                            onClick={() => handleEdit(item.id)}
+                            className="btn-action btn-action-edit"
+                          >
+                            <HugeiconsIcon icon={Edit03Icon} size={25} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="btn-action btn-action-delete"
+                          >
+                            <HugeiconsIcon icon={Delete02Icon} size={25} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
 
             {showDialog && (

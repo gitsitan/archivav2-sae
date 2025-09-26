@@ -12,6 +12,13 @@ import {
   getLocalisationById,
   LocalisationWithParent,
 } from "./actions";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Add01Icon,
+  Edit01Icon,
+  Edit02Icon,
+  Edit03Icon,
+} from "@hugeicons/core-free-icons";
 
 interface LocalisationModalProps {
   isOpen: boolean;
@@ -347,7 +354,11 @@ const LocalisationModal: React.FC<LocalisationModalProps> = ({
                   </>
                 ) : (
                   <>
-                    <Save size={16} className="mr-2" />
+                    <HugeiconsIcon
+                      icon={localisation ? Edit03Icon : Add01Icon}
+                      size={16}
+                      className="mr-2"
+                    />
                     {localisation ? "Modifier" : "Créer"}
                   </>
                 )}

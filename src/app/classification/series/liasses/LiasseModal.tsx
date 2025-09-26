@@ -6,6 +6,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
+  Add01Icon,
+  Add02Icon,
   Cancel02FreeIcons,
   CosIcon,
   Edit03Icon,
@@ -261,7 +263,7 @@ const LiasseModal: React.FC<LiasseModalProps> = ({
                 ) : (
                   <>
                     <HugeiconsIcon
-                      icon={Edit03Icon}
+                      icon={liasse ? Edit03Icon : Add01Icon}
                       size={16}
                       className="mr-2"
                     />

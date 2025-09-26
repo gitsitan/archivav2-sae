@@ -112,7 +112,7 @@ const EditTypeDocumentPage = () => {
                   onSubmit={handleSubmit(onSubmit)}
                   className="px-6 py-8 space-y-6"
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-1 gap-6">
                     <div>
                       <label
                         htmlFor="name"

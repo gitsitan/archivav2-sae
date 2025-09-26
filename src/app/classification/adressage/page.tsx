@@ -23,6 +23,13 @@ import Notification from "@/components/ui/notifications";
 import AdminLayout from "@/app/adminLayout";
 import AdminHeaders from "@/app/components/adminHeader";
 import MySpinner from "@/components/ui/my-spinner";
+import {
+  Delete02Icon,
+  Edit01Icon,
+  Edit02Icon,
+  Edit03Icon,
+} from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 const MAX_LEVEL = 3;
 
@@ -283,17 +290,6 @@ const AdressagePage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {canAddChild && (
-              <button
-                onClick={() => handleCreate(localisation.id, localisation.name)}
-                className="p-2 text-green-600 hover:text-green-700 transition-colors"
-                title={`Ajouter une sous-localisation (niveau ${
-                  localisation.level + 1
-                })`}
-              >
-                <Plus size={16} />
-              </button>
-            )}
             <button
               onClick={() => handleToggleStatus(localisation)}
               className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -307,17 +303,17 @@ const AdressagePage: React.FC = () => {
             </button>
             <button
               onClick={() => handleEdit(localisation)}
-              className="p-2 text-indigo-600 hover:text-indigo-700 transition-colors"
+              className="p-2  hover:btn-primary transition-colors"
               title="Modifier"
             >
-              <Edit size={16} />
+              <HugeiconsIcon icon={Edit03Icon} size={25} />
             </button>
             <button
               onClick={() => handleOpenDeleteModal(localisation)}
               className="p-2 text-red-600 hover:text-red-700 transition-colors"
               title="Supprimer"
             >
-              <Trash2 size={16} />
+              <HugeiconsIcon icon={Delete02Icon} size={25} />
             </button>
           </div>
         </div>
