@@ -12,7 +12,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import z from "zod";
 import useNotification from "@/app/hooks/useNotifications";
 import AdminLayout from "@/app/adminLayout";
-import { createStructure, getStructures } from "../actions";
+import { createStructure, getStructuresForSelection } from "../actions";
 import MySpinner from "@/components/ui/my-spinner";
 import Notification from "@/components/ui/notifications";
 
@@ -21,17 +21,15 @@ interface StructureFormData {
   address: string;
   phone: string;
   email: string;
+  parentId?: number;
 }
 
 interface Structure {
   id: number;
   name: string;
-  address: string | null;
-  phone: string | null;
-  email: string | null;
+  niveau: number;
+  parentId: number | null;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 // Schéma de validation Zod
@@ -43,6 +41,7 @@ const structureSchema = z.object({
   address: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email("Format d'email invalide").optional().or(z.literal("")),
+  parentId: z.number().optional(),
 });
 
 const NewStructurePage = () => {
@@ -53,6 +52,7 @@ const NewStructurePage = () => {
     address: "",
     phone: "",
     email: "",
+    parentId: undefined,
   });
 
   const [structures, setStructures] = useState<Structure[]>([]);
@@ -63,21 +63,40 @@ const NewStructurePage = () => {
     useNotification();
 
   useEffect(() => {
-    const start = Date.now();
-    const elapsed = Date.now() - start;
-    const minLoadingTime = 800; // Temps minimum réduit pour cohérence
-    const remaining = minLoadingTime - elapsed;
-
-    if (remaining > 0) {
-      setTimeout(() => setLoading(false), remaining);
-    } else {
-      setLoading(false);
-    }
+    const loadStructures = async () => {
+      const start = Date.now();
+      try {
+        const result = await getStructuresForSelection();
+        const elapsed = Date.now() - start;
+        
+        if (result.success && result.data) {
+          setStructures(result.data);
+        }
+        
+        const minLoadingTime = 800;
+        const remaining = minLoadingTime - elapsed;
+        
+        if (remaining > 0) {
+          setTimeout(() => setLoading(false), remaining);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des structures:", error);
+        setLoading(false);
+      }
+    };
+    
+    loadStructures();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     if (error) setError(null);
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ 
+      ...formData, 
+      [name]: name === 'parentId' ? (value ? parseInt(value) : undefined) : value 
+    });
   };
 
   const handleBack = () => {
@@ -152,6 +171,31 @@ const NewStructurePage = () => {
                       <span className="block sm:inline">{error}</span>
                     </div>
                   )}
+                  
+                  <div>
+                    <label
+                      htmlFor="parentId"
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                    >
+                      Structure parent
+                    </label>
+                    <select
+                      id="parentId"
+                      name="parentId"
+                      value={formData.parentId || ""}
+                      onChange={handleChange}
+                      className="block w-full py-3 px-4 rounded-lg bg-gray-100 dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600"
+                    >
+                      <option value="">Aucune (Structure racine)</option>
+                      {structures
+                        .filter(structure => structure.isActive)
+                        .map((structure) => (
+                          <option key={structure.id} value={structure.id}>
+                            {"— ".repeat(structure.niveau - 1)}{structure.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
                   
                   <div>
                     <label

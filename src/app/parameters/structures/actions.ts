@@ -8,17 +8,46 @@ export interface StructureFormData {
   address?: string;
   phone?: string;
   email?: string;
+  parentId?: number;
+}
+
+export interface StructureWithChildren {
+  id: number;
+  name: string;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  niveau: number;
+  parentId: number | null;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  children: StructureWithChildren[];
 }
 
 // Créer une structure
 export async function createStructure(data: StructureFormData) {
   try {
+    // Calculer le niveau basé sur le parent
+    let niveau = 1;
+    if (data.parentId) {
+      const parent = await prisma.structure.findUnique({
+        where: { id: data.parentId },
+        select: { niveau: true }
+      });
+      if (parent) {
+        niveau = parent.niveau + 1;
+      }
+    }
+
     const structure = await prisma.structure.create({
       data: {
         name: data.name,
         address: data.address || null,
         phone: data.phone || null,
         email: data.email || null,
+        parentId: data.parentId || null,
+        niveau,
       },
     });
 
@@ -33,11 +62,46 @@ export async function createStructure(data: StructureFormData) {
   }
 }
 
-// Récupérer toutes les structures
+// Récupérer toutes les structures avec hiérarchie
 export async function getStructures() {
   try {
     const structures = await prisma.structure.findMany({
-      orderBy: { createdAt: "desc" },
+      where: { parentId: null }, // Seulement les structures racines
+      include: {
+        children: {
+          include: {
+            children: {
+              include: {
+                children: true // 3 niveaux de profondeur
+              }
+            }
+          }
+        }
+      },
+      orderBy: { name: "asc" },
+    });
+    return { success: true, data: structures };
+  } catch (error) {
+    console.error("Erreur lors de la récupération des structures:", error);
+    return { 
+      success: false, 
+      error: "Erreur lors de la récupération des structures" 
+    };
+  }
+}
+
+// Récupérer toutes les structures pour sélection (flat list)
+export async function getStructuresForSelection() {
+  try {
+    const structures = await prisma.structure.findMany({
+      select: {
+        id: true,
+        name: true,
+        niveau: true,
+        parentId: true,
+        isActive: true,
+      },
+      orderBy: { name: "asc" },
     });
     return { success: true, data: structures };
   } catch (error) {
@@ -76,6 +140,18 @@ export async function getStructureById(id: number) {
 // Mettre à jour une structure
 export async function updateStructure(id: number, data: StructureFormData) {
   try {
+    // Calculer le niveau basé sur le parent
+    let niveau = 1;
+    if (data.parentId) {
+      const parent = await prisma.structure.findUnique({
+        where: { id: data.parentId },
+        select: { niveau: true }
+      });
+      if (parent) {
+        niveau = parent.niveau + 1;
+      }
+    }
+
     const structure = await prisma.structure.update({
       where: { id },
       data: {
@@ -83,6 +159,8 @@ export async function updateStructure(id: number, data: StructureFormData) {
         address: data.address || null,
         phone: data.phone || null,
         email: data.email || null,
+        parentId: data.parentId || null,
+        niveau,
       },
     });
 
