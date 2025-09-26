@@ -383,10 +383,11 @@ const SeriesPage: React.FC = () => {
 
             {showDialog && (
               <ConfirmationDialog
+                isOpen={showDialog}
                 title="Confirmation de suppression"
                 message="Voulez-vous vraiment supprimer cette série ? Cette action est irréversible."
                 onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
+                onClose={handleCancelDelete}
               />
             )}
           </>

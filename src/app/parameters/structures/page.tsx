@@ -443,10 +443,11 @@ const StructurePage: React.FC = () => {
 
             {showDialog && (
               <ConfirmationDialog
+                isOpen={showDialog}
                 title="Confirmation de suppression"
                 message="Voulez-vous vraiment supprimer cette structure ?"
                 onConfirm={handleConfirmDelete}
-                onCancel={handleCancelDelete}
+                onClose={handleCancelDelete}
               />
             )}
           </>
